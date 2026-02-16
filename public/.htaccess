@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    Options -MultiViews
+    RewriteEngine On
+    
+    # "/" (gốc server koyeb), "/php_crud/public/"  (gốc XAMPP)
+    RewriteBase /
+    
+    # Nếu không phải file thực
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Thì viết lại URL
+    RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+
+</IfModule>
