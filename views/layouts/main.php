@@ -7,20 +7,26 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body>
 
     <nav id="sidebar" class="sidebar d-flex flex-column">
-        <div class="sidebar-header">
-            <img src="public/img/kho_iot_logo.png" alt="Logo" class="sidebar-logo me-2">
-            <span class="fw-bold">IoT WAREHOUSE</span>
+        <div class="sidebar-header d-flex align-items-center justify-content-center">
+            <img src="public/img/kho_iot_logo.png" alt="Logo" class="sidebar-logo me-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <i class="fas fa-leaf text-warning me-2" style="display:none; font-size: 1.5rem;"></i>
+            
+            <span class="fw-bold logo-text">IoT WAREHOUSE</span>
         </div>
         
         <div class="flex-grow-1 mt-3">
             <?php 
+                // Kiểm tra file tồn tại trước khi include để tránh lỗi Fatal Error
                 if (file_exists(__DIR__ . '/../dungchung/sidebar.php')) {
                     include __DIR__ . '/../dungchung/sidebar.php';
+                } else {
+                    echo '<p class="text-white text-center">Lỗi: Không tìm thấy Menu</p>';
                 }
             ?>
         </div>
@@ -56,7 +62,7 @@
                 if (isset($content) && file_exists($content)) {
                     include $content;
                 } else {
-                    echo "<div class='alert alert-danger'>Không tìm thấy nội dung!</div>";
+                    echo "<div class='alert alert-danger'>Không tìm thấy nội dung: $content</div>";
                 }
             ?>
         </div>
@@ -64,7 +70,6 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -73,11 +78,9 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
 
-            if (sidebarToggle) {
+            if (sidebarToggle && sidebar && mainContent) {
                 sidebarToggle.addEventListener('click', function() {
-                    // Thêm/Bỏ class 'collapsed' cho sidebar
                     sidebar.classList.toggle('collapsed');
-                    // Thêm/Bỏ class 'expanded' cho main content
                     mainContent.classList.toggle('expanded');
                 });
             }
