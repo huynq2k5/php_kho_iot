@@ -8,13 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="public/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
     <nav id="sidebar" class="sidebar d-flex flex-column">
         <div class="sidebar-header d-flex align-items-center justify-content-center">
-            <img src="public/img/kho_iot_logo.png" alt="Logo" class="sidebar-logo me-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img src="/img/kho_iot_logo.png" alt="Logo" class="sidebar-logo me-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <i class="fas fa-leaf text-warning me-2" style="display:none; font-size: 1.5rem;"></i>
             
             <span class="fw-bold logo-text">IoT WAREHOUSE</span>
