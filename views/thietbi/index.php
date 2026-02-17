@@ -4,7 +4,9 @@
             <h4 class="text-secondary fw-bold">Hạ tầng thiết bị</h4>
             <p class="text-muted small mb-0">Giám sát Node ESP32 và các trạm cảm biến</p>
         </div>
-        <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Thêm Node</button>
+        <a href="index.php?page=thietbi_them" class="btn btn-primary shadow-sm fw-bold">
+            <i class="fas fa-plus me-2"></i>Thêm Node
+        </a>
     </div>
 
     <div class="card border-0 shadow-sm">
