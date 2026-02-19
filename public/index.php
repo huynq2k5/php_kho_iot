@@ -47,9 +47,33 @@ switch ($page) {
         $title = "";
         $content = $viewDir . '/thietbi/config.php';
         break;
+    case 'thietbi_them':
+        $title = "";
+        $content = $viewDir . '/thietbi/them.php';
+        break;
     case 'users':
         $title = "Quản lý người dùng";
         $content = $viewDir . '/users/index.php';
+        break;
+    case 'users_them_nhom':
+        $title = "Quản lý người dùng";
+        $content = $viewDir . '/users/them_nhom.php';
+        break;
+    case 'sua_nhom':
+        $title = "Quản lý người dùng";
+        $content = $viewDir . '/users/sua_nhom.php';
+        break;
+    case 'users_them_quyen':
+        $title = "Quản lý người dùng";
+        $content = $viewDir . '/users/them_quyen.php';
+        break;
+    case 'sua_quyen':
+        $title = "Quản lý người dùng";
+        $content = $viewDir . '/users/sua_quyen.php';
+        break;
+    case 'nguoidung_them':
+        $title = "Quản lý người dùng";
+        $content = $viewDir . '/users/form.php';
         break;
         
     case 'auth':
