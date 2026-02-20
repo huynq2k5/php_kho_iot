@@ -15,6 +15,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
         <!-- Main Menu -->
         <ul class="mt-6">
             <!-- Dashboard - Tổng quan -->
+            <?php if (hasPermission('trangchu.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'dashboard'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -26,8 +27,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Tổng quan</span>
                 </a>
             </li>
-
+            <?php endif; ?>
+            
             <!-- Phân tích -->
+            <?php if (hasPermission('phantich.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'phantich'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -39,8 +42,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Phân tích</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Tự động hoá -->
+            <?php if (hasPermission('tudong.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'tudong'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -52,8 +57,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Tự động hoá</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Thiết bị -->
+            <?php if (hasPermission('thietbi.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'thietbi'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -65,8 +72,9 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Thiết bị</span>
                 </a>
             </li>
-
+            <?php endif; ?>
             <!-- Cảnh báo và Nhật ký -->
+            <?php if (hasPermission('canhbao.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'alert_log'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -78,8 +86,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Cảnh báo và nhật ký</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Người dùng -->
+            <?php if (hasPermission('nguoidung.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'users'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -91,6 +101,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Người dùng</span>
                 </a>
             </li>
+            <?php endif; ?>
         </ul>
 
     </div>
@@ -129,6 +140,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
         <!-- Mobile Menu - Copy đầy đủ từ desktop sidebar -->
         <ul class="mt-6">
             <!-- Dashboard - Tổng quan -->
+            <?php if (hasPermission('trangchu.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'dashboard'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -140,8 +152,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Tổng quan</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Phân tích -->
+            <?php if (hasPermission('phantich.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'phantich'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -153,8 +167,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Phân tích</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Tự động hoá -->
+            <?php if (hasPermission('tudong.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'tudong'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -166,8 +182,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Tự động hoá</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Thiết bị -->
+            <?php if (hasPermission('thietbi.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'thietbi'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -179,8 +197,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Thiết bị</span>
                 </a>
             </li>
+            <?php endif; ?>
             
             <!-- Cảnh báo -->
+            <?php if (hasPermission('canhbao.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'alert_log'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -192,8 +212,10 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Cảnh báo và Nhật ký</span>
                 </a>
             </li>
+            <?php endif; ?>
 
             <!-- Người dùng -->
+            <?php if (hasPermission('nguoidung.view')): ?>
             <li class="relative px-6 py-3">
                 <?php if ($currentPage == 'users'): ?>
                     <span class="absolute inset-y-0 left-0 w-1 bg-red-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
@@ -205,6 +227,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     <span class="ml-4">Người dùng</span>
                 </a>
             </li>
+            <?php endif; ?>
         </ul>
     </div>
 </aside>
