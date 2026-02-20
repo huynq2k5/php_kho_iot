@@ -1,97 +1,95 @@
 <?php
-// public/index.php
+session_start();
+require_once __DIR__ . '/../vendor/autoload.php';
 
-// 1. Giả lập dữ liệu dùng chung (Thay cho Controller)
-$currentUser = ['role' => 'ADMIN', 'name' => 'Nguyen Van A']; // Thử sửa thành MEMBER để test
+$page = $_GET['page'] ?? 'dashboard';
 
-// 2. Lấy trang cần xem từ URL (Ví dụ: index.php?page=thietbi)
-// Nếu không có ?page thì mặc định vào 'dashboard'
-$page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+// 1. KIỂM TRA ĐĂNG NHẬP
+if (!isset($_SESSION['user_id']) && !in_array($page, ['auth', 'auth_xuly_dangnhap'])) {
+    header('Location: index.php?page=auth');
+    exit;
+}
 
-// 3. Định nghĩa đường dẫn đến thư mục views (Lùi lại 1 cấp ra khỏi public)
-$viewDir = __DIR__ . '/../views';
+// 2. CHUẨN HÓA ĐƯỜNG DẪN (Dùng realpath để mất dấu /../)
+$viewDir = realpath(__DIR__ . '/../views');
+$layout = 'main';
+$title = "Hệ thống quản lý Kho IoT";
 
-// 4. Switch-Case điều hướng (Router tạm thời)
+// 3. ĐIỀU HƯỚNG CHI TIẾT
 switch ($page) {
-    case 'dashboard':
-        $title = "Tổng quan";
-        $content = $viewDir . '/trangchu/index.php'; // Đường dẫn file view
-        break;
-
-    case 'thietbi':
-        $title = "";
-        $content = $viewDir . '/thietbi/index.php';
-        break;
-
-    case 'phantich':
-        $title = "";
-        $content = $viewDir . '/phantich/index.php';
-        break;
-    case 'tudong':
-        $title = "Tự động hoá";
-        $content = $viewDir . '/tudong/index.php';
-        break;
-    case 'tudong-sua':
-        $title = "Tự động hoá";
-        $content = $viewDir . '/tudong/sua.php';
-        break;
-    case 'tudong-them':
-        $title = "Tự động hoá";
-        $content = $viewDir . '/tudong/them.php';
-        break;
-    case 'alert_log':
-        $title = "";
-        $content = $viewDir . '/alert_log/index.php';
-        break;
-    case 'thietbi_config':
-        $title = "";
-        $content = $viewDir . '/thietbi/config.php';
-        break;
-    case 'thietbi_them':
-        $title = "";
-        $content = $viewDir . '/thietbi/them.php';
-        break;
-    case 'users':
-        $title = "Quản lý người dùng";
-        $content = $viewDir . '/users/index.php';
-        break;
-    case 'users_them_nhom':
-        $title = "Quản lý người dùng";
-        $content = $viewDir . '/users/them_nhom.php';
-        break;
-    case 'sua_nhom':
-        $title = "Quản lý người dùng";
-        $content = $viewDir . '/users/sua_nhom.php';
-        break;
-    case 'users_them_quyen':
-        $title = "Quản lý người dùng";
-        $content = $viewDir . '/users/them_quyen.php';
-        break;
-    case 'sua_quyen':
-        $title = "Quản lý người dùng";
-        $content = $viewDir . '/users/sua_quyen.php';
-        break;
-    case 'nguoidung_them':
-        $title = "Quản lý người dùng";
-        $content = $viewDir . '/users/form.php';
-        break;
-        
     case 'auth':
-        // Trang login không dùng layout chung nên include trực tiếp và exit
-        include $viewDir . '/auth/login.php';
+        $layout = 'auth';
+        $viewFile = $viewDir . '/auth/login.php';
+        break;
+
+    case 'auth_xuly_dangnhap':
+        $controller = new \App\Controllers\AuthController();
+        $controller->webLogin();
         exit;
 
+    case 'logout':
+        $controller = new \App\Controllers\AuthController();
+        $controller->logout();
+        exit;
+
+    case 'dashboard':
+        $title = "Tổng quan kho";
+        $viewFile = $viewDir . '/trangchu/index.php';
+        break;
+
+    // Các tab thiết bị
+    case 'thietbi':
+        $viewFile = $viewDir . '/thietbi/index.php';
+        break;
+    case 'thietbi_config':
+        $viewFile = $viewDir . '/thietbi/config.php';
+        break;
+    case 'thietbi_them':
+        $viewFile = $viewDir . '/thietbi/them.php';
+        break;
+
+    // Các tab tự động hóa và phân tích
+    case 'phantich':
+        $viewFile = $viewDir . '/phantich/index.php';
+        break;
+    case 'tudong':
+        $viewFile = $viewDir . '/tudong/index.php';
+        break;
+    case 'alert_log':
+        $viewFile = $viewDir . '/alert_log/index.php';
+        break;
+
+    // Quản lý người dùng và nhóm quyền
+    case 'users':
+        $title = "Quản lý nhân viên";
+        $viewFile = $viewDir . '/users/index.php';
+        break;
+    case 'sua_nhom':
+        $isEdit = true;
+        $viewFile = $viewDir . '/users/sua_nhom.php';
+        break;
+    case 'users_them_quyen':
+        $viewFile = $viewDir . '/users/them_quyen.php';
+        break;
+
     default:
-        $title = "Lỗi";
-        $content = $viewDir . '/error/404.php';
+        $viewFile = $viewDir . '/error/404.php';
         break;
 }
 
-// 5. Gọi Layout chính để hiển thị (Layout sẽ bọc lấy $content)
-// Lưu ý: Bạn cần tạo file views/layouts/main.php trước
-if (file_exists($viewDir . '/layouts/main.php')) {
-    include $viewDir . '/layouts/main.php';
+// 4. KIỂM TRA FILE VÀ NẠP NỘI DUNG
+if ($viewFile && file_exists($viewFile)) {
+    ob_start();
+    include $viewFile;
+    $content = ob_get_clean();
 } else {
-    echo "Chưa có file layout! Hãy tạo views/layouts/main.php";
+    $content = "<h2 class='text-red-500'>Lỗi: Không tìm thấy file tại $viewFile</h2>";
 }
-?>
+
+// 5. HIỂN THỊ LAYOUT
+$layoutPath = $viewDir . "/layouts/{$layout}.php";
+if (file_exists($layoutPath)) {
+    include $layoutPath;
+} else {
+    echo "Lỗi hệ thống: Layout không tồn tại.";
+}

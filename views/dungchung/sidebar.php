@@ -8,7 +8,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
     <div class="py-4 text-gray-500 dark:text-gray-400">
         <!-- Logo -->
         <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center" href="index.php?page=dashboard">
-            <img src="public/img/kho_iot_logo.png" class="w-8 h-8 mr-3 object-contain" alt="Logo">
+            <img src="img/kho_iot_logo.png" class="w-8 h-8 mr-3 object-contain" alt="Logo">
             <span>IoT Warehouse</span>
         </a>
         
@@ -122,7 +122,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
     <div class="py-4 text-gray-500 dark:text-gray-400">
         <!-- Logo -->
         <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center" href="index.php?page=dashboard">
-            <img src="public/img/kho_iot_logo.png" class="w-8 h-8 mr-3 object-contain" alt="Logo">
+            <img src="img/kho_iot_logo.png" class="w-8 h-8 mr-3 object-contain" alt="Logo">
             <span>IoT Warehouse</span>
         </a>
         

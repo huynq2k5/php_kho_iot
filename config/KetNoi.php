@@ -9,10 +9,10 @@ class KetNoi {
     private $conn;
 
     public function __construct() {
-        $this->host = getenv('DB_HOST') ?: 'localhost';
-        $this->user = getenv('DB_USER') ?: 'root';
-        $this->pass = getenv('DB_PASS') ?: '';
-        $this->dbname = getenv('DB_NAME') ?: 'test';
+        $this->host = getenv('DB_HOST') ?: '127.0.0.1';
+        $this->user = getenv('DB_USER') ?: 'user_kho';
+        $this->pass = getenv('DB_PASS') ?: '123';
+        $this->dbname = getenv('DB_NAME') ?: 'kho_iot';
         $this->port = getenv('DB_PORT') ?: 3306;
         $this->moKetNoi();
     }

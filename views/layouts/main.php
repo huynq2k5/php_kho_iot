@@ -78,10 +78,11 @@
             <main class="h-full overflow-y-auto">
                 <div class="container px-6 mx-auto grid">
                     <?php 
-                        if (isset($content) && file_exists($content)) {
-                            include $content;
+                        // Chỉ cần kiểm tra biến có tồn tại hay không
+                        if (isset($content)) {
+                            echo $content; // Xuất thẳng nội dung HTML ra đây
                         } else {
-                            echo "<div class='p-4 text-red-600 font-bold dark:text-red-400'>Nội dung không tồn tại</div>"; 
+                            echo "<div class='p-4 text-red-600 font-bold dark:text-red-400'>Không có dữ liệu hiển thị</div>"; 
                         }
                     ?>
                 </div>
