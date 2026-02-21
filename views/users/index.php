@@ -125,7 +125,7 @@
                                         </td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 text-xs font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-                                                <i class="fas fa-crown mr-1"></i> <?= $user->tenNhom ?>
+                                                <?= $user->tenNhom ?>
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-xs">
@@ -134,10 +134,14 @@
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-sm text-right">
-                                            <button onclick="return confirm('Đặt lại mật khẩu về mặc định (12345678)?') ? window.location.href='index.php?page=users_reset_pass&id=<?= $user->idNguoiDung ?>' : false"
-                                                    class="text-gray-400 hover:text-blue-600 transition-colors duration-150 mx-1" 
-                                                    title="Reset mật khẩu">
-                                                <i class="fas fa-key"></i>
+                                            <button @click="openModal" 
+                                                    onclick="triggerModal({
+                                                        title: 'Khôi phục mật khẩu',
+                                                        description: 'Bạn đang khôi phục mật khẩu của <?= $user->hoTen ?>.',
+                                                        confirmUrl: 'index.php?page=users_xuly_reset&id=<?= $user->idNguoiDung ?>',
+                                                        btnClass: 'bg-red-600 hover:bg-red-700'
+                                                    })">
+                                                <i class="fas fa-key"></i></i>
                                             </button>
 
                                             <a href="index.php?page=nguoidung_sua&id=<?= $user->idNguoiDung ?>" 
@@ -145,8 +149,13 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             
-                                            <button class="text-gray-400 hover:text-red-600 transition-colors duration-150 mx-1"
-                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                            <button @click="openModal" 
+                                                    onclick="triggerModal({
+                                                        title: 'Xóa nhân sự',
+                                                        description: 'Bạn đang xóa <?= $user->hoTen ?>. Hành động này không thể hoàn tác!',
+                                                        confirmUrl: 'index.php?page=users_xuly_xoa&id=<?= $user->idNguoiDung ?>',
+                                                        btnClass: 'bg-red-600 hover:bg-red-700'
+                                                    })">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
@@ -204,7 +213,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-3 text-sm text-right">
-                                                <a href="index.php?page=sua_nhom&id=<?= $nhom->idNhom ?>" 
+                                                <a href="index.php?page=nhom_sua&id=<?= $nhom->idNhom ?>" 
                                                 class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
@@ -264,7 +273,7 @@
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-right">
-                                            <a href="index.php?page=sua_quyen&id=<?= $quyen->idQuyen ?>" 
+                                            <a href="index.php?page=quyen_sua&id=<?= $quyen->idQuyen ?>" 
                                             class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
                                                 <i class="fas fa-edit"></i>
                                             </a>

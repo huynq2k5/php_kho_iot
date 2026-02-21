@@ -71,37 +71,41 @@ class UserRepository {
         return null;
     }
 
-    public function themNguoiDung($data) {
-        $sql = "INSERT INTO nguoidung (tenDangNhap, matKhau, hoTen, idNhom, email, trangThai, ngayTao) 
-                VALUES (?, ?, ?, ?, ?, ?, NOW())";
+    public function insertNguoiDung($data) {
+        $sql = "INSERT INTO nguoidung (maNguoiDung, tenDangNhap, matKhau, hoTen, idNhom) 
+                VALUES (?, ?, ?, ?, ?)";
         
-        return $this->db->truyVan($sql, [
+        return $this->db->capNhat($sql, [
+            $data['maNguoiDung'],
             $data['tenDangNhap'],
             $data['matKhau'],
             $data['hoTen'],
-            $data['idNhom'],
-            $data['email'] ?? null,
-            $data['trangThai'] ?? 1
+            $data['idNhom']
         ]);
     }
 
-    public function suaNguoiDung($id, $data) {
+    public function updateNguoiDung($id, $data) {
         $sql = "UPDATE nguoidung 
-                SET tenDangNhap = ?, hoTen = ?, idNhom = ?, email = ?, trangThai = ? 
+                SET tenDangNhap = ?, hoTen = ?, idNhom = ? 
                 WHERE idNguoiDung = ?";
         
-        return $this->db->truyVan($sql, [
+        return $this->db->capNhat($sql, [
             $data['tenDangNhap'],
             $data['hoTen'],
             $data['idNhom'],
-            $data['email'] ?? null,
-            $data['trangThai'] ?? 1,
             $id
         ]);
     }
 
-    public function xoaNguoiDung($id) {
+    public function resetMatKhau($id, $data){
+        $sql = "UPDATE nguoidung 
+                SET matKhau = ? 
+                WHERE idNguoiDung = ?";
+        return $this->db->capNhat($sql, [$data, $id]);
+    }
+
+    public function deleteNguoiDung($id) {
         $sql = "DELETE FROM nguoidung WHERE idNguoiDung = ?";
-        return $this->db->truyVan($sql, [$id]);
+        return $this->db->capNhat($sql, [$id]);
     }
 }

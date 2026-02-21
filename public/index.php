@@ -3,7 +3,43 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// thông báo kết quả
 session_start();
+
+$msg = $_SESSION['msg'] ?? $_GET['msg'] ?? null;
+$alert = null;
+
+if ($msg) {
+    unset($_SESSION['msg']); 
+    
+    switch ($msg) {
+        case 'add_success':
+            $alert = ['type' => 'success', 'title' => 'Thành công!', 'text' => 'Nhân sự mới đã được thêm vào hệ thống.'];
+            break;
+        case 'add_error':
+            $alert = ['type' => 'error', 'title' => 'Thất bại', 'text' => 'Không thể thêm nhân sự. Vui lòng kiểm tra lại dữ liệu.'];
+            break;
+        case 'edit_success':
+            $alert = ['type' => 'success', 'title' => 'Đã cập nhật', 'text' => 'Thông tin nhân sự đã được thay đổi thành công.'];
+            break;
+        case 'edit_error':
+            $alert = ['type' => 'error', 'title' => 'Lỗi cập nhật', 'text' => 'Có lỗi xảy ra trong quá trình lưu dữ liệu.'];
+            break;
+        case 'del_success':
+            $alert = ['type' => 'success', 'title' => 'Đã xóa', 'text' => 'Dữ liệu nhân sự đã được gỡ bỏ khỏi hệ thống.'];
+            break;
+        case 'del_error':
+            $alert = ['type' => 'error', 'title' => 'Không thể xóa', 'text' => 'Nhân sự này có thể đang liên kết với các dữ liệu khác.'];
+            break;
+        case 'res_thanhcong':
+            $alert = ['type' => 'success', 'title' => 'Khôi phục thành công', 'text' => 'Mật khẩu đã được đưa về mặc định (12345678).'];
+            break;
+        case 'res_thatbai':
+            $alert = ['type' => 'error', 'title' => 'Khôi phục thất bại', 'text' => 'Lỗi khi thực hiện khôi phục mật khẩu.'];
+            break;
+    }
+}
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $page = $_GET['page'] ?? 'dashboard';
@@ -108,6 +144,8 @@ switch ($page) {
         break;
     case 'nguoidung_them':
         if (hasPermission('nguoidung.view')) {
+            $userController = new \App\Controllers\NguoiDungController();
+            $danhSachNhom = $userController->layDuLieuNhom();
             $viewFile = $viewDir . '/users/them_user.php';
         } else {
             $page = '403';
@@ -129,6 +167,25 @@ switch ($page) {
             }
         }
         break;
+        
+    case 'users_xuly_them':
+        $userController = new \App\Controllers\NguoiDungController();
+        $userController->webThemNguoiDung();
+        break;
+
+    case 'users_xuly_sua':
+        $userController = new \App\Controllers\NguoiDungController();
+        $userController->webSuaNguoiDung();
+        break;
+
+    case 'users_xuly_xoa':
+        $userController = new \App\Controllers\NguoiDungController();
+        $userController->webXoaNguoiDung();
+        break;
+    case 'users_xuly_reset':
+        $userController = new \App\Controllers\NguoiDungController();
+        $userController->webResetPass();
+        break;
     case 'nhom_them':
         if (hasPermission('nguoidung.view')) {
             $viewFile = $viewDir . '/users/them_nhom.php';
@@ -138,6 +195,10 @@ switch ($page) {
         break;
     case 'nhom_sua':
         if (hasPermission('nguoidung.view')) {
+            $id = $_GET['id'] ?? null;
+            $controller = new \App\Controllers\NguoiDungController();
+            $nhom = $controller->layThongTinSuaNhom($id);
+            $quyen = $controller->layDuLieuQuyen();
             $viewFile = $viewDir . '/users/sua_nhom.php';
         } else {
             $page = '403';

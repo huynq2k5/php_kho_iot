@@ -56,6 +56,10 @@
                 @apply block w-full text-sm rounded-md border-gray-300 focus:border-purple-400 focus:outline-none focus:shadow-outline-red dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:focus:shadow-outline-gray;
             }
         }
+        
+        [x-cloak] { 
+            display: none !important; 
+        }
     </style>
 
     <!-- ĐỔI THỨ TỰ: init-alpine.js load TRƯỚC -->
@@ -89,5 +93,30 @@
             </main>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if (isset($alert)): ?>
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: '<?= $alert['type'] ?>',
+            title: '<?= $alert['title'] ?>',
+            text: '<?= $alert['text'] ?>'
+        });
+    </script>
+    <?php endif; ?>
+    <?php include $viewDir . '/dungchung/modal_confirm.php'; ?>
+    <script src="js/main.js"></script>
 </body>
 </html>

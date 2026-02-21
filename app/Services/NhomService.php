@@ -12,5 +12,10 @@ class NhomService{
         $nhom = $this->nhomRepo->layTatCaNhom();
         return $nhom;
     }
+
+    public function getRoleById($id) {
+        $nhom = $this->nhomRepo->timNhomTheoId($id);
+        return $nhom;
+    }
 }
 ?>

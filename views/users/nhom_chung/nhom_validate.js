@@ -42,7 +42,7 @@ function uncheckAllPermissions() {
 }
 
 function updatePreview() {
-    const nameInput = document.getElementById('groupNameInput');
+    const nameInput = document.getElementById('tenNhom');
     const previewText = document.getElementById('previewText');
     const badge = document.getElementById('badgePreview');
     if (!nameInput || !previewText || !badge) return;
@@ -54,82 +54,71 @@ function updatePreview() {
 }
 
 function validateGroupCode() {
-    const groupCode = document.getElementById('groupCode');
-    const errorSpan = document.getElementById('groupCode_error');
-    const helperSpan = document.getElementById('groupCode_helper');
-    if (!groupCode) return true;
+    const groupCode = document.getElementById('maNhom');
+    const errorSpan = document.getElementById('maNhom_error');
+    if (!groupCode || groupCode.readOnly) return true;
 
     const value = groupCode.value.trim();
     const regex = /^[A-Z0-9_]+$/;
 
     if (!value) {
-        showError(groupCode, errorSpan, helperSpan, '❌ Mã nhóm không được để trống');
+        showError(groupCode, errorSpan, 'Mã nhóm không được để trống');
         return false;
     } else if (value.includes(' ')) {
-        showError(groupCode, errorSpan, helperSpan, '❌ Mã nhóm không được chứa dấu cách');
+        showError(groupCode, errorSpan, 'Mã nhóm không được chứa dấu cách');
         return false;
     } else if (!regex.test(value)) {
-        showError(groupCode, errorSpan, helperSpan, '❌ Chỉ dùng chữ hoa, số và gạch dưới');
+        showError(groupCode, errorSpan, 'Chỉ dùng chữ hoa, số và gạch dưới');
         return false;
     } else if (value.length < 3) {
-        showError(groupCode, errorSpan, helperSpan, '❌ Mã nhóm phải có ít nhất 3 ký tự');
+        showError(groupCode, errorSpan, 'Mã nhóm phải có ít nhất 3 ký tự');
         return false;
     } else {
-        showSuccess(groupCode, errorSpan, helperSpan, '✓ Mã nhóm hợp lệ');
+        showSuccess(groupCode, errorSpan);
         return true;
     }
 }
 
 function validateGroupName() {
-    const groupName = document.getElementById('groupNameInput');
-    const errorSpan = document.getElementById('groupName_error');
+    const groupName = document.getElementById('tenNhom');
+    const errorSpan = document.getElementById('tenNhom_error');
     if (!groupName) return true;
 
     const value = groupName.value.trim();
 
     if (!value) {
-        groupName.classList.add('border-red-600');
-        errorSpan.classList.remove('hidden');
-        errorSpan.textContent = '❌ Tên nhóm không được để trống';
+        showError(groupName, errorSpan, 'Tên nhóm không được để trống');
         return false;
     } else if (value.length < 3) {
-        groupName.classList.add('border-red-600');
-        errorSpan.classList.remove('hidden');
-        errorSpan.textContent = '❌ Tên nhóm phải có ít nhất 3 ký tự';
+        showError(groupName, errorSpan, 'Tên nhóm phải có ít nhất 3 ký tự');
         return false;
     } else {
-        groupName.classList.remove('border-red-600');
-        groupName.classList.add('border-green-600');
-        errorSpan.classList.add('hidden');
+        showSuccess(groupName, errorSpan);
         return true;
     }
 }
 
-function showError(input, errorEl, helperEl, message) {
+function showError(input, errorEl, message) {
     input.classList.add('border-red-600');
     input.classList.remove('border-green-600');
-    errorEl.classList.remove('hidden');
-    errorEl.textContent = message;
-    if (helperEl) helperEl.classList.add('hidden');
+    if (errorEl) {
+        errorEl.classList.remove('hidden');
+        errorEl.textContent = message;
+    }
 }
 
-function showSuccess(input, errorEl, helperEl, message) {
+function showSuccess(input, errorEl) {
     input.classList.remove('border-red-600');
     input.classList.add('border-green-600');
-    errorEl.classList.add('hidden');
-    if (helperEl) {
-        helperEl.classList.remove('hidden');
-        helperEl.classList.add('text-green-600');
-        helperEl.textContent = message;
-    }
+    if (errorEl) errorEl.classList.add('hidden');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     updatePreview();
     document.querySelectorAll('.module-checkbox').forEach(cb => updateModuleCheckbox(cb.dataset.module));
 
-    const groupCode = document.getElementById('groupCode');
-    const groupName = document.getElementById('groupNameInput');
+    const groupCode = document.getElementById('maNhom');
+    const groupName = document.getElementById('tenNhom');
     const form = document.getElementById('mainForm');
 
     if (groupCode) {
@@ -137,12 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
             this.value = this.value.toUpperCase();
             validateGroupCode();
         });
-        groupCode.addEventListener('blur', validateGroupCode);
     }
 
     if (groupName) {
-        groupName.addEventListener('input', validateGroupName);
-        groupName.addEventListener('blur', validateGroupName);
+        groupName.addEventListener('input', () => {
+            validateGroupName();
+            updatePreview();
+        });
     }
 
     if (form) {

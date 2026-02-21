@@ -30,5 +30,28 @@ class UserService{
 
         return $user;
     }
+
+    public function themUser($data) {
+        if (empty($data['matKhau'])) {
+            $data['matKhau'] = '12345678';
+        }
+
+        $data['matKhau'] = password_hash($data['matKhau'], PASSWORD_DEFAULT);
+        
+        return $this->userRepo->insertNguoiDung($data);
+    }
+
+    public function suaUser($id, $data) {
+        return $this->userRepo->updateNguoiDung($id, $data);
+    }
+
+    public function xoaUser($id) {
+        return $this->userRepo->deleteNguoiDung($id);
+    }
+
+    public function thucHienResetPass($id){
+        $matKhau = password_hash('12345678', PASSWORD_DEFAULT);
+        return $this->userRepo->resetMatKhau($id, $matKhau);
+    }
 }
 ?>

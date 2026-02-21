@@ -27,5 +27,20 @@ class NhomRepository{
         }
         return $nhom;
     }
+
+    public function timNhomTheoId($id) {
+        $sql = "SELECT * 
+                FROM nhomnguoidung 
+                WHERE idNhom = ?";
+        
+        $result = $this->db->truyVan($sql, [$id]);
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return (object)$row;
+        }
+        
+        return null;
+    }
 }
 ?>

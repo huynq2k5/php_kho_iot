@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Validation Script Loaded!");
+    console.log("Đang kiểm tra dữ liệu nhập!");
 
     const userForm = document.getElementById('userForm');
     const getEl = (id) => document.getElementById(id);

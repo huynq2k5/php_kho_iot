@@ -7,27 +7,42 @@
             
             <div class="space-y-4">
                 <label class="block text-sm">
-                    <span class="text-gray-700 dark:text-gray-400 font-medium">Mã nhóm <span class="text-red-600">*</span></span>
+                    <span class="text-gray-700 dark:text-gray-400 font-medium">
+                        Mã nhóm <span class="text-red-600">*</span>
+                    </span>
                     <?php if (isset($isEdit) && $isEdit === true): ?>
-                        <input type="text" value="<?= $group['maNhom'] ?>" class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-input bg-gray-100 dark:bg-gray-600 cursor-not-allowed opacity-75 font-mono uppercase" disabled readonly>
-                        <input type="hidden" name="group_code" value="<?= $group['maNhom'] ?>">
-                        <span class="text-xs text-gray-500 mt-1"><i class="fas fa-lock mr-1"></i> Mã nhóm không thể thay đổi</span>
+                        <div class="relative mt-1">
+                            <input type="text" value="<?= $group->maNhom ?>" 
+                                class="block w-full text-sm dark:bg-gray-700 dark:text-gray-300 form-input bg-gray-100 dark:bg-gray-600 cursor-not-allowed opacity-75 font-mono uppercase" 
+                                disabled readonly>
+                            <input type="hidden" name="maNhom" id="maNhom" value="<?= $group->maNhom ?>">
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1"><i class="fas fa-lock mr-1"></i> Mã nhóm cố định</span>
                     <?php else: ?>
-                        <input type="text" id="groupCode" name="group_code" class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-input focus:border-red-400 focus:shadow-outline-red font-mono uppercase" placeholder="VD: KE_TOAN" required maxlength="20">
-                        <span class="text-xs text-red-600 hidden mt-1" id="groupCode_error"></span>
-                        <span class="text-xs text-gray-500 mt-1" id="groupCode_helper">Viết hoa, không dấu, không cách</span>
+                        <input type="text" id="maNhom" name="maNhom" 
+                            class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-input focus:border-red-400 font-mono uppercase" 
+                            placeholder="VD: QUAN_LY_KHO" required maxlength="20">
+                        <span class="text-xs text-red-600 hidden mt-1" id="maNhom_error"></span>
+                        <span class="text-xs text-gray-500 mt-1" id="maNhom_helper"></span>
                     <?php endif; ?>
                 </label>
 
                 <label class="block text-sm">
-                    <span class="text-gray-700 dark:text-gray-400 font-medium">Tên nhóm vai trò <span class="text-red-600">*</span></span>
-                    <input type="text" id="groupNameInput" name="group_name" value="<?= (isset($isEdit) && $isEdit === true) ? $group['tenNhom'] : '' ?>" class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-input focus:border-red-400 focus:shadow-outline-red" placeholder="VD: Kế toán kho" required oninput="updatePreview()">
-                    <span class="text-xs text-red-600 hidden mt-1" id="groupName_error"></span>
+                    <span class="text-gray-700 dark:text-gray-400 font-medium">
+                        Tên nhóm vai trò <span class="text-red-600">*</span>
+                    </span>
+                    <input type="text" id="tenNhom" name="tenNhom" 
+                        value="<?= (isset($isEdit) && $isEdit === true) ? $group->tenNhom : '' ?>" 
+                        class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-input focus:border-red-400" 
+                        placeholder="VD: Nhân viên kỹ thuật" required>
+                    <span class="text-xs text-red-600 hidden mt-1" id="tenNhom_error"></span>
                 </label>
 
                 <label class="block text-sm">
                     <span class="text-gray-700 dark:text-gray-400 font-medium">Mô tả chức năng</span>
-                    <textarea class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-textarea focus:border-red-400 focus:shadow-outline-red" name="description" rows="3" placeholder="Mô tả quyền hạn..."><?= (isset($isEdit) && $isEdit === true) ? $group['moTa'] : '' ?></textarea>
+                    <textarea id="moTa" name="moTa" 
+                        class="block w-full mt-1 text-sm dark:bg-gray-700 dark:text-gray-300 form-textarea focus:border-red-400" 
+                        rows="3" placeholder="Mô tả quyền hạn..."><?= (isset($isEdit) && $isEdit === true) ? $group->moTa : '' ?></textarea>
                 </label>
             </div>
         </div>
@@ -44,7 +59,8 @@
                     <?php 
                     $colors = ['blue' => 'Xanh dương', 'green' => 'Xanh lá', 'yellow' => 'Vàng', 'red' => 'Đỏ', 'cyan' => 'Xanh nhạt', 'gray' => 'Xám'];
                     foreach ($colors as $val => $label): 
-                        $checked = ((isset($isEdit) && $isEdit === true && isset($group['badge_color']) && $group['badge_color'] == $val) || (!isset($isEdit) && $val == 'blue')) ? 'checked' : '';
+                        
+                        $checked = ((isset($isEdit) && $isEdit === true && isset($group->badge_color) && $group->badge_color == $val) || (!isset($isEdit) && $val == 'blue')) ? 'checked' : '';
                     ?>
                     <div class="relative">
                         <input type="radio" class="sr-only peer" name="badge_color" id="color_<?= $val ?>" value="<?= $val ?>" <?= $checked ?> onchange="updatePreview()">
@@ -59,7 +75,7 @@
                     <p class="text-xs font-medium text-gray-500 mb-3 uppercase">Xem trước</p>
                     <span id="badgePreview" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 border">
                         <i class="fas fa-users mr-1"></i> 
-                        <span id="previewText">Tên nhóm...</span>
+                        <span id="previewText"><?= (isset($isEdit) && $isEdit === true) ? htmlspecialchars($group->tenNhom) : 'Tên nhóm...' ?></span>
                     </span>
                 </div>
             </div>
