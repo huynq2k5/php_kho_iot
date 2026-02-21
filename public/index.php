@@ -106,11 +106,53 @@ switch ($page) {
             $page = '403';
         }
         break;
-    case 'sua_nhom':
-    case 'users_them_quyen':
+    case 'nguoidung_them':
         if (hasPermission('nguoidung.view')) {
-            $title = "Quản lý nhân viên";
-            $viewFile = $viewDir . "/users/" . ($page == 'users' ? 'index' : str_replace('users_', '', $page)) . ".php";
+            $viewFile = $viewDir . '/users/them_user.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'nguoidung_sua':
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $userController = new \App\Controllers\NguoiDungController();
+            $data = $userController->layThongTinSua($id);
+            
+            $user = $data['user'];
+            $danhSachNhom = $data['danhSachNhom'];
+
+            if ($user) {
+                $viewFile = $viewDir . '/users/sua_user.php';
+            } else {
+                $page = '404';
+            }
+        }
+        break;
+    case 'nhom_them':
+        if (hasPermission('nguoidung.view')) {
+            $viewFile = $viewDir . '/users/them_nhom.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'nhom_sua':
+        if (hasPermission('nguoidung.view')) {
+            $viewFile = $viewDir . '/users/sua_nhom.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'quyen_them':
+        if (hasPermission('nguoidung.view')) {
+            $viewFile = $viewDir . '/users/them_quyen.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'quyen_sua':
+        if (hasPermission('nguoidung.view')) {
+            $viewFile = $viewDir . '/users/sua_quyen.php';
         } else {
             $page = '403';
         }

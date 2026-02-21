@@ -26,5 +26,18 @@ class NguoiDungController{
     public function layDuLieuQuyen() {
         return $this->quyenService->hienthiDSQuyen();
     }
+
+    public function layThongTinSua($id) {
+        // 1. Lấy thông tin chi tiết người dùng
+        $user = $this->userService->getUserById($id);
+        
+        // 2. Lấy danh sách nhóm để hiển thị trong thẻ <select> của form
+        $danhSachNhom = $this->nhomService->hienThiDSNhom();
+
+        return [
+            'user' => $user,
+            'danhSachNhom' => $danhSachNhom
+        ];
+    }
 }
 ?>

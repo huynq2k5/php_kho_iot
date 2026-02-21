@@ -134,12 +134,19 @@
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-sm text-right">
+                                            <button onclick="return confirm('Đặt lại mật khẩu về mặc định (12345678)?') ? window.location.href='index.php?page=users_reset_pass&id=<?= $user->idNguoiDung ?>' : false"
+                                                    class="text-gray-400 hover:text-blue-600 transition-colors duration-150 mx-1" 
+                                                    title="Reset mật khẩu">
+                                                <i class="fas fa-key"></i>
+                                            </button>
+
                                             <a href="index.php?page=nguoidung_sua&id=<?= $user->idNguoiDung ?>" 
-                                            class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
+                                            class="text-gray-400 hover:text-red-600 transition-colors duration-150 mx-1">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1"
-                                                    onclick="return confirm('Ban co chac chan muon xoa nhan su nay?')">
+                                            
+                                            <button class="text-gray-400 hover:text-red-600 transition-colors duration-150 mx-1"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
@@ -334,13 +341,13 @@
                     groups: {
                         icon: 'folder-plus',
                         text: 'Tạo nhóm mới',
-                        page: 'them_nhom',
+                        page: 'nhom_them',
                         color: 'green'
                     },
                     permissions: {
                         icon: 'key',
                         text: 'Thêm quyền mới',
-                        page: 'them_quyen',
+                        page: 'quyen_them',
                         color: 'red'
                     }
                 };

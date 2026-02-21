@@ -54,4 +54,54 @@ class UserRepository {
         }
         return $user;
     }
+
+    public function timUserTheoId($id) {
+        $sql = "SELECT u.*, n.tenNhom as role_name 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE u.idNguoiDung = ?";
+        
+        $result = $this->db->truyVan($sql, [$id]);
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return (object)$row;
+        }
+        
+        return null;
+    }
+
+    public function themNguoiDung($data) {
+        $sql = "INSERT INTO nguoidung (tenDangNhap, matKhau, hoTen, idNhom, email, trangThai, ngayTao) 
+                VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        
+        return $this->db->truyVan($sql, [
+            $data['tenDangNhap'],
+            $data['matKhau'],
+            $data['hoTen'],
+            $data['idNhom'],
+            $data['email'] ?? null,
+            $data['trangThai'] ?? 1
+        ]);
+    }
+
+    public function suaNguoiDung($id, $data) {
+        $sql = "UPDATE nguoidung 
+                SET tenDangNhap = ?, hoTen = ?, idNhom = ?, email = ?, trangThai = ? 
+                WHERE idNguoiDung = ?";
+        
+        return $this->db->truyVan($sql, [
+            $data['tenDangNhap'],
+            $data['hoTen'],
+            $data['idNhom'],
+            $data['email'] ?? null,
+            $data['trangThai'] ?? 1,
+            $id
+        ]);
+    }
+
+    public function xoaNguoiDung($id) {
+        $sql = "DELETE FROM nguoidung WHERE idNguoiDung = ?";
+        return $this->db->truyVan($sql, [$id]);
+    }
 }

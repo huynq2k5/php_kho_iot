@@ -20,5 +20,15 @@ class UserService{
 
         return $users;
     }
+
+    public function getUserById($id) {
+        $user = $this->userRepo->timUserTheoId($id);
+
+        if ($user && isset($user->idNhom)) {
+            $user->permissions = $this->userRepo->getPermissions($user->idNhom);
+        }
+
+        return $user;
+    }
 }
 ?>
