@@ -39,4 +39,19 @@ class UserRepository {
         }
         return $permissions;
     }
+
+    public function layTatCaNguoiDung(){
+        $sql = "SELECT u.*, n.tenNhom 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom ";
+        $kq = $this->db->truyVan($sql);
+
+        $user = [];
+        if($kq && $kq->num_rows >0){
+            while($row = $kq->fetch_assoc()){
+                $user[] = (object)$row;
+            }
+        }
+        return $user;
+    }
 }

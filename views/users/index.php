@@ -8,7 +8,7 @@
         
         <!-- Dynamic Action Button -->
         <div id="dynamicActionButton">
-            <a href="index.php?page=nguoidung_照" 
+            <a href="index.php?page=nguoidung_them" 
                class="inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:shadow-outline-red shadow-md">
                 <i class="fas fa-user-plus mr-2"></i>
                 Thêm nhân sự
@@ -98,58 +98,58 @@
                         <thead>
                             <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
                                 <th class="px-4 py-3">Nhân sự</th>
+                                <th class="px-4 py-3">Tên đăng nhập</th>
                                 <th class="px-4 py-3">Vai trò</th>
-                                <th class="px-4 py-3">Trạng thái</th>
-                                <th class="px-4 py-3">Ngày tạo</th>
+                                <th class="px-4 py-3">Quyền hạn</th>
                                 <th class="px-4 py-3 text-right">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                            <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center text-sm">
-                                        <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block flex-shrink-0">
-                                            <div class="flex items-center justify-center w-full h-full rounded-full bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200 font-bold">
-                                                A
+                            <?php if (!empty($danhSachNguoiDung)): ?>
+                                <?php foreach ($danhSachNguoiDung as $user): ?>
+                                    <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center text-sm">
+                                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block flex-shrink-0">
+                                                    <div class="flex items-center justify-center w-full h-full rounded-full bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200 font-bold">
+                                                        <?= strtoupper(substr($user->hoTen ?? 'U', 0, 1)) ?>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold"><?= $user->hoTen ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold">Nguyễn Văn A</p>
-                                            <p class="text-xs text-gray-600 dark:text-gray-400">admin@khoiot.com</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="px-2 py-1 text-xs font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-                                        <i class="fas fa-crown mr-1"></i> Administrator
-                                    </span>
-                                </td>
-                                <!-- Thay thế dòng cột Trạng thái trong table -->
-                                <td class="px-4 py-3">
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" class="sr-only peer" checked>
-                                        <!-- Background toggle -->
-                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-red-600 peer-focus:ring-2 peer-focus:ring-red-300 dark:bg-gray-700 dark:peer-focus:ring-red-800 transition-all duration-300"></div>
-                                        <!-- Nút tròn -->
-                                        <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-sm peer-checked:translate-x-5 peer-checked:bg-white transition-all duration-300"></div>
-                                        <!-- Trạng thái text (ẩn/hiện khi cần) -->
-                                        <span class="ml-3 text-xs font-medium text-gray-600 dark:text-gray-400 peer-checked:text-red-600 dark:peer-checked:text-red-400">
-                                            <span class="peer-checked:hidden">Tắt</span>
-                                            <span class="hidden peer-checked:inline">Bật</span>
-                                        </span>
-                                    </label>
-                                </td>
-                                <td class="px-4 py-3 text-sm">15/01/2026</td>
-                                <td class="px-4 py-3 text-sm text-right">
-                                    <a href="index.php?page=nguoidung_sua&id=1" 
-                                       class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">
+                                            <?= $user->tenDangNhap ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
+                                                <i class="fas fa-crown mr-1"></i> <?= $user->tenNhom ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs">
+                                            <span class="px-2 py-1 font-medium leading-tight text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
+                                                <?= count($user->permissions) ?> quyền được gán
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-right">
+                                            <a href="index.php?page=nguoidung_sua&id=<?= $user->idNguoiDung ?>" 
+                                            class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1"
+                                                    onclick="return confirm('Ban co chac chan muon xoa nhan su nay?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="px-4 py-3 text-center">Khong co du lieu nguoi dung hop le.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -169,6 +169,7 @@
                         <table class="w-full whitespace-no-wrap">
                             <thead>
                                 <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                                    <th class="px-4 py-3">Mã nhóm</th>
                                     <th class="px-4 py-3">Tên nhóm</th>
                                     <th class="px-4 py-3">Mô tả</th>
                                     <th class="px-4 py-3">Thành viên</th>
@@ -176,21 +177,42 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                                <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                    <td class="px-4 py-3 font-medium">Ban quản trị (Admin)</td>
-                                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">Full Access</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded dark:bg-gray-700 dark:text-gray-400">3 Users</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <a href="index.php?page=sua_nhom" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <?php if (!empty($danhSachNhom)): ?>
+                                    <?php foreach ($danhSachNhom as $nhom): ?>
+                                        <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                            <td class="px-4 py-3 text-sm">
+                                                <code class="px-2 py-1 font-mono text-xs bg-gray-100 rounded dark:bg-gray-700 text-red-600 dark:text-red-400">
+                                                    <?= $nhom->maNhom ?>
+                                                </code>
+                                            </td>
+                                            <td class="px-4 py-3 font-medium">
+                                                <?= $nhom->tenNhom ?>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                                <?= $nhom->moTa ?? 'Khong co mo ta' ?>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded dark:bg-gray-700 dark:text-gray-400">
+                                                    <?= $nhom->soThanhVien ?? 0 ?> Users
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-right">
+                                                <a href="index.php?page=sua_nhom&id=<?= $nhom->idNhom ?>" 
+                                                class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1"
+                                                        onclick="return confirm('Ban co chac chan muon xoa nhom nay?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-3 text-center text-gray-500">Khong co du lieu nhom.</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -213,30 +235,44 @@
                             <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
                                 <th class="px-4 py-3">Mã quyền (Key)</th>
                                 <th class="px-4 py-3">Tên hiển thị</th>
-                                <th class="px-4 py-3">Module</th>
+                                <th class="px-4 py-3">Nhóm sử dụng</th>
                                 <th class="px-4 py-3 text-right">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                            <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                <td class="px-4 py-3">
-                                    <code class="px-2 py-1 text-xs font-mono bg-gray-100 rounded dark:bg-gray-700 text-red-600 dark:text-red-400">device.view</code>
-                                </td>
-                                <td class="px-4 py-3 text-sm">Xem danh sách thiết bị</td>
-                                <td class="px-4 py-3">
-                                    <span class="px-2 py-1 text-xs font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
-                                        Thiết bị
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    <a href="index.php?page=sua_quyen" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <?php if (!empty($danhSachQuyen)): ?>
+                                <?php foreach ($danhSachQuyen as $quyen): ?>
+                                    <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <td class="px-4 py-3 text-sm">
+                                            <code class="px-2 py-1 font-mono text-xs bg-gray-100 rounded dark:bg-gray-700 text-red-600 dark:text-red-400">
+                                                <?= $quyen->maQuyen ?>
+                                            </code>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">
+                                            <?= $quyen->tenQuyen ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
+                                                <?= $quyen->soNhom ?? 0 ?> Nhóm
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-right">
+                                            <a href="index.php?page=sua_quyen&id=<?= $quyen->idQuyen ?>" 
+                                            class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1"
+                                                    onclick="return confirm('Bạn có chắc muốn xóa quyền này không?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4" class="px-4 py-3 text-center text-gray-500">Chưa có định nghĩa quyền nào.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -298,13 +334,13 @@
                     groups: {
                         icon: 'folder-plus',
                         text: 'Tạo nhóm mới',
-                        page: 'users_them_nhom',
+                        page: 'them_nhom',
                         color: 'green'
                     },
                     permissions: {
                         icon: 'key',
                         text: 'Thêm quyền mới',
-                        page: 'users_them_quyen',
+                        page: 'them_quyen',
                         color: 'red'
                     }
                 };

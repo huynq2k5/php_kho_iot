@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -88,6 +92,20 @@ switch ($page) {
 
     // Quản lý người dùng
     case 'users':
+        if (hasPermission('nguoidung.view')) {
+            $title = "Quản lý nhân viên";
+            
+            $userController = new \App\Controllers\NguoiDungController();
+            
+            $danhSachNguoiDung = $userController->layDuLieuNguoiDung();
+            $danhSachNhom = $userController->layDuLieuNhom();
+            $danhSachQuyen = $userController->layDuLieuQuyen();
+            
+            $viewFile = $viewDir . '/users/index.php';
+        } else {
+            $page = '403';
+        }
+        break;
     case 'sua_nhom':
     case 'users_them_quyen':
         if (hasPermission('nguoidung.view')) {
