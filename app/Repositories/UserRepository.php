@@ -1,10 +1,10 @@
 <?php
 namespace App\Repositories;
 
-use Config\KetNoi;       // Sử dụng class kết nối DB
-use App\Models\User;     // Sử dụng Entity User
+use Config\KetNoi;
+use App\Models\User;
 
-class UserRepository implements IUserRepository {
+class UserRepository {
     private $db;
 
     public function __construct() {
@@ -12,50 +12,159 @@ class UserRepository implements IUserRepository {
     }
 
     public function findByUsername($username) {
-        // SQL Join để lấy luôn tên role
-        $sql = "SELECT u.*, r.name as role_name 
-                FROM users u 
-                JOIN roles r ON u.role_id = r.id 
-                WHERE u.username = ?";
+        $sql = "SELECT u.*, n.tenNhom as role_name 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE u.tenDangNhap = ?";
         
-        // Gọi hàm truyVan từ class KetNoi của bạn
         $result = $this->db->truyVan($sql, [$username]);
         $row = $result->fetch_assoc();
 
         if ($row) {
-            // Quan trọng: Chuyển mảng thành Object User
+            return new User($row); 
+        }
+        return null;
+    }
+
+    public function findByGoogleIdOrEmail($googleId, $email) {
+        $sql = "SELECT u.*, n.tenNhom 
+                FROM nguoidung u  
+                LEFT JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE u.google_id = ? OR u.tenDangNhap = ? LIMIT 1";
+        
+        $result = $this->db->truyVan($sql, [$googleId, $email]);
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
             return new User($row);
         }
         return null;
     }
 
-    public function findByToken($token) {
-        $sql = "SELECT u.id, u.username, u.full_name, u.role_id, u.token_created_at, r.name as role_name 
-                FROM users u 
-                JOIN roles r ON u.role_id = r.id 
-                WHERE u.api_token = ?";
-        $result = $this->db->truyVan($sql, [$token]);
-        return $result->fetch_assoc();
+    public function updateGoogleInfo($idNguoiDung, $googleId, $avatar) {
+        $sql = "UPDATE nguoidung SET google_id = ?, avatar = ? WHERE idNguoiDung = ?";
+        return $this->db->capNhat($sql, [$googleId, $avatar, $idNguoiDung]);
     }
 
-    public function updateToken($userId, $token) {
-        // Cập nhật cả thời gian tạo token (NOW())
-        $sql = "UPDATE users SET api_token = ?, token_created_at = NOW() WHERE id = ?";
-        return $this->db->capNhat($sql, [$token, $userId]);
-    }
-
-    public function getPermissions($roleId) {
-        $sql = "SELECT p.code 
-                FROM permissions p
-                JOIN role_permissions rp ON p.id = rp.permission_id
-                WHERE rp.role_id = ?";
-        $result = $this->db->truyVan($sql, [$roleId]);
+    public function getPermissions($idNhom) {
+        $sql = "SELECT q.maQuyen 
+                FROM quyen q
+                JOIN nhomnguoidung_quyen nq ON q.idQuyen = nq.idQuyen
+                WHERE nq.idNhom = ?";
+        $result = $this->db->truyVan($sql, [$idNhom]);
         
         $permissions = [];
         while ($row = $result->fetch_assoc()) {
-            $permissions[] = $row['code'];
+            $permissions[] = $row['maQuyen'];
         }
         return $permissions;
     }
+
+    public function layTatCaNguoiDung(){
+        $sql = "SELECT u.*, n.tenNhom 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom ";
+        $kq = $this->db->truyVan($sql);
+
+        $user = [];
+        if($kq && $kq->num_rows >0){
+            while($row = $kq->fetch_assoc()){
+                $user[] = (object)$row;
+            }
+        }
+        return $user;
+    }
+
+    public function timUserTheoId($id) {
+        $sql = "SELECT u.*, n.tenNhom as role_name 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE u.idNguoiDung = ?";
+        
+        $result = $this->db->truyVan($sql, [$id]);
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return (object)$row;
+        }
+        
+        return null;
+    }
+
+    public function timUserTheoNhom($idNhom) {
+        $sql = "SELECT u.*, n.tenNhom 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE u.idNhom = ?";
+        
+        $kq = $this->db->truyVan($sql, [$idNhom]);
+        
+        $users = [];
+        if ($kq && $kq->num_rows > 0) {
+            while ($row = $kq->fetch_assoc()) {
+                $users[] = (object)$row;
+            }
+        }
+        return $users;
+    }
+
+    public function insertNguoiDung($data) {
+        $sql = "INSERT INTO nguoidung (maNguoiDung, tenDangNhap, matKhau, hoTen, idNhom) 
+                VALUES (?, ?, ?, ?, ?)";
+        
+        return $this->db->capNhat($sql, [
+            $data['maNguoiDung'],
+            $data['tenDangNhap'],
+            $data['matKhau'],
+            $data['hoTen'],
+            $data['idNhom']
+        ]);
+    }
+
+    public function updateNguoiDung($id, $data) {
+        $sql = "UPDATE nguoidung 
+                SET tenDangNhap = ?, hoTen = ?, idNhom = ? 
+                WHERE idNguoiDung = ?";
+        
+        return $this->db->capNhat($sql, [
+            $data['tenDangNhap'],
+            $data['hoTen'],
+            $data['idNhom'],
+            $id
+        ]);
+    }
+
+    public function resetMatKhau($id, $data){
+        $sql = "UPDATE nguoidung 
+                SET matKhau = ? 
+                WHERE idNguoiDung = ?";
+        return $this->db->capNhat($sql, [$data, $id]);
+    }
+
+    public function deleteNguoiDung($id) {
+        $sql = "DELETE FROM nguoidung WHERE idNguoiDung = ?";
+        return $this->db->capNhat($sql, [$id]);
+    }
+
+    public function layNguoiDungNgoaiNhom($idNhom) {
+        $sql = "SELECT u.*, n.tenNhom 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE u.idNhom != ? OR u.idNhom IS NULL";
+        
+        $result = $this->db->truyVan($sql, [$idNhom]);
+        
+        $users = [];
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = (object)$row;
+            }
+        }
+        return $users;
+    }
+
+    public function updateIdNhom($idNguoiDung, $idNhomMoi) {
+        $sql = "UPDATE nguoidung SET idNhom = ? WHERE idNguoiDung = ?";
+        return $this->db->capNhat($sql, [$idNhomMoi, $idNguoiDung]);
+    }
 }
-?>

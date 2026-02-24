@@ -1,218 +1,494 @@
-<div class="container-fluid py-4">
-    
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Header với tiêu đề và nút action động -->
+    <div class="flex flex-col items-start justify-between w-full gap-4 my-6 sm:flex-row sm:items-center">
         <div>
-            <h4 class="mb-1 fw-bold text-secondary">Hệ thống & Phân quyền</h4>
-            <p class="text-muted small fw-bold mb-0">Quản lý Nhân sự, Nhóm vai trò và Định nghĩa quyền hạn</p>
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">
+                Người dùng và Phân quyền
+            </h2>
         </div>
+        
+        <!-- Dynamic Action Button -->
         <div id="dynamicActionButton">
-            <a href="index.php?page=nguoidung_them" class="btn btn-primary fw-bold shadow-sm">
-                <i class="fas fa-user-plus me-2"></i> Thêm nhân sự
+            <a href="index.php?page=nguoidung_them" 
+               class="inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:shadow-outline-red shadow-md">
+                <i class="fas fa-user-plus mr-2"></i>
+                Thêm người dùng mới
             </a>
         </div>
     </div>
 
-    <ul class="nav nav-tabs nav-fill mb-4 border-bottom-0" id="userTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold py-3 border-bottom-2 border-transparent" id="users-tab" data-bs-toggle="tab" data-bs-target="#tab-users" type="button" role="tab">
-                <i class="fas fa-users me-2"></i> Danh sách nhân sự
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold py-3 border-bottom-2 border-transparent text-success" id="groups-tab" data-bs-toggle="tab" data-bs-target="#tab-groups" type="button" role="tab">
-                <i class="fas fa-layer-group me-2"></i> Nhóm vai trò
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold py-3 border-bottom-2 border-transparent text-danger" id="permissions-tab" data-bs-toggle="tab" data-bs-target="#tab-permissions" type="button" role="tab">
-                <i class="fas fa-key me-2"></i> Định nghĩa Quyền (SQL)
-            </button>
-        </li>
-    </ul>
+    <!-- Tabs Navigation -->
+    <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="userTabs" role="tablist">
+            <li class="mr-2">
+                <button class="inline-block p-4 border-b-2 rounded-t-lg transition-colors duration-150 focus:outline-none active-tab" 
+                        id="users-tab" 
+                        data-tab="users"
+                        data-bs-toggle="tab" 
+                        data-bs-target="#tab-users">
+                    <i class="fas fa-users mr-2"></i> Danh sách người dùng
+                </button>
+            </li>
+            <li class="mr-2">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-colors duration-150 focus:outline-none" 
+                        id="groups-tab" 
+                        data-tab="groups"
+                        data-bs-toggle="tab" 
+                        data-bs-target="#tab-groups">
+                    <i class="fas fa-layer-group mr-2 "></i> Nhóm vai trò
+                </button>
+            </li>
+            <li class="mr-2">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-colors duration-150 focus:outline-none" 
+                        id="permissions-tab" 
+                        data-tab="permissions"
+                        data-bs-toggle="tab" 
+                        data-bs-target="#tab-permissions">
+                    <i class="fas fa-key mr-2 "></i> Định nghĩa Quyền
+                </button>
+            </li>
+        </ul>
+    </div>
 
+    <!-- Tab Content -->
     <div class="tab-content" id="userTabsContent">
         
+        <!-- Tab 1: Danh sách nhân sự -->
         <div class="tab-pane fade show active" id="tab-users" role="tabpanel">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="input-group w-auto">
-                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 ps-0 fw-bold" placeholder="Tìm tên, email...">
+            <div class="w-full overflow-hidden rounded-lg shadow-xs border border-gray-200 dark:border-gray-700">
+                <!-- Card Header với filter -->
+                <div class="px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <!-- Search box đẹp hơn -->
+                        <div class="relative flex-1 max-w-md">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <i class="fas fa-search text-gray-400 dark:text-gray-500"></i>
+                            </div>
+                            <input type="text" 
+                                class="block w-full pl-10 pr-4 py-2.5 text-sm bg-gray-100 border-0 rounded-lg dark:bg-gray-700 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-300 dark:focus:ring-red-800 transition-all duration-150" 
+                                placeholder="Tìm kiếm theo tên, email..."
+                                style="min-width: 280px;">
                         </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <select class="form-select form-select-sm fw-bold border-2 text-secondary w-auto">
-                            <option value="">Tất cả vai trò</option>
-                            <option value="admin">Admin</option>
-                            <option value="staff">Staff</option>
-                        </select>
-                        <button class="btn btn-white border fw-bold text-secondary btn-sm px-3">
-                            <i class="fas fa-filter me-1"></i> Lọc
-                        </button>
+                        
+                        <div class="flex gap-2">
+                            <!-- Select đẹp hơn -->
+                            <div class="relative">
+                                <select class="block w-full py-2.5 pl-4 pr-10 text-sm bg-gray-100 border-0 rounded-lg appearance-none dark:bg-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-300 dark:focus:ring-red-800 transition-all duration-150 cursor-pointer">
+                                    <option value="">Tất cả vai trò</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="viewer">Viewer</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-xs text-gray-400 dark:text-gray-500"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Nút lọc đẹp hơn -->
+                            <button class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-red-800 transition-all duration-150">
+                                <i class="fas fa-filter mr-2 text-red-500"></i>
+                                <span>Lọc</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4 py-3 fw-bold text-secondary text-uppercase small" style="width: 35%;">Nhân sự</th>
-                                <th class="py-3 fw-bold text-secondary text-uppercase small">Vai trò</th>
-                                <th class="py-3 fw-bold text-secondary text-uppercase small">Trạng thái</th>
-                                <th class="py-3 fw-bold text-secondary text-uppercase small">Ngày tạo</th>
-                                <th class="pe-4 py-3 fw-bold text-secondary text-uppercase small text-end">Thao tác</th>
+                <!-- Table -->
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full whitespace-no-wrap">
+                        <thead>
+                            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                                <th class="px-4 py-3">Người dùng</th>
+                                <th class="px-4 py-3">Tên đăng nhập</th>
+                                <th class="px-4 py-3">Vai trò</th>
+                                <th class="px-4 py-3">Quyền hạn</th>
+                                <th class="px-4 py-3 text-right">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 40px; height: 40px;">
-                                            A
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold text-dark">Nguyễn Văn A</div>
-                                            <div class="small text-muted fw-bold">admin@khoiot.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded fw-bold">
-                                        <i class="fas fa-crown me-1"></i> Administrator
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
-                                    </div>
-                                </td>
-                                <td class="fw-bold text-secondary small">15/01/2026</td>
-                                <td class="pe-4 text-end">
-                                    <a href="index.php?page=nguoidung_sua&id=1" class="btn btn-sm btn-light text-primary me-1" title="Chỉnh sửa">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-light text-danger" title="Xóa">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                            <?php if (!empty($danhSachNguoiDung)): ?>
+                                <?php foreach ($danhSachNguoiDung as $user): ?>
+                                    <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center text-sm">
+                                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block flex-shrink-0">
+                                                    <div class="flex items-center justify-center w-full h-full rounded-full bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200 font-bold">
+                                                        <?= strtoupper(substr($user->hoTen ?? 'U', 0, 1)) ?>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold"><?= $user->maNguoiDung ?> - <?= $user->hoTen ?></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">
+                                            <?= $user->tenDangNhap ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
+                                                <?= $user->tenNhom ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs">
+                                            <span class="px-2 py-1 font-medium leading-tight text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
+                                                <?= count($user->permissions) ?> quyền được gán
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-right">
+                                            <button @click="openModal" 
+                                                    onclick="triggerModal({
+                                                        title: 'Khôi phục mật khẩu',
+                                                        description: 'Bạn đang khôi phục mật khẩu của <?= $user->hoTen ?>.',
+                                                        confirmUrl: 'index.php?page=users_xuly_reset&id=<?= $user->idNguoiDung ?>',
+                                                        btnClass: 'bg-red-600 hover:bg-red-700'
+                                                    })"
+                                                    class="text-gray-400 hover:text-red-600 transition-colors duration-150">
+                                                <i class="fas fa-key"></i></i>
+                                            </button>
 
-        <div class="tab-pane fade" id="tab-groups" role="tabpanel">
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-header bg-white py-3 border-bottom">
-                            <h6 class="mb-0 fw-bold text-success"><i class="fas fa-users-cog me-2"></i>Các nhóm quyền hiện có</h6>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th class="ps-4 py-3 fw-bold text-secondary text-uppercase small">Tên nhóm</th>
-                                        <th class="py-3 fw-bold text-secondary text-uppercase small">Mô tả</th>
-                                        <th class="py-3 fw-bold text-secondary text-uppercase small">Thành viên</th>
-                                        <th class="pe-4 py-3 fw-bold text-secondary text-uppercase small text-end">Cấu hình</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="ps-4 fw-bold">Ban quản trị (Admin)</td>
-                                        <td class="text-muted small fw-bold">Full Access</td>
-                                        <td><span class="badge bg-light text-dark border fw-bold">3 Users</span></td>
-                                        <td class="pe-4 text-end">
-                                            <a href="index.php?page=nhom_sua&id=1" class="btn btn-sm btn-outline-dark fw-bold"><i class="fas fa-sliders-h"></i></a>
+                                            <a href="index.php?page=nguoidung_sua&id=<?= $user->idNguoiDung ?>" 
+                                            class="text-gray-400 hover:text-red-600 transition-colors duration-150 mx-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            
+                                            <button @click="openModal" 
+                                                    onclick="triggerModal({
+                                                        title: 'Xóa người dùng',
+                                                        description: 'Bạn đang xóa <?= $user->hoTen ?>. Hành động này không thể hoàn tác!',
+                                                        confirmUrl: 'index.php?page=users_xuly_xoa&id=<?= $user->idNguoiDung ?>',
+                                                        btnClass: 'bg-red-600 hover:bg-red-700'
+                                                    })"
+                                                    class="text-gray-400 hover:text-red-600 transition-colors duration-150">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-pane fade" id="tab-permissions" role="tabpanel">
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold text-danger"><i class="fas fa-database me-2"></i>Danh sách Permission Keys</h6>
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">System Level</span>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4 py-3 fw-bold text-secondary text-uppercase small">Mã quyền (Key)</th>
-                                <th class="py-3 fw-bold text-secondary text-uppercase small">Tên hiển thị</th>
-                                <th class="py-3 fw-bold text-secondary text-uppercase small">Module</th>
-                                <th class="pe-4 py-3 fw-bold text-secondary text-uppercase small text-end">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="ps-4"><code class="fw-bold text-primary bg-light px-2 py-1 rounded border">device.view</code></td>
-                                <td class="fw-bold text-dark">Xem danh sách thiết bị</td>
-                                <td><span class="badge bg-info text-white fw-bold">Thiết bị</span></td>
-                                <td class="pe-4 text-end">
-                                    <a href="index.php?page=quyen_sua&id=1" class="btn btn-sm btn-light text-primary"><i class="fas fa-edit"></i></a>
-                                    <button class="btn btn-sm btn-light text-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="px-4 py-3 text-center">Khong co du lieu nguoi dung hop le.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+        <!-- Tab 2: Nhóm vai trò -->
+        <div class="tab-pane fade" id="tab-groups" role="tabpanel" style="display: none;">
+            <div class="grid gap-6">
+                <div class="w-full overflow-hidden rounded-lg shadow-xs border border-gray-200 dark:border-gray-700">
+                    <div class="px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <h4 class="font-semibold text-gray-700 dark:text-gray-300">
+                            Các nhóm quyền hiện có
+                        </h4>
+                    </div>
+                    <div class="w-full overflow-x-auto">
+                        <table class="w-full whitespace-no-wrap">
+                            <thead>
+                                <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                                    <th class="px-4 py-3">Mã nhóm</th>
+                                    <th class="px-4 py-3">Tên nhóm</th>
+                                    <th class="px-4 py-3">Mô tả</th>
+                                    <th class="px-4 py-3">Thành viên</th>
+                                    <th class="px-4 py-3 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                                <?php if (!empty($danhSachNhom)): ?>
+                                    <?php foreach ($danhSachNhom as $nhom): ?>
+                                        <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                            <td class="px-4 py-3 text-sm">
+                                                <code class="px-2 py-1 font-mono text-xs bg-gray-100 rounded dark:bg-gray-700 text-red-600 dark:text-red-400">
+                                                    <?= $nhom->maNhom ?>
+                                                </code>
+                                            </td>
+                                            <td class="px-4 py-3 font-medium">
+                                                <?= $nhom->tenNhom ?>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                                <?= $nhom->moTa ?? 'Khong co mo ta' ?>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded dark:bg-gray-700 dark:text-gray-400">
+                                                    <?= $nhom->soThanhVien ?? 0 ?> Users
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-right">
+                                                <a href="index.php?page=nhom_sua&id=<?= $nhom->idNhom ?>" 
+                                                class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        @click="isDeleteGroupModalOpen = true" 
+                                                        onclick="openDeleteGroupModal('<?= $nhom->idNhom ?>', '<?= htmlspecialchars($nhom->maNhom) ?>')"
+                                                        class="text-gray-400 hover:text-red-600 transition-colors duration-150"
+                                                        title="Xóa nhóm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-3 text-center text-gray-500">Khong co du lieu nhom.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Định nghĩa Quyền -->
+        <div class="tab-pane fade" id="tab-permissions" role="tabpanel" style="display: none;">
+            <div class="w-full overflow-hidden rounded-lg shadow-xs border border-gray-200 dark:border-gray-700">
+                <div class="px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h4 class="font-semibold text-gray-700 dark:text-gray-300">
+                        Danh sách quyền
+                    </h4>
+                    
+                </div>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full whitespace-no-wrap">
+                        <thead>
+                            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                                <th class="px-4 py-3">Mã quyền (Key)</th>
+                                <th class="px-4 py-3">Tên hiển thị</th>
+                                <th class="px-4 py-3">Nhóm sử dụng</th>
+                                <th class="px-4 py-3 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                            <?php if (!empty($danhSachQuyen)): ?>
+                                <?php foreach ($danhSachQuyen as $quyen): ?>
+                                    <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                        <td class="px-4 py-3 text-sm">
+                                            <code class="px-2 py-1 font-mono text-xs bg-gray-100 rounded dark:bg-gray-700 text-red-600 dark:text-red-400">
+                                                <?= $quyen->maQuyen ?>
+                                            </code>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">
+                                            <?= $quyen->tenQuyen ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
+                                                <?= $quyen->soNhom ?? 0 ?> Nhóm
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-right">
+                                            <a href="index.php?page=quyen_sua&id=<?= $quyen->idQuyen ?>" 
+                                            class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150 mx-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button @click="openModal" 
+                                                    onclick="triggerModal({
+                                                        title: 'Xóa quyền',
+                                                        description: 'Bạn đang xóa quyền <?= $quyen->tenQuyen ?>. Hành động này không thể hoàn tác!',
+                                                        confirmUrl: 'index.php?page=xuly_quyen_xoa&id=<?= $quyen->idQuyen ?>',
+                                                        btnClass: 'bg-red-600 hover:bg-red-700'
+                                                    })"
+                                                    class="text-gray-400 hover:text-red-600 transition-colors duration-150">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4" class="px-4 py-3 text-center text-gray-500">Chưa có định nghĩa quyền nào.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div
+    x-show="isDeleteGroupModalOpen"
+    x-cloak
+    x-data="{ isDeleteGroupModalOpen: false }"
+    @open-delete-modal.window="isDeleteGroupModalOpen = true"
+    x-transition:enter="transition ease-out duration-150"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-40 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
+>
+    <div
+        x-show="isDeleteGroupModalOpen"
+        @click.away="isDeleteGroupModalOpen = false"
+        @keydown.escape="isDeleteGroupModalOpen = false"
+        class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl "
+        role="dialog"
+    >
+        <div class="mt-4 mb-6">
+            <p class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
+                Xác nhận xóa nhóm: <span id="delete-group-display-name" class="text-red-600"></span>
+            </p>
+            <div class="text-sm text-gray-700 dark:text-gray-400 space-y-3">
+                <div class="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-800">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <b>Cảnh báo:</b> Hành động này sẽ xóa toàn bộ thành viên trong nhóm. Di chuyển người dùng sang nhóm mới (nếu có) để xóa an toàn.
+                </div>
+                
+                <p>Để xác nhận, vui lòng nhập chính xác mã nhóm vào ô dưới đây:</p>
+                
+                <input type="text" 
+                       id="delete-confirm-input" 
+                       placeholder="Nhập mã nhóm..."
+                       autocomplete="off"
+                       class="block w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:border-red-400 focus:outline-none focus:shadow-outline-red dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                
+                <input type="hidden" id="delete-group-id">
+                <input type="hidden" id="delete-group-expected-name">
+            </div>
+        </div>
+
+        <footer class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800">
+            <button @click="isDeleteGroupModalOpen = false" 
+                    class="w-full px-5 py-3 text-sm text-gray-700 border border-gray-300 rounded-lg sm:w-auto hover:bg-gray-100 dark:text-gray-400">
+                Hủy bỏ
+            </button>
+            <button onclick="executeDeleteGroup()" 
+                    class="w-full px-5 py-3 text-sm text-center text-white bg-red-600 rounded-lg sm:w-auto hover:bg-red-700 shadow-lg">
+                Xác nhận xóa vĩnh viễn
+            </button>
+        </footer>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const usersTab = document.getElementById('users-tab');
-        const groupsTab = document.getElementById('groups-tab');
-        const permsTab = document.getElementById('permissions-tab');
+        const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
+        const tabPanes = {
+            users: document.getElementById('tab-users'),
+            groups: document.getElementById('tab-groups'),
+            permissions: document.getElementById('tab-permissions')
+        };
         const actionBtnContainer = document.getElementById('dynamicActionButton');
 
-        // 1. Tab Nhân sự -> Link đến trang thêm user
-        usersTab.addEventListener('shown.bs.tab', function (e) {
-            actionBtnContainer.innerHTML = `
-                <a href="index.php?page=nguoidung_them" class="btn btn-primary fw-bold shadow-sm">
-                    <i class="fas fa-user-plus me-2"></i> Thêm nhân sự
-                </a>`;
+        function setActiveTab(activeId) {
+            tabs.forEach(tab => {
+                const tabId = tab.getAttribute('data-tab');
+                tab.classList.remove('active', 'text-red-600', 'border-red-600', 'dark:text-red-500', 'dark:border-red-500');
+                
+                if (tabId === activeId) {
+                    tab.classList.add('active', 'text-red-600', 'border-red-600', 'dark:text-red-500', 'dark:border-red-500');
+                } else {
+                    tab.classList.add('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300', 'dark:hover:text-gray-300');
+                }
+            });
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-bs-target').replace('#tab-', '');
+                
+                Object.values(tabPanes).forEach(pane => {
+                    pane.style.display = 'none';
+                    pane.classList.remove('show', 'active');
+                });
+                
+                tabPanes[targetId].style.display = 'block';
+                tabPanes[targetId].classList.add('show', 'active');
+                
+                setActiveTab(targetId);
+                
+                const actions = {
+                    users: { icon: 'user-plus', text: 'Thêm người dùng mới', page: 'nguoidung_them', color: 'red' },
+                    groups: { icon: 'folder-plus', text: 'Thêm nhóm mới', page: 'nhom_them', color: 'red' },
+                    permissions: { icon: 'key', text: 'Thêm quyền mới', page: 'quyen_them', color: 'red' }
+                };
+                
+                const action = actions[targetId];
+                actionBtnContainer.innerHTML = `
+                    <a href="index.php?page=${action.page}" 
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-${action.color}-600 border border-transparent rounded-lg hover:bg-${action.color}-700 focus:outline-none focus:shadow-outline-${action.color} shadow-md">
+                        <i class="fas fa-${action.icon} mr-2"></i>
+                        ${action.text}
+                    </a>
+                `;
+            });
         });
 
-        // 2. Tab Nhóm -> Link đến trang thêm nhóm
-        groupsTab.addEventListener('shown.bs.tab', function (e) {
-            actionBtnContainer.innerHTML = `
-                <a href="index.php?page=users_them_nhom" class="btn btn-success fw-bold shadow-sm">
-                    <i class="fas fa-folder-plus me-2"></i> Tạo nhóm mới
-                </a>`;
-        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabParam = urlParams.get('tab'); 
 
-        // 3. Tab Quyền -> Link đến trang thêm quyền
-        permsTab.addEventListener('shown.bs.tab', function (e) {
-            actionBtnContainer.innerHTML = `
-                <a href="index.php?page=users_them_quyen" class="btn btn-danger fw-bold shadow-sm">
-                    <i class="fas fa-key me-2"></i> Thêm quyền mới
-                </a>`;
-        });
+        if (activeTabParam) {
+            const targetTab = document.querySelector(`[data-bs-target="#tab-${activeTabParam}"]`);
+            if (targetTab) {
+                targetTab.click();
+            } else if (tabs.length > 0) {
+                tabs[0].click();
+            }
+        } else if (tabs.length > 0) {
+            tabs[0].click();
+        }
     });
 </script>
 
+<script>
+    function openDeleteGroupModal(groupId, groupName) {
+        document.getElementById('delete-group-display-name').textContent = groupName;
+
+        document.getElementById('delete-group-id').value = groupId;
+        document.getElementById('delete-group-expected-name').value = groupName;
+
+        const input = document.getElementById('delete-confirm-input');
+        input.value = '';
+        input.classList.remove('border-red-600', 'bg-red-50');
+
+        window.dispatchEvent(new CustomEvent('open-delete-modal'));
+    }
+
+    function executeDeleteGroup() {
+        const groupId = document.getElementById('delete-group-id').value;
+        const expectedName = document.getElementById('delete-group-expected-name').value;
+        const userInput = document.getElementById('delete-confirm-input').value.trim();
+
+        if (userInput === expectedName) {
+            window.location.href = `index.php?page=nhom_xuly_xoa&id=${groupId}`;
+        } else {
+            const inputEl = document.getElementById('delete-confirm-input');
+            inputEl.classList.add('border-red-600', 'bg-red-50');
+            inputEl.focus();
+            alert('Mã nhóm nhập vào không chính xác. Vui lòng kiểm tra lại!');
+        }
+    }
+</script>
+
 <style>
-    /* CSS Giữ nguyên như cũ */
-    .nav-tabs .nav-link { color: #6c757d; border: none; border-bottom: 3px solid transparent; transition: all 0.2s; }
-    .nav-tabs .nav-link:hover { background-color: rgba(0,0,0,0.02); }
-    .nav-tabs .nav-link.active { background-color: transparent !important; border-bottom: 3px solid var(--bs-primary); color: var(--bs-primary); }
-    #groups-tab.active { border-color: var(--bs-success); color: var(--bs-success) !important; }
-    #permissions-tab.active { border-color: var(--bs-danger); color: var(--bs-danger) !important; }
-    code { font-size: 0.9em; }
+    /* Style cho tabs */
+    [data-bs-toggle="tab"] {
+        color: #6b7280;
+        border-bottom: 2px solid transparent;
+    }
+    [data-bs-toggle="tab"].active {
+        color: #dc2626;
+        border-bottom-color: #dc2626;
+    }
+    .dark [data-bs-toggle="tab"].active {
+        color: #f87171;
+        border-bottom-color: #f87171;
+    }
+    [data-bs-toggle="tab"]:hover {
+        color: #4b5563;
+        border-bottom-color: #d1d5db;
+    }
+    .dark [data-bs-toggle="tab"]:hover {
+        color: #e5e7eb;
+        border-bottom-color: #4b5563;
+    }
+    
+    /* Switch toggle style */
+    .peer:checked ~ div:last-child {
+        transform: translateX(100%);
+    }
 </style>

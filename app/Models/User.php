@@ -2,23 +2,25 @@
 namespace App\Models;
 
 class User {
-    public $id;
-    public $username;
-    public $password;
-    public $full_name;
-    public $role_id;
-    public $role_name;     // Thuộc tính lấy từ bảng roles
-    public $permissions;   // Mảng quyền hạn
+    public $idNguoiDung;
+    public $tenDangNhap;
+    public $matKhau;
+    public $hoTen;
+    public $idNhom;
+    public $tenNhom;      
+    public $permissions; 
+    public $googleId;
+    public $anhDaiDien;
 
-    // Constructor giúp nạp dữ liệu từ mảng (do Database trả về) vào Object
     public function __construct($data = []) {
-        $this->id = $data['id'] ?? null;
-        $this->username = $data['username'] ?? null;
-        $this->password = $data['password'] ?? null;
-        $this->full_name = $data['full_name'] ?? null;
-        $this->role_id = $data['role_id'] ?? null;
-        $this->role_name = $data['role_name'] ?? null;
+        $this->idNguoiDung = $data['idNguoiDung'] ?? null;
+        $this->tenDangNhap = $data['tenDangNhap'] ?? null;
+        $this->matKhau     = $data['matKhau'] ?? null;
+        $this->hoTen       = $data['hoTen'] ?? null;
+        $this->idNhom      = $data['idNhom'] ?? null;
+        $this->tenNhom     = $data['role_name'] ?? ($data['tenNhom'] ?? null);
         $this->permissions = $data['permissions'] ?? [];
+        $this->googleId    = $data['google_id'] ?? null;
+        $this->anhDaiDien  = $data['avatar'] ?? null;
     }
 }
-?>
