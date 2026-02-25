@@ -97,10 +97,97 @@ switch ($page) {
 
     // Các tab thiết bị
     case 'thietbi':
-    case 'thietbi_config':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $danhSachKhuVuc = $tbkvController->layDuLieuKhuVuc();
+            $danhSachThietBi = $tbkvController->layDuLieuThietBi();
+            $viewFile = $viewDir . '/thietbi/index.php';
+        } else {
+            $page = '403';
+        }
+        break;
     case 'thietbi_them':
         if (hasPermission('thietbi.view')) {
-            $viewFile = $viewDir . "/thietbi/" . (strpos($page, '_') !== false ? explode('_', $page)[1] : 'index') . ".php";
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $dsKhuVuc = $tbkvController->layDuLieuKhuVuc();
+            $viewFile = $viewDir . '/thietbi/them_thietbi.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'thietbi_sua':
+        if (hasPermission('thietbi.view')) {
+            $id = $_GET['id'] ?? null;
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tb = $tbkvController->layThongTinSuaThietBi($id);
+            $dsKhuVuc = $tbkvController->layDuLieuKhuVuc();
+            $viewFile = $viewDir . '/thietbi/sua_thietbi.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'thietbi_xuly_them':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webThemThietBi();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'thietbi_xuly_sua':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webSuaThietBi();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'thietbi_xuly_xoa':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webXoaThietBi();
+        } else {
+            $page = '403';
+        }
+        break;    
+    
+    case 'khuvuc_them':
+        if (hasPermission('thietbi.view')) {
+            $viewFile = $viewDir . '/thietbi/them_khuvuc.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'khuvuc_sua':
+        if (hasPermission('thietbi.view')) {
+            $id = $_GET['id'] ?? null;
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $kv = $tbkvController->layThongTinSuaKhuVuc($id);
+            $viewFile = $viewDir . '/thietbi/sua_khuvuc.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'khuvuc_xuly_them':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webThemKhuVuc();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'khuvuc_xuly_sua':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webSuaKhuVuc();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'khuvuc_xuly_xoa':
+        if (hasPermission('thietbi.view')) {
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webXoaKhuVuc();
         } else {
             $page = '403';
         }

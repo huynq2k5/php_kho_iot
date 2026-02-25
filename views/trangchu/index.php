@@ -12,7 +12,7 @@
         </div>
         <div>
             <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Nhiệt độ</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">28°C</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-nhietdo">-- °C</p>
             <p class="text-xs font-bold text-red-600 mt-1">Cao hơn chuẩn</p>
         </div>
     </div>
@@ -23,7 +23,7 @@
         </div>
         <div>
             <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Độ ẩm</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">65%</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-doam">-- %</p>
             <p class="text-xs text-gray-500 mt-1">Ổn định</p>
         </div>
     </div>
@@ -34,7 +34,7 @@
         </div>
         <div>
             <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Ánh sáng</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">350 Lux</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-anhsang">-- Lux</p>
             <p class="text-xs text-gray-500 mt-1">Trời nắng</p>
         </div>
     </div>
@@ -45,7 +45,7 @@
         </div>
         <div>
             <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Nồng độ CO2</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">420 ppm</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-co2">-- ppm</p>
             <p class="text-xs text-green-600 font-bold mt-1">Không khí tốt</p>
         </div>
     </div>
@@ -180,6 +180,88 @@
     input:checked ~ .dot { transform: translateX(100%); }
     .opacity-50 { opacity: 0.5; }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // ... (Giữ nguyên phần code biểu đồ và nút gạt của bạn ở đây) ...
+
+        // --- 3. LOGIC KẾT NỐI MQTT (PAHO JS) ---
+        const mqtt_broker = "66134711837f4104800192a63e1b7f97.s1.eu.hivemq.cloud";
+        const mqtt_port = 8884; // Cổng WebSockets của HiveMQ Cloud
+        const mqtt_user = "huyng";
+        const mqtt_password = "Huy12345";
+        const topic = "kho_iot/esp32";
+        
+        // Tạo ID ngẫu nhiên cho client Web
+        const clientId = "Web-Client-" + Math.random().toString(16).substr(2, 8);
+        
+        // Khởi tạo client
+        const client = new Paho.MQTT.Client(mqtt_broker, mqtt_port, clientId);
+
+        // Thiết lập các hàm callback
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+
+        // Tùy chọn kết nối an toàn (WSS)
+        const options = {
+            useSSL: true,
+            userName: mqtt_user,
+            password: mqtt_password,
+            onSuccess: onConnect,
+            onFailure: function (message) {
+                console.log("Kết nối MQTT thất bại: " + message.errorMessage);
+            }
+        };
+
+        // Bắt đầu kết nối
+        console.log("Đang kết nối tới MQTT Broker...");
+        client.connect(options);
+
+        // Khi kết nối thành công
+        function onConnect() {
+            console.log("MQTT Đã kết nối thành công!");
+            client.subscribe(topic);
+        }
+
+        // Khi mất kết nối
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Mất kết nối MQTT: " + responseObject.errorMessage);
+                // Có thể viết thêm hàm tự động kết nối lại ở đây
+            }
+        }
+
+        // Khi nhận được tin nhắn từ ESP32
+        function onMessageArrived(message) {
+            console.log("Đã nhận: " + message.payloadString);
+            try {
+                // Bóc tách thùng hàng JSON
+                const data = JSON.parse(message.payloadString);
+
+                // Đổ dữ liệu lên giao diện
+                if(data.nhiet_do !== undefined) {
+                    document.getElementById("val-nhietdo").innerText = data.nhiet_do.toFixed(1) + "°C";
+                }
+                if(data.do_am !== undefined) {
+                    document.getElementById("val-doam").innerText = data.do_am.toFixed(1) + "%";
+                }
+                if(data.co2 !== undefined) {
+                    document.getElementById("val-co2").innerText = data.co2 + " ppm";
+                }
+                if(data.anh_sang !== undefined) {
+                    document.getElementById("val-anhsang").innerText = data.anh_sang + " Lux";
+                }
+                
+                // (Tùy chọn tương lai) Cập nhật dữ liệu vào biểu đồ lineChart ở đây
+                
+            } catch (e) {
+                console.error("Lỗi phân tích JSON: ", e);
+            }
+        }
+    });
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
