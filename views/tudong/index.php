@@ -37,57 +37,44 @@
             </div>
             
             <div class="space-y-8">
-                <!-- Automation item 1 -->
+                <?php foreach ($data['sensor'] as $kb): ?>
                 <div class="automation-group group">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-gray-700 dark:text-gray-200">Tự động làm mát kho</span>
+                        <span class="font-bold text-gray-700 dark:text-gray-200"><?php echo $kb->tenKichBan; ?></span>
                         <label class="flex items-center cursor-pointer relative">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300 peer-focus:ring-2 peer-focus:ring-red-300"></div>
+                            <input type="checkbox" class="sr-only peer" <?php echo $kb->kichHoat ? 'checked' : ''; ?> 
+                                onchange="location.href='index.php?page=tudong-toggle&id=<?php echo $kb->idKichBan; ?>&status=' + (this.checked ? 1 : 0)">
+                            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300"></div>
                             <div class="absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full transition-all duration-300 peer-checked:translate-x-5 shadow-sm"></div>
                         </label>
                     </div>
                     <div class="relative p-3 bg-gray-50 rounded-lg dark:bg-gray-700 border border-gray-100 dark:border-gray-600 flex items-center justify-between overflow-hidden">
                         <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
-                        <span class="text-xs text-gray-600 dark:text-gray-400 ml-2">NẾU Nhiệt độ <b class="text-red-600">> 30°C</b></span>
+                        <span class="text-xs text-gray-600 dark:text-gray-400 ml-2">
+                            <?php echo $kb->getFormattedCondition(); ?>
+                        </span>
                         <i class="fas fa-arrow-right text-gray-300 text-xs"></i>
-                        <span class="text-xs font-black text-green-600 uppercase"><i class="fas fa-fan mr-1"></i> BẬT Quạt</span>
+                        <span class="text-xs font-black <?php echo $kb->hanhDong === 'ON' ? 'text-green-600' : 'text-red-500'; ?> uppercase">
+                             <?php echo $kb->hanhDong === 'ON' ? 'BẬT' : 'TẮT'; ?> <?php echo $kb->tenThanhPhanRa; ?>
+                        </span>
                     </div>
                     <div class="flex justify-end mt-2 gap-4 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                        <button class="text-[11px] font-bold text-gray-400 hover:text-blue-500 uppercase tracking-tighter transition-colors duration-150">
+                        <a href="index.php?page=tudong-sua&id=<?php echo $kb->idKichBan; ?>" class="text-[11px] font-bold text-gray-400 hover:text-blue-500 uppercase tracking-tighter">
                             <i class="fas fa-edit mr-1"></i>Thiết lập
-                        </button>
-                        <button class="text-[11px] font-bold text-gray-400 hover:text-red-600 uppercase tracking-tighter transition-colors duration-150">
+                        </a>
+                        <button @click="openModal"
+                                onclick="triggerModal({
+                                    title: 'Gỡ bỏ kịch bản',
+                                    description: 'Bạn có chắc chắn muốn gỡ bỏ kịch bản: <?= $kb->tenKichBan ?> ?',
+                                    confirmUrl: 'index.php?page=tudong_xuly_xoa&id=<?= $kb->idKichBan ?>',
+                                    btnClass: 'bg-red-600 hover:bg-red-700'
+                                })"
+                                class="text-[11px] font-bold text-gray-400 hover:text-red-600 uppercase tracking-tighter transition-colors duration-150">
                             <i class="fas fa-trash mr-1"></i>Gỡ bỏ
                         </button>
                     </div>
                 </div>
-
-                <!-- Automation item 2 -->
-                <div class="automation-group group">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-gray-700 dark:text-gray-200">Cấp ẩm tự động</span>
-                        <label class="flex items-center cursor-pointer relative">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300 peer-focus:ring-2 peer-focus:ring-red-300"></div>
-                            <div class="absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full transition-all duration-300 peer-checked:translate-x-5 shadow-sm"></div>
-                        </label>
-                    </div>
-                    <div class="relative p-3 bg-gray-50 rounded-lg dark:bg-gray-700 border border-gray-100 dark:border-gray-600 flex items-center justify-between overflow-hidden">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
-                        <span class="text-xs text-gray-600 dark:text-gray-400 ml-2">NẾU Độ ẩm <b class="text-blue-600">< 60%</b></span>
-                        <i class="fas fa-arrow-right text-gray-300 text-xs"></i>
-                        <span class="text-xs font-black text-blue-600 uppercase"><i class="fas fa-spray-can mr-1"></i> BẬT Phun sương</span>
-                    </div>
-                    <div class="flex justify-end mt-2 gap-4 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                        <button class="text-[11px] font-bold text-gray-400 hover:text-blue-500 uppercase tracking-tighter transition-colors duration-150">
-                            <i class="fas fa-edit mr-1"></i>Thiết lập
-                        </button>
-                        <button class="text-[11px] font-bold text-gray-400 hover:text-red-600 uppercase tracking-tighter transition-colors duration-150">
-                            <i class="fas fa-trash mr-1"></i>Gỡ bỏ
-                        </button>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
 
@@ -101,33 +88,45 @@
             </div>
 
             <div class="space-y-8">
+                <?php foreach ($data['timer'] as $kb): ?>
                 <div class="automation-group group">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-gray-700 dark:text-gray-200">Bật đèn kho tối</span>
+                        <span class="font-bold text-gray-700 dark:text-gray-200"><?php echo $kb->tenKichBan; ?></span>
                         <label class="flex items-center cursor-pointer relative">
-                            <input type="checkbox" class="sr-only peer" checked>
-                            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300 peer-focus:ring-2 peer-focus:ring-red-300"></div>
+                            <input type="checkbox" class="sr-only peer" <?php echo $kb->kichHoat ? 'checked' : ''; ?>
+                                onchange="location.href='index.php?page=tudong-toggle&id=<?php echo $kb->idKichBan; ?>&status=' + (this.checked ? 1 : 0)">
+                            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300"></div>
                             <div class="absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full transition-all duration-300 peer-checked:translate-x-5 shadow-sm"></div>
                         </label>
                     </div>
                     <div class="flex items-baseline mb-2">
-                        <span class="text-2xl font-black text-gray-800 dark:text-gray-100 mr-2">18:00</span>
+                        <span class="text-2xl font-black text-gray-800 dark:text-gray-100 mr-2"><?php echo date("H:i", strtotime($kb->thoiGianBat)); ?></span>
                         <span class="text-xs font-bold text-gray-400 uppercase mr-3">đến</span>
-                        <span class="text-2xl font-black text-gray-800 dark:text-gray-100">06:00</span>
+                        <span class="text-2xl font-black text-gray-800 dark:text-gray-100"><?php echo date("H:i", strtotime($kb->thoiGianTat)); ?></span>
                         <span class="ml-auto px-2 py-0.5 text-[9px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-500 rounded uppercase">Hàng ngày</span>
                     </div>
                     <div class="p-3 bg-orange-50 dark:bg-gray-700 rounded-lg border border-orange-100 dark:border-gray-600">
-                        <span class="text-xs font-black text-orange-700 dark:text-orange-300 uppercase"><i class="fas fa-lightbulb mr-1"></i> Kích hoạt: BẬT Đèn sưởi</span>
+                        <span class="text-xs font-black text-orange-700 dark:text-orange-300 uppercase">
+                            <i class="fas fa-clock mr-1"></i> Kích hoạt: <?php echo $kb->hanhDong === 'ON' ? 'BẬT' : 'TẮT'; ?> <?php echo $kb->tenThanhPhanRa; ?>
+                        </span>
                     </div>
                     <div class="flex justify-end mt-2 gap-4 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                        <button class="text-[11px] font-bold text-gray-400 hover:text-blue-500 uppercase tracking-tighter transition-colors duration-150">
+                        <a href="index.php?page=tudong-sua&id=<?php echo $kb->idKichBan; ?>" class="text-[11px] font-bold text-gray-400 hover:text-blue-500 uppercase tracking-tighter">
                             <i class="fas fa-edit mr-1"></i>Thiết lập
-                        </button>
-                        <button class="text-[11px] font-bold text-gray-400 hover:text-red-600 uppercase tracking-tighter transition-colors duration-150">
+                        </a>
+                        <button @click="openModal"
+                                onclick="triggerModal({
+                                    title: 'Gỡ bỏ kịch bản',
+                                    description: 'Bạn có chắc chắn muốn gỡ bỏ kịch bản: <?= $kb->tenKichBan ?> ?',
+                                    confirmUrl: 'index.php?page=tudong_xuly_xoa&id=<?= $kb->idKichBan ?>',
+                                    btnClass: 'bg-red-600 hover:bg-red-700'
+                                })"
+                                class="text-[11px] font-bold text-gray-400 hover:text-red-600 uppercase tracking-tighter transition-colors duration-150">
                             <i class="fas fa-trash mr-1"></i>Gỡ bỏ
                         </button>
                     </div>
                 </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

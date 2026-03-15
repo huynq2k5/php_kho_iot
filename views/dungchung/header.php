@@ -28,18 +28,18 @@
         <!-- Right section: Icons menu -->
         <ul class="flex items-center flex-shrink-0 space-x-6">
             
-            <!-- Theme toggler (THÊM MỚI) -->
+            <!-- Theme toggler -->
             <li class="flex">
                 <button class="rounded-md focus:outline-none focus:shadow-outline-red" 
                         @click="toggleTheme" 
                         aria-label="Toggle color mode">
-                    <!-- Dark mode icon (moon) - hiển thị khi dark = false -->
+                    <!-- Dark mode icon -->
                     <template x-if="!dark">
                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                         </svg>
                     </template>
-                    <!-- Light mode icon (sun) - hiển thị khi dark = true -->
+                    <!-- Light mode icon -->
                     <template x-if="dark">
                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
@@ -48,7 +48,7 @@
                 </button>
             </li>
 
-            <!-- Notifications menu (THÊM MỚI) -->
+            <!-- Notifications menu -->
             <li class="relative">
                 <button class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-red" 
                         @click="toggleNotificationsMenu" 
@@ -92,7 +92,7 @@
                 </template>
             </li>
 
-            <!-- Profile menu (SỬA LẠI - thêm mục Settings) -->
+            <!-- Profile menu -->
             <li class="relative">
                 <?php
                 $tenHienThi = $_SESSION['user_name'] ?? 'User';
@@ -113,7 +113,7 @@
                         aria-hidden="true" />
                 </button>
                 
-                <!-- Profile dropdown (ĐÃ SỬA - thêm mục Settings) -->
+                <!-- Profile dropdown -->
                 <template x-if="isProfileMenuOpen">
                     <ul x-transition:leave="transition ease-in duration-150" 
                         x-transition:leave-start="opacity-100" 
@@ -125,7 +125,7 @@
                         
                         <!-- Hồ sơ -->
                         <li class="flex">
-                            <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="#">
+                            <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="index.php?page=profile">
                                 <svg class="w-4 h-4 mr-3" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
                                     <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
@@ -133,7 +133,7 @@
                             </a>
                         </li>
                         
-                        <!-- Cài đặt (THÊM MỚI) -->
+                        <!-- Cài đặt -->
                         <li class="flex">
                             <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="#">
                                 <svg class="w-4 h-4 mr-3" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">

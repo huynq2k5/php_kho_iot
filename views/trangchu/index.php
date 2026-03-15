@@ -59,55 +59,62 @@
         </h4>
         
         <div class="flex items-center justify-between p-4 mb-4 bg-purple-50 rounded-lg border border-purple-100 dark:bg-gray-700 dark:border-gray-600">
-            <div>
-                <p class="font-semibold text-purple-700 dark:text-purple-300">Chế độ vận hành</p>
-                <p class="text-xs text-gray-600 dark:text-gray-400" id="modeStatusText">Hệ thống đang chạy Tự động</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" class="sr-only peer" checked>
-                <!-- Background toggle -->
-                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-red-600 peer-focus:ring-2 peer-focus:ring-red-300 dark:bg-gray-700 dark:peer-focus:ring-red-800 transition-all duration-300"></div>
-                <!-- Nút tròn -->
-                <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-sm peer-checked:translate-x-5 peer-checked:bg-white transition-all duration-300"></div>                
-            </label>
-        </div>
+			<div>
+				<p class="font-semibold text-purple-700 dark:text-purple-300">Chế độ vận hành</p>
+				<p class="text-xs text-gray-600 dark:text-gray-400" id="modeStatusText">Hệ thống đang chạy Tự động</p>
+			</div>
+			<label class="relative inline-flex items-center cursor-pointer">
+				<input type="checkbox" id="masterSwitch" class="sr-only peer">
+				<div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-600 peer-focus:ring-2 peer-focus:ring-purple-300 dark:bg-gray-700 dark:peer-focus:ring-purple-800 transition-all duration-300"></div>
+				<div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-sm peer-checked:translate-x-5 transition-all duration-300"></div>                
+			</label>
+		</div>
 
-        <div class="w-full overflow-x-auto">
-            <table class="w-full whitespace-no-wrap">
-                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800" id="controlTable">
-                    <tr class="text-gray-700 dark:text-gray-400 opacity-50 transition-opacity">
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center">
-                                <div class="p-2 mr-3 rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <i class="fas fa-fan text-gray-500"></i>
-                                </div>
-                                <span class="font-medium">Quạt thông gió</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-right">
-                            <button disabled class="btn-device px-3 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md cursor-not-allowed">
-                                Tắt
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="text-gray-700 dark:text-gray-400 opacity-50 transition-opacity">
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center">
-                                <div class="p-2 mr-3 rounded-full bg-blue-50 dark:bg-blue-900">
-                                    <i class="fas fa-spray-can text-blue-500"></i>
-                                </div>
-                                <span class="font-medium">Máy phun sương</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-right">
-                            <button disabled class="btn-device px-3 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md cursor-not-allowed">
-                                Bật
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+		<div class="w-full overflow-x-auto">
+			<table class="w-full whitespace-no-wrap">
+				<tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800" id="controlTable">
+					<tr class="text-gray-700 dark:text-gray-400 opacity-50 transition-opacity" id="row-q">
+						<td class="px-4 py-3 text-sm">
+							<div class="flex items-center">
+								<div class="p-2 mr-3 rounded-full bg-gray-100 dark:bg-gray-700">
+									<i class="fas fa-fan" id="icon-q"></i>
+								</div>
+								<span class="font-medium">Quạt thông gió</span>
+							</div>
+						</td>
+						<td class="px-4 py-3 text-sm text-right">
+							<button disabled id="btn-q" onclick="controlDevice('q')" class="btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed">Đang đợi...</button>
+						</td>
+					</tr>
+					<tr class="text-gray-700 dark:text-gray-400 opacity-50 transition-opacity" id="row-a">
+						<td class="px-4 py-3 text-sm">
+							<div class="flex items-center">
+								<div class="p-2 mr-3 rounded-full bg-blue-50 dark:bg-blue-900">
+									<i class="fas fa-snowflake text-blue-500" id="icon-a"></i>
+								</div>
+								<span class="font-medium">Máy lạnh</span>
+							</div>
+						</td>
+						<td class="px-4 py-3 text-sm text-right">
+							<button disabled id="btn-a" onclick="controlDevice('a')" class="btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed">Đang đợi...</button>
+						</td>
+					</tr>
+					<tr class="text-gray-700 dark:text-gray-400 opacity-50 transition-opacity" id="row-h">
+						<td class="px-4 py-3 text-sm">
+							<div class="flex items-center">
+								<div class="p-2 mr-3 rounded-full bg-teal-50 dark:bg-teal-900">
+									<i class="fas fa-droplet-slash text-teal-500" id="icon-h"></i>
+								</div>
+								<span class="font-medium">Máy hút ẩm</span>
+							</div>
+						</td>
+						<td class="px-4 py-3 text-sm text-right">
+							<button disabled id="btn-h" onclick="controlDevice('h')" class="btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed">Đang đợi...</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
     </div>
 
     <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
@@ -163,7 +170,7 @@
                     </td>
                     <td class="px-4 py-3 text-sm">Sensor Node</td>
                     <td class="px-4 py-3 text-xs">
-                        <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                        <span id="device-status-badge" class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                             Online
                         </span>
                     </td>
@@ -184,82 +191,120 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // ... (Giữ nguyên phần code biểu đồ và nút gạt của bạn ở đây) ...
+    const MQTT_CONF = {
+        broker: "66134711837f4104800192a63e1b7f97.s1.eu.hivemq.cloud",
+        port: 8884,
+        user: "huyng",
+        pass: "Huy12345",
+        baseTopic: "kho_iot/TB01",
+        cmdTopic: "kho_iot/TB01/cmd",
+        statusTopic: "kho_iot/TB01/status",
+        clientId: "Web_Huy_" + Math.random().toString(16).substr(2, 4)
+    };
 
-        // --- 3. LOGIC KẾT NỐI MQTT (PAHO JS) ---
-        const mqtt_broker = "66134711837f4104800192a63e1b7f97.s1.eu.hivemq.cloud";
-        const mqtt_port = 8884; // Cổng WebSockets của HiveMQ Cloud
-        const mqtt_user = "huyng";
-        const mqtt_password = "Huy12345";
-        const topic = "kho_iot/esp32";
-        
-        // Tạo ID ngẫu nhiên cho client Web
-        const clientId = "Web-Client-" + Math.random().toString(16).substr(2, 8);
-        
-        // Khởi tạo client
-        const client = new Paho.MQTT.Client(mqtt_broker, mqtt_port, clientId);
+    const client = new Paho.MQTT.Client(MQTT_CONF.broker, MQTT_CONF.port, MQTT_CONF.clientId);
+    let deviceStates = { q: 0, a: 0, h: 0 };
 
-        // Thiết lập các hàm callback
-        client.onConnectionLost = onConnectionLost;
-        client.onMessageArrived = onMessageArrived;
+    const mqttOptions = {
+        useSSL: true,
+        userName: MQTT_CONF.user,
+        password: MQTT_CONF.pass,
+        onSuccess: onConnect,
+        onFailure: (err) => setTimeout(startConnect, 5000),
+        keepAliveInterval: 30
+    };
 
-        // Tùy chọn kết nối an toàn (WSS)
-        const options = {
-            useSSL: true,
-            userName: mqtt_user,
-            password: mqtt_password,
-            onSuccess: onConnect,
-            onFailure: function (message) {
-                console.log("Kết nối MQTT thất bại: " + message.errorMessage);
-            }
-        };
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
 
-        // Bắt đầu kết nối
-        console.log("Đang kết nối tới MQTT Broker...");
-        client.connect(options);
+    function startConnect() {
+        if (!client.isConnected()) client.connect(mqttOptions);
+    }
 
-        // Khi kết nối thành công
-        function onConnect() {
-            console.log("MQTT Đã kết nối thành công!");
-            client.subscribe(topic);
-        }
+    function onConnect() {
+        client.subscribe(MQTT_CONF.baseTopic);
+        client.subscribe(MQTT_CONF.statusTopic);
+        console.log("MQTT Connected!");
+    }
 
-        // Khi mất kết nối
-        function onConnectionLost(responseObject) {
-            if (responseObject.errorCode !== 0) {
-                console.log("Mất kết nối MQTT: " + responseObject.errorMessage);
-                // Có thể viết thêm hàm tự động kết nối lại ở đây
-            }
-        }
+    function onConnectionLost(res) {
+        setTimeout(startConnect, 5000);
+    }
 
-        // Khi nhận được tin nhắn từ ESP32
-        function onMessageArrived(message) {
-            console.log("Đã nhận: " + message.payloadString);
-            try {
-                // Bóc tách thùng hàng JSON
-                const data = JSON.parse(message.payloadString);
+    function controlDevice(dev) {
+        if (!client.isConnected()) return;
+        const action = deviceStates[dev] === 1 ? "off" : "on";
+        const message = new Paho.MQTT.Message(`${dev}_${action}`);
+        message.destinationName = MQTT_CONF.cmdTopic;
+        client.send(message);
+    }
 
-                // Đổ dữ liệu lên giao diện
-                if(data.nhiet_do !== undefined) {
-                    document.getElementById("val-nhietdo").innerText = data.nhiet_do.toFixed(1) + "°C";
-                }
-                if(data.do_am !== undefined) {
-                    document.getElementById("val-doam").innerText = data.do_am.toFixed(1) + "%";
-                }
-                if(data.co2 !== undefined) {
-                    document.getElementById("val-co2").innerText = data.co2 + " ppm";
-                }
-                if(data.anh_sang !== undefined) {
-                    document.getElementById("val-anhsang").innerText = data.anh_sang + " Lux";
-                }
+    function onMessageArrived(message) {
+        try {
+            const payload = JSON.parse(message.payloadString);
+            
+            if (message.destinationName === MQTT_CONF.statusTopic) {
+                deviceStates = { q: payload.q, a: payload.a, h: payload.h };
+                updateAllButtons();
                 
-                // (Tùy chọn tương lai) Cập nhật dữ liệu vào biểu đồ lineChart ở đây
-                
-            } catch (e) {
-                console.error("Lỗi phân tích JSON: ", e);
+                const badge = document.getElementById("device-status-badge");
+                if (badge) {
+                    const isOnline = payload.s === 1;
+                    badge.innerText = isOnline ? "Online" : "Offline";
+                    badge.className = `px-2 py-1 font-semibold leading-tight rounded-full ${isOnline ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}`;
+                }
             }
-        }
+
+            if (message.destinationName === MQTT_CONF.baseTopic) {
+                const map = { t: "val-nhietdo", h: "val-doam", co2: "val-co2", as: "val-anhsang" };
+                const units = { t: "°C", h: "%", co2: " ppm", as: " Lux" };
+                
+                Object.keys(map).forEach(key => {
+                    const el = document.getElementById(map[key]);
+                    if (el && payload[key] !== undefined) {
+                        el.innerText = (typeof payload[key] === 'number' ? payload[key].toFixed(1) : payload[key]) + units[key];
+                    }
+                });
+            }
+        } catch (e) { console.error("JSON Error", e); }
+    }
+
+    function updateAllButtons() {
+        const isManual = document.getElementById('masterSwitch')?.checked;
+        
+        ['q', 'a', 'h'].forEach(dev => {
+            const btn = document.getElementById(`btn-${dev}`);
+            const row = document.getElementById(`row-${dev}`);
+            const icon = document.getElementById(`icon-${dev}`);
+            const statusText = document.getElementById(`status-text-${dev}`);
+            
+            if (!btn || !row) return;
+
+            const isOn = deviceStates[dev] === 1;
+            btn.innerText = isOn ? "Bật" : "Tắt";
+            
+            if (statusText) {
+                statusText.innerText = isOn ? "ON" : "OFF";
+                statusText.className = `ml-2 text-xs font-bold ${isOn ? 'text-green-600' : 'text-red-600'}`;
+            }
+
+            if (!isManual) {
+                btn.disabled = true;
+                btn.className = "btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed";
+                row.classList.add('opacity-50');
+            } else {
+                btn.disabled = false;
+                row.classList.remove('opacity-50');
+                btn.className = `btn-device px-3 py-1 text-xs font-medium text-white rounded-md ${isOn ? 'bg-green-600' : 'bg-red-600'}`;
+            }
+
+            if (icon && dev === 'q') icon.className = `fas fa-fan ${isOn ? 'text-green-500 fa-spin' : 'text-gray-500'}`;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('masterSwitch')?.addEventListener('change', updateAllButtons);
+        startConnect();
     });
 </script>
 

@@ -7,6 +7,15 @@ namespace Composer\Autoload;
 class ComposerStaticInit27ee1b9e262c9ce2f53232b6b8304336
 {
     public static $prefixLengthsPsr4 = array (
+        'P' =>
+        array (
+            'Psr\\Log\\' => 8,
+            'PhpMqtt\\Client\\' => 15,
+        ),
+        'M' =>
+        array (
+            'MyCLabs\\Enum\\' => 13,
+        ),
         'C' =>
         array (
             'Config\\' => 7,
@@ -18,6 +27,18 @@ class ComposerStaticInit27ee1b9e262c9ce2f53232b6b8304336
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Log\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
+        'PhpMqtt\\Client\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/php-mqtt/client/src',
+        ),
+        'MyCLabs\\Enum\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
+        ),
         'Config\\' =>
         array (
             0 => __DIR__ . '/../..' . '/config',
@@ -30,6 +51,7 @@ class ComposerStaticInit27ee1b9e262c9ce2f53232b6b8304336
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

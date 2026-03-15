@@ -23,6 +23,7 @@ class AuthController {
 
             if ($user) {
                 $_SESSION['user_id'] = $user->idNguoiDung;
+                $_SESSION['user_email'] = $user->tenDangNhap;
                 $_SESSION['user_name'] = $user->hoTen;
                 $_SESSION['user_role'] = $user->tenNhom;
                 $_SESSION['user_avatar'] = $user->anhDaiDien;

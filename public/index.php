@@ -86,6 +86,13 @@ switch ($page) {
         $controller->logout();
         exit;
 
+    case 'profile':
+        $id = $_SESSION['user_id'];
+        $controller = new \App\Controllers\NguoiDungController();
+        $user = $controller->layDuLieuNguoiDungBangId($id);
+        $viewFile = $viewDir . '/profile/index.php';
+        break;
+
     case 'dashboard':
         if (hasPermission('trangchu.view')) {
             
@@ -130,6 +137,18 @@ switch ($page) {
         if (hasPermission('thietbi.view')) {
             $tbkvController = new \App\Controllers\TbiKvucController();
             $tbkvController->webThemThietBi();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'thietbi_chitiet':
+        if (hasPermission('thietbi.view')) {
+            $id = $_GET['id'] ?? null;
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tb = $tbkvController->layThongTinSuaThietBi($id);
+            $lichSu = $tbkvController->layDuLieuCamBienTheoTB($id);
+            $viewFile = $viewDir . '/thietbi/chitiet_tb.php';
+
         } else {
             $page = '403';
         }
@@ -193,7 +212,7 @@ switch ($page) {
         }
         break;
 
-    // Phân tích và Tự động hóa
+    // Phân tích
     case 'phantich':
         if (hasPermission('phantich.view')) {
             $viewFile = $viewDir . '/phantich/index.php';
@@ -201,13 +220,83 @@ switch ($page) {
             $page = '403';
         }
         break;
-
+    // Tự động hoá
     case 'tudong':
         if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+
+            $data = $tdController->layDuLieuTrangChu();
+
             $viewFile = $viewDir . '/tudong/index.php';
         } else {
             $page = '403';
         }
+        break;
+    case 'tudong-toggle':
+        if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $tdController->webToggleKichHoat();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'tudong-them':
+        if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $danhSachThietBi = $tdController->layDanhSachThietBi();
+            $viewFile = $viewDir . '/tudong/them.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'tudong_xuly_them':
+        if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $tdController->webThemKichBan();
+        } else {
+            $page = '403';
+        }
+        break;
+
+    case 'tudong-sua':
+        if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $id = $_GET['id'] ?? null;
+
+            $kichBan = $tdController->layThongTinSuaKichBan($id);
+
+            $danhSachThietBi = $tdController->layDanhSachThietBi();
+            
+            if ($kichBan) {
+                $viewFile = $viewDir . '/tudong/sua.php';
+            } else {
+                $_SESSION['msg'] = 'not_found';
+                header('Location: index.php?page=tudong');
+                exit;
+            }
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'tudong_xuly_sua':
+        if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $tdController->webSuaKichBan();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'tudong_xuly_xoa':
+        if (hasPermission('tudong.view')) {
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $tdController->webXoaKichBan();
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'tudong_api_lay_thanh_phan':
+        $tdController = new \App\Controllers\TuDongHoaController();
+        $tdController->apiLayThanhPhan();
         break;
 
     case 'alert_log':

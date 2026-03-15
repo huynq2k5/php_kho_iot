@@ -39,7 +39,7 @@
                             <th class="px-4 py-3">Khu vực</th>
                             <th class="px-4 py-3">Trạng thái</th>
                             <th class="px-4 py-3">Topic MQTT</th>
-                            <th class="px-4 py-3 text-right">Thao tác</th>
+                            <th class="px-4 py-3 text-center">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -85,6 +85,9 @@
                                     </td>
                                     
                                     <td class="px-4 py-3 text-sm text-right">
+                                        <a href="index.php?page=thietbi_chitiet&id=<?= $tb->idThietBi ?>" class="px-3 py-1 mr-1 text-xs font-medium leading-5 text-green-600 rounded-lg dark:text-green-400 focus:outline-none focus:shadow-outline-green hover:bg-green-100 dark:hover:bg-green-900 transition-colors duration-150 inline-block">
+                                            <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                                        </a>
                                         <a href="index.php?page=thietbi_sua&id=<?= $tb->idThietBi ?>" class="px-3 py-1 mr-1 text-xs font-medium leading-5 text-blue-600 rounded-lg dark:text-blue-400 focus:outline-none focus:shadow-outline-blue hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors duration-150 inline-block">
                                             <i class="fas fa-edit mr-1"></i> Sửa
                                         </a>

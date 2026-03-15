@@ -18,6 +18,9 @@ class NguoiDungController{
     public function layDuLieuNguoiDung() {
         return $this->userService->hienThiUser();
     }
+    public function layDuLieuNguoiDungBangId($id) {
+        return $this->userService->getUserById($id);
+    }
 
     public function layDuLieuNhom(){
         return $this->nhomService->hienThiDSNhom();

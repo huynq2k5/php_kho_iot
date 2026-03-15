@@ -2,7 +2,8 @@
     "name": "huynguyen/project",
     "description": "Web PHP MVC",
     "require": {
-        "ext-mysqli": "*"
+        "ext-mysqli": "*",
+        "php-mqtt/client": "^2.3"
     },
     "autoload": {
         "psr-4": {

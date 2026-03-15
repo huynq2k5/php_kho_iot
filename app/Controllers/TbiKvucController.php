@@ -2,14 +2,17 @@
 namespace  App\Controllers;
 use App\Services\KhuVucService;
 use App\Services\ThietBiService;
+use App\Services\LichSuCamBienService;
 
 class TbiKvucController{
     private $kvService;
     private $tbService;
+    private $lsService;
     public function __construct()
     {
         $this-> kvService = new KhuVucService();
         $this->tbService = new ThietBiService();
+        $this->lsService = new LichSuCamBienService();
     }
 
     public function layDuLieuKhuVuc() {
@@ -24,6 +27,9 @@ class TbiKvucController{
         return $this->kvService->getKhuVucById($id);
     }
 
+    public function layDuLieuCamBienTheoTB($id){
+        return $this->lsService->layTatCaLichSu($id);
+    }
 
     public function webThemKhuVuc() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
