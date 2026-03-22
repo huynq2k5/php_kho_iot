@@ -4,17 +4,20 @@ namespace App\Controllers;
 use App\Services\KichBanTuDongService;
 use App\Services\ThietBiService;
 use App\Services\ThanhPhanThietBiService;
+use App\Repositories\KichBanTuDongRepository;
 
 class TuDongHoaController {
     private $kbService;
     private $tbService;
     private $tpService;
+    private $kbRepo;
 
     public function __construct()
     {
         $this->kbService = new KichBanTuDongService();
         $this->tbService = new ThietBiService();
         $this->tpService = new ThanhPhanThietBiService();
+        $this->kbRepo = new KichBanTuDongRepository();
     }
 
     public function layThongTinSuaKichBan($id){
@@ -98,13 +101,21 @@ class TuDongHoaController {
     }
 
     public function webToggleKichHoat() {
-        $id = $_GET['id'] ?? null;
-        $status = $_GET['status'] ?? 0;
+    $id = $_GET['id'] ?? null;
+    $status = $_GET['status'] ?? 0;
+
+    if ($id) {
+        $result = $this->kbRepo->toggleKichHoat($id, $status);
         
-        if ($id) {
-            $this->kbService->thayDoiTrangThai($id, $status);
-            header('Location: index.php?page=tudong');
-            exit;
+        if ($result) {
+            // Gọi tín hiệu sang Node.js Bridge qua cổng 3001
+            $url = "http://localhost:3001/capnhatkichban?id=" . $id;
+            @file_get_contents($url); 
+
+            $_SESSION['msg'] = 'edit_success';
         }
     }
+    header('Location: index.php?page=tudong');
+    exit;
+}
 }
