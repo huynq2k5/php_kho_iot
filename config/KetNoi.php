@@ -41,6 +41,7 @@ class KetNoi {
         }
         
         $this->conn->set_charset("utf8mb4");
+        $this->conn->query("SET time_zone = '+07:00'");
     }
 
     public function truyVan($sql, $params = []) {
