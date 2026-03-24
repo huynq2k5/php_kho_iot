@@ -4,21 +4,26 @@ namespace App\Controllers;
 
 use App\Services\NhatKyHeThongService;
 use App\Services\ThongBaoService;
+use App\Services\LogSecurityService;
 
-class CanhBaoNhatKyController {
+class CanhBaoNhatKyController extends BaseController{
     private $nhatKyService;
     private $thongBaoService;
+    private $securityService;
 
     public function __construct()
     {
+        parent::__construct();
         $this->nhatKyService = new NhatKyHeThongService();
         $this->thongBaoService = new ThongBaoService();
+        $this->securityService = new LogSecurityService();
     }
 
     public function layDuLieuManHinhChinh() {
         return [
             'canhBao' => $this->thongBaoService->layCanhBaoMoiNhat(10),
-            'nhatKy'  => $this->nhatKyService->hienThiTatCaNhatKy(20)
+            'nhatKy'  => $this->nhatKyService->hienThiTatCaNhatKy(20),
+            'truyCap' => $this->securityService->layDanhSachTruyCap(10) 
         ];
     }
 

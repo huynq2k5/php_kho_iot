@@ -4,13 +4,14 @@ use App\Services\KhuVucService;
 use App\Services\ThietBiService;
 use App\Services\LichSuCamBienService;
 
-class TbiKvucController{
+class TbiKvucController extends BaseController{
     private $kvService;
     private $tbService;
     private $lsService;
     public function __construct()
     {
-        $this-> kvService = new KhuVucService();
+        parent::__construct();
+        $this->kvService = new KhuVucService();
         $this->tbService = new ThietBiService();
         $this->lsService = new LichSuCamBienService();
     }

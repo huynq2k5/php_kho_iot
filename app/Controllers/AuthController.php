@@ -4,10 +4,12 @@ namespace App\Controllers;
 use App\Services\AuthService;
 use App\Services\GoogleAuthService;
 
-class AuthController {
+class AuthController extends BaseController{
     private $authService;
 
-    public function __construct() {
+    public function __construct()
+    {
+        parent::__construct();
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

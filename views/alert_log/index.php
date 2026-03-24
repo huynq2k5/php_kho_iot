@@ -99,4 +99,49 @@
             </div>
         </div>
     </div>
+
+    <div class="w-full mt-6">
+        <div class="min-w-0 bg-white rounded-lg shadow-xs dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h4 class="font-semibold text-gray-700 dark:text-gray-300">Nhật ký truy cập (Security Log)</h4>
+                <span class="text-xs text-gray-500 uppercase tracking-widest">Dữ liệu IP & Thiết bị</span>
+            </div>
+
+            <div class="w-full overflow-x-auto">
+                <table class="w-full whitespace-no-wrap">
+                    <thead>
+                        <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                            <th class="px-4 py-3">Thời gian</th>
+                            <th class="px-4 py-3">IP & Địa điểm</th>
+                            <th class="px-4 py-3">Thiết bị (Fingerprint)</th>
+                            <th class="px-4 py-3">ISP / Nhà mạng</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                        <?php if (empty($data['truyCap'])): ?>
+                            <tr><td colspan="4" class="px-4 py-10 text-center text-gray-500">Chưa có dữ liệu truy cập.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($data['truyCap'] as $access): ?>
+                            <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                <td class="px-4 py-3 text-sm"><?= date('H:i:s d/m', strtotime($access->thoiGian)) ?></td>
+                                <td class="px-4 py-3">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-red-600 dark:text-red-400"><?= $access->ipAddress ?></span>
+                                        <span class="text-[10px]"><?= $access->thanhPho ?>, <?= $access->quocGia ?></span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-xs">
+                                    <code class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-300">
+                                        <?= substr($access->fingerprint, 0, 8) ?>...
+                                    </code>
+                                </td>
+                                <td class="px-4 py-3 text-sm italic"><?= $access->isp ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

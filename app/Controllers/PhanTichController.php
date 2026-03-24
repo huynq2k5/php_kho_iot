@@ -5,15 +5,17 @@ namespace App\Controllers;
 use App\Services\ThietBiService;
 use App\Services\LichSuCamBienService;
 
-class PhanTichController {
+class PhanTichController extends BaseController{
     private $thietBiService;
     private $lichSuService;
 
-    public function __construct() {
+    public function __construct()
+    {
+        parent::__construct();
         $this->thietBiService = new ThietBiService();
         $this->lichSuService = new LichSuCamBienService();
     }
-
+    
     public function hienThiTrangPhanTich() {
         return $this->thietBiService->hienThiTatCaThietBi();
     }

@@ -4,12 +4,14 @@ use App\Services\UserService;
 use App\Services\NhomService;
 use App\Services\QuyenService;
 
-class NguoiDungController{
+class NguoiDungController extends BaseController{
     private $userService;
     private $nhomService;
     private $quyenService;
+
     public function __construct()
     {
+        parent::__construct();
         $this-> userService = new UserService();
         $this-> nhomService = new NhomService();
         $this-> quyenService = new QuyenService();

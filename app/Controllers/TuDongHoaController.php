@@ -6,7 +6,7 @@ use App\Services\ThietBiService;
 use App\Services\ThanhPhanThietBiService;
 use App\Repositories\KichBanTuDongRepository;
 
-class TuDongHoaController {
+class TuDongHoaController extends BaseController{
     private $kbService;
     private $tbService;
     private $tpService;
@@ -14,6 +14,7 @@ class TuDongHoaController {
 
     public function __construct()
     {
+        parent::__construct();
         $this->kbService = new KichBanTuDongService();
         $this->tbService = new ThietBiService();
         $this->tpService = new ThanhPhanThietBiService();
