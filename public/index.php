@@ -215,9 +215,18 @@ switch ($page) {
     // Phân tích
     case 'phantich':
         if (hasPermission('phantich.view')) {
+            $ptController = new \App\Controllers\PhanTichController();
+            $danhSachThietBi = $ptController->hienThiTrangPhanTich();
             $viewFile = $viewDir . '/phantich/index.php';
         } else {
             $page = '403';
+        }
+        break;
+
+    case 'phantich_api_data':
+        if (hasPermission('phantich.view')) {
+            $ptController = new \App\Controllers\PhanTichController();
+            $ptController->apiLayDuLieuBieuDo();
         }
         break;
     // Tự động hoá
@@ -299,9 +308,33 @@ switch ($page) {
         $tdController->apiLayThanhPhan();
         break;
 
+    // Cảnh báo và Nhật ký hệ thống
     case 'alert_log':
         if (hasPermission('canhbao.view')) {
+            $controller = new \App\Controllers\CanhBaoNhatKyController();
+            
+            // Lấy dữ liệu tổng hợp cho màn hình chính (Cả thông báo và nhật ký)
+            $data = $controller->layDuLieuManHinhChinh(); 
+            
             $viewFile = $viewDir . '/alert_log/index.php';
+        } else {
+            $page = '403';
+        }
+        break;
+
+    case 'alert_log_xoa':
+        if (hasPermission('canhbao.view')) {
+            $controller = new \App\Controllers\CanhBaoNhatKyController();
+            $controller->webXoaLichSuCu();
+        } else {
+            $page = '403';
+        }
+        break;
+
+    case 'alert_log_export':
+        if (hasPermission('canhbao.view')) {
+            $controller = new \App\Controllers\CanhBaoNhatKyController();
+            $controller->webXuatBaoCao();
         } else {
             $page = '403';
         }

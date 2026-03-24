@@ -2,9 +2,9 @@
     <div class="flex flex-col overflow-y-auto md:flex-row">
         <div class="h-32 md:h-auto md:w-1/2">
             <img aria-hidden="true" class="object-cover w-full h-full dark:hidden" 
-                 src="img/login-office.jpeg" alt="Office" />
+                 src="img/warehouse.jpg" alt="Kho IoT" />
             <img aria-hidden="true" class="hidden object-cover w-full h-full dark:block" 
-                 src="img/login-office.jpeg" alt="Office" />
+                 src="img/warehouse.jpg" alt="Kho IoT" />
         </div>
         
         <div class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
@@ -105,7 +105,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    window.location.href = './index.php?url=dashboard';
+                    window.location.href = './index.php?page=dashboard';
                 } else {
                     alert(data.message);
                 }
