@@ -118,5 +118,6 @@
     <?php endif; ?>
     <?php include $viewDir . '/dungchung/modal_confirm.php'; ?>
     <script src="js/main.js"></script>
+    <script src="js/log_truycap.js"></script>
 </body>
 </html>

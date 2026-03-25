@@ -13,5 +13,6 @@
     <div class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
         <?php echo $content; ?>
     </div>
+    <script src="js/log_truycap.js"></script>
 </body>
 </html>
