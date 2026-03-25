@@ -11,69 +11,132 @@ class LogSecurityService {
         $this->repo = new NhatKyTruyCapRepository();
     }
 
-    /**
-     * Hàm lấy IP thật của người dùng (vượt qua Proxy/Cloudflare)
-     */
-    private function getRealIp() {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
-        }
-        return $_SERVER['REMOTE_ADDR'];
-    }
-
-    /**
-     * Ghi nhận lượt truy cập vào Database
-     */
     public function ghiNhanTruyCap() {
-        // Đảm bảo session đã chạy để lấy được ID
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        if ($method === 'GET') {
+            return false;
+        }
+
+        $dsTrangBoQua = [
+            'page=alert_log',
+            'page=security_detail',
+            '/api/ping'
+        ];
+
+        foreach ($dsTrangBoQua as $trang) {
+            if (strpos($uri, $trang) !== false) {
+                return false;
+            }
         }
 
         $ip = $this->getRealIp();
+        $geo = $this->getGeoInfo($ip);
         
-        // Localhost test: Nếu IP là loopback, dùng IP ảo để test GeoIP
-        $lookupIp = ($ip === '127.0.0.1' || $ip === '::1') ? '113.161.127.234' : $ip;
-        $geo = $this->getGeoInfo($lookupIp);
-
         $data = [
             'idNguoiDung' => $_SESSION['user_id'] ?? null,
             'ipAddress'   => $ip,
             'fingerprint' => $_COOKIE['device_fingerprint'] ?? 'N/A',
             'userAgent'   => $_SERVER['HTTP_USER_AGENT'],
-            'method'      => $_SERVER['REQUEST_METHOD'],
-            'requestUri'  => $_SERVER['REQUEST_URI'],
+            'method'      => $method,
+            'requestUri'  => $uri,
             'sessionId'   => session_id(),
             'quocGia'     => $geo['country'] ?? 'Unknown',
             'thanhPho'    => $geo['city'] ?? 'Unknown',
             'isp'         => $geo['isp'] ?? 'Unknown',
-            'timeZone'    => $geo['timezone'] ?? 'Asia/Ho_Chi_Minh'
+            'timezone'    => $geo['timezone'] ?? 'Asia/Ho_Chi_Minh'
         ];
 
         return $this->repo->luuTruyCap($data);
     }
 
-    /**
-     * Gọi API lấy thông tin địa lý
-     */
+    public function parseUserAgent($ua) {
+        $os = "Unknown OS";
+        $version = "Unknown Version";
+        $browser = "Unknown Browser";
+        
+        // Mảng ánh xạ icon
+        $osIcons = [
+            'Windows' => 'fab fa-windows',
+            'Android' => 'fab fa-android',
+            'iOS'     => 'fab fa-apple',
+            'Mac OS'  => 'fab fa-apple',
+            'Linux'   => 'fab fa-linux'
+        ];
+
+        $browserIcons = [
+            'Chrome'  => 'fab fa-chrome',
+            'Edge'    => 'fab fa-edge',
+            'Firefox' => 'fab fa-firefox',
+            'Safari'  => 'fab fa-safari'
+        ];
+
+        $realOSVersion = $_COOKIE['os_real_version'] ?? null;
+
+        if (preg_match('/Windows NT 10\.0/i', $ua)) {
+            $os = 'Windows';
+            $version = ($realOSVersion && version_compare($realOSVersion, '13.0.0', '>=')) ? '11' : '10';
+        } elseif (preg_match('/Android ([0-9.]+)/i', $ua, $matches)) {
+            $os = 'Android';
+            $version = $matches[1];
+        } elseif (preg_match('/iPhone/i', $ua)) {
+            $os = 'iOS';
+            $version = preg_match('/OS ([0-9_]+)/i', $ua, $matches) ? str_replace('_', '.', $matches[1]) : 'Version';
+        }
+
+        if (preg_match('/Edg\/([0-9.]+)/i', $ua)) {
+            $browser = 'Edge';
+        } elseif (preg_match('/Chrome\/([0-9.]+)/i', $ua)) {
+            $browser = 'Chrome';
+        } elseif (preg_match('/Firefox\/([0-9.]+)/i', $ua)) {
+            $browser = 'Firefox';
+        } elseif (preg_match('/Safari\/([0-9.]+)/i', $ua) && !preg_match('/Chrome/i', $ua)) {
+            $browser = 'Safari';
+        }
+
+        return [
+            'os'           => $os,
+            'version'      => $version,
+            'browser'      => $browser,
+            'os_icon'      => $osIcons[$os] ?? 'fas fa-desktop',
+            'browser_icon' => $browserIcons[$browser] ?? 'fas fa-globe'
+        ];
+    }
+
+    public function layDanhSachTruyCap($limit = 10) {
+        $dsTruyCap = $this->repo->layTatCaTruyCap($limit);
+        foreach ($dsTruyCap as $item) {
+            $item->phanGiaiUA = $this->parseUserAgent($item->userAgent);
+        }
+        return $dsTruyCap;
+    }
+
+    public function layChiTietTruyCap($id) {
+        $item = $this->repo->layTruyCapTheoId($id);
+        if ($item) {
+            $item->phanGiaiUA = $this->parseUserAgent($item->userAgent);
+        }
+        return $item;
+    }
+
+    private function getRealIp() {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+        }
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
     private function getGeoInfo($ip) {
-        // Thêm trường 'timezone' vào API
         $url = "http://ip-api.com/json/{$ip}?fields=status,country,city,isp,timezone";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Tăng lên 3s để ổn định hơn trên host
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         $res = curl_exec($ch);
         curl_close($ch);
         return json_decode($res, true);
-    }
-
-    /**
-     * Lấy danh sách nhật ký truy cập để hiển thị
-     */
-    public function layDanhSachTruyCap($limit = 10) {
-        return $this->repo->layTatCaTruyCap($limit);
     }
 }

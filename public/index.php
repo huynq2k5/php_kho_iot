@@ -340,6 +340,13 @@ switch ($page) {
         }
         break;
 
+    case 'chitiet_baomat':
+        $controller = new \App\Controllers\CanhBaoNhatKyController();
+        $access = $controller->webHienThiChiTietTruyCap();
+        
+        $viewFile = $viewDir . '/alert_log/chitiet_baomat.php';
+        break;
+
     // Quản lý người dùng
     case 'users':
         if (hasPermission('nguoidung.view')) {

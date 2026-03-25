@@ -6,13 +6,12 @@ use App\Services\NhatKyHeThongService;
 use App\Services\ThongBaoService;
 use App\Services\LogSecurityService;
 
-class CanhBaoNhatKyController extends BaseController{
+class CanhBaoNhatKyController extends BaseController {
     private $nhatKyService;
     private $thongBaoService;
     private $securityService;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->nhatKyService = new NhatKyHeThongService();
         $this->thongBaoService = new ThongBaoService();
@@ -23,8 +22,25 @@ class CanhBaoNhatKyController extends BaseController{
         return [
             'canhBao' => $this->thongBaoService->layCanhBaoMoiNhat(10),
             'nhatKy'  => $this->nhatKyService->hienThiTatCaNhatKy(20),
-            'truyCap' => $this->securityService->layDanhSachTruyCap(10) 
+            'truyCap' => $this->securityService->layDanhSachTruyCap(10)
         ];
+    }
+
+    public function webHienThiChiTietTruyCap() {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header('Location: index.php?page=alert_log');
+            exit;
+        }
+
+        $access = $this->securityService->layChiTietTruyCap($id);
+        
+        if (!$access) {
+            header('Location: index.php?page=alert_log');
+            exit;
+        }
+
+        return $access;
     }
 
     public function webXoaLichSuCu() {
@@ -38,15 +54,13 @@ class CanhBaoNhatKyController extends BaseController{
         }
     }
 
-    public function webXuatBaoCao() {
-        // Chưa viết logic xuất báo cáo
-        header('Location: index.php?page=alert_log');
-        exit;
-    }
-
-    public function webTimKiemNhatKy()
-    {
+    public function webTimKiemNhatKy() {
         $tuKhoa = $_GET['tuKhoa'] ?? '';
         return $this->nhatKyService->timKiemNhatKy($tuKhoa);
+    }
+
+    public function webXuatBaoCao() {
+        header('Location: index.php?page=alert_log');
+        exit;
     }
 }

@@ -14,8 +14,8 @@ class NhatKyTruyCapRepository
     }
 
     public function luuTruyCap($data) {
-        $sql = "INSERT INTO nhatky_truycap (idNguoiDung, ipAddress, fingerprint, userAgent, method, requestUri, quocGia, thanhPho, isp) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO nhatky_truycap (idNguoiDung, ipAddress, fingerprint, userAgent, method, requestUri, sessionId, quocGia, thanhPho, isp, timezone) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         return $this->db->capNhat($sql, [
             $data['idNguoiDung'],
@@ -24,15 +24,16 @@ class NhatKyTruyCapRepository
             $data['userAgent'],
             $data['method'],
             $data['requestUri'],
+            $data['sessionId'],
             $data['quocGia'],
             $data['thanhPho'],
-            $data['isp']
+            $data['isp'],
+            $data['timezone']
         ]);
     }
 
     public function layTatCaTruyCap($limit = 10) {
         $sql = "SELECT * FROM nhatky_truycap ORDER BY thoiGian DESC LIMIT ?";
-        
         $kq = $this->db->truyVan($sql, [$limit]);
         $dsTruyCap = [];
 
@@ -42,5 +43,15 @@ class NhatKyTruyCapRepository
             }
         }
         return $dsTruyCap;
+    }
+
+    public function layTruyCapTheoId($id) {
+        $sql = "SELECT * FROM nhatky_truycap WHERE idTruyCap = ?";
+        $kq = $this->db->truyVan($sql, [$id]);
+        
+        if ($kq && $kq->num_rows > 0) {
+            return new NhatKyTruyCap($kq->fetch_assoc());
+        }
+        return null;
     }
 }
