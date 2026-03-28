@@ -95,8 +95,20 @@ switch ($page) {
 
     case 'dashboard':
         if (hasPermission('trangchu.view')) {
-            
+            $kbService = new \App\Services\KichBanTuDongService();
+            $controller = new App\Controllers\TrangChuController();
+            $ttTB = $controller->layTrangThaiThietBi();
+            // Định nghĩa biến này để file view bên dưới có thể dùng được
+            $isManual = $kbService->isHeThongManual();
             $viewFile = $viewDir . '/trangchu/index.php';
+        } else {
+            $page = '403';
+        }
+        break;
+    case 'tudong-master':
+        if (hasPermission('trangchu.view')) {
+            $controller = new \App\Controllers\TrangChuController();
+            $controller->toggleMasterMode();
         } else {
             $page = '403';
         }
@@ -241,14 +253,17 @@ switch ($page) {
             $page = '403';
         }
         break;
-    case 'tudong-toggle':
-        if (hasPermission('tudong.view')) {
+    
+        case 'api-tudong-status':
             $tdController = new \App\Controllers\TuDongHoaController();
-            $tdController->webToggleKichHoat();
-        } else {
-            $page = '403';
-        }
-        break;
+            $tdController->apiLayTrangThaiTatCa();
+            break;
+
+        case 'api-tudong-toggle':
+            $tdController = new \App\Controllers\TuDongHoaController();
+            $tdController->apiToggleKichBan();
+            break;
+   
     case 'tudong-them':
         if (hasPermission('tudong.view')) {
             $tdController = new \App\Controllers\TuDongHoaController();

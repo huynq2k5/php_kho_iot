@@ -71,4 +71,34 @@ class KichBanTuDongService {
 
         return $ketQua;
     }
+
+    public function voHieuHoaToanBoHeThong($isManual)
+    {
+        // 1. Nếu chuyển sang MANUAL (isManual = true) thì trangThai = 0 (tắt hết)
+        $trangThai = $isManual ? 0 : 1; 
+        $res = $this->kichBanRepo->updateTatCaTrangThai($trangThai);
+
+        if ($res) {
+            // 2. Gửi lệnh báo cho Bridge.js
+            $mode = $isManual ? "MANUAL" : "AUTO";
+            $url = "http://localhost:3001/set_mode?mode=" . $mode;
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+            curl_exec($ch);
+            curl_close($ch);
+        }
+        return $res;
+    }
+
+    public function isHeThongManual() {
+        return $this->kichBanRepo->checkHeThongIsManual();
+    }
+
+    public function getTrangThai($id)
+    {
+        return $this->kichBanRepo->layTrangThaiKichBan($id);
+    }
 }

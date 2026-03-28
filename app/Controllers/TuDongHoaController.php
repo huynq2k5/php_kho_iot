@@ -101,22 +101,29 @@ class TuDongHoaController extends BaseController{
         }
     }
 
-    public function webToggleKichHoat() {
-    $id = $_GET['id'] ?? null;
-    $status = $_GET['status'] ?? 0;
+    public function apiLayTrangThaiTatCa() {
+        $dsKichBan = $this->kbService->hienThiTatCaKichBan();
+        $dataStatus = [];
+        foreach ($dsKichBan as $kb) {
+            $dataStatus[$kb->idKichBan] = $kb->kichHoat;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($dataStatus);
+        exit;
+    }
 
-    if ($id) {
-        $result = $this->kbRepo->toggleKichHoat($id, $status);
+    public function apiToggleKichBan() {
+        $id = $_GET['id'] ?? null;
+        $status = $_GET['status'] ?? 0;
+        $result = $this->kbService->thayDoiTrangThai($id, $status);
         
         if ($result) {
-            // Gọi tín hiệu sang Node.js Bridge qua cổng 3001
             $url = "http://localhost:3001/capnhatkichban?id=" . $id;
-            @file_get_contents($url); 
-
-            $_SESSION['msg'] = 'edit_success';
+            @file_get_contents($url);
         }
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => (bool)$result]);
+        exit;
     }
-    header('Location: index.php?page=tudong');
-    exit;
-}
 }

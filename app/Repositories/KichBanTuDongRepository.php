@@ -123,4 +123,30 @@ class KichBanTuDongRepository
         $sql = "DELETE FROM kichban_tudong WHERE idKichBan = ?";
         return $this->db->capNhat($sql, [$id]);
     }
+
+    public function updateTatCaTrangThai($trangThai)
+    {
+        $sql = "UPDATE kichban_tudong SET kichHoat = ?";
+        return $this->db->capNhat($sql, [$trangThai]);
+    }
+
+    public function checkHeThongIsManual() {
+        // Nếu có ít nhất 1 kịch bản đang bật (kichHoat = 1) -> Hệ thống là AUTO
+        // Nếu tất cả đều tắt -> Hệ thống là MANUAL
+        $sql = "SELECT COUNT(*) as count FROM kichban_tudong WHERE kichHoat = 1";
+        $kq = $this->db->truyVan($sql);
+        $row = $kq->fetch_assoc();
+        return (int)$row['count'] === 0; 
+    }
+
+    public function layTrangThaiKichBan($id)
+    {
+        $sql = "SELECT kichHoat FROM kichban_tudong WHERE idKichBan = ?";
+        $kq = $this->db->truyVan($sql, [$id]);
+        if ($kq && $kq->num_rows > 0) {
+            $row = $kq->fetch_assoc();
+            return (int)$row['kichHoat'];
+        }
+        return 0;
+    }   
 }
