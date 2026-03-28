@@ -5,12 +5,11 @@ const app = express();
 
 // 1. Cấu hình Database (Chỉ để ĐỌC kịch bản, không ghi log vào đây)
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'kho_iot',
-    waitForConnections: true,
-    connectionLimit: 10
+    host: process.env.DB_HOST || 'localhost', // Trên Cloud sẽ là địa chỉ của DB
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'kho_iot',
+    port: process.env.DB_PORT || 3306
 });
 
 // 2. Cấu hình MQTT HiveMQ
@@ -82,6 +81,49 @@ const pushRulesToDevice = (idKichBan) => {
     });
 };
 
+const updateDeviceConnectionStatus = (maThietBi, statusValue) => {
+    const time = getTimestamp();
+    const statusText = statusValue === 1 ? "ONLINE" : "OFFLINE";
+    const color = statusValue === 1 ? "\x1b[32m" : "\x1b[31m";
+    const sql = `UPDATE thietbi SET trangThai = ? WHERE maThietBi = ?`;
+
+    db.query(sql, [statusValue, maThietBi], (err, result) => {
+        if (err) {
+            console.log(`\x1b[31m[${time}] [STATUS_ERROR] ${err.message}\x1b[0m`);
+            return;
+        }
+        if (result.affectedRows > 0) {
+            console.log(`${color}[${time}] [STATUS_UPDATE] ${maThietBi} is now ${statusText}\x1b[0m`);
+        }
+    });
+};
+
+const handleSensorData = (deviceId, payload) => {
+    const time = getTimestamp();
+    const insertSql = `
+        INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang)
+        SELECT idThietBi, ?, ?, ?, ? 
+        FROM thietbi 
+        WHERE maThietBi = ? 
+        LIMIT 1`;
+
+    const values = [
+        payload.t || null,
+        payload.h || null,
+        payload.co2 || null,
+        payload.as || null,
+        deviceId
+    ];
+
+    db.query(insertSql, values, (err, result) => {
+        if (err) {
+            console.log(`\x1b[31m[${time}] [SAVE_ERROR] Lỗi lưu DB: ${err.message}\x1b[0m`);
+        } else if (result.affectedRows > 0) {
+            console.log(`\x1b[34m[${time}] [DB_SAVED] Dữ liệu cảm biến từ ${deviceId} đã được lưu\x1b[0m`);
+        }
+    });
+};
+
 // 4. Lắng nghe tin nhắn từ MQTT
 client.on('connect', () => {
     console.log(`\x1b[32m[${getTimestamp()}] >>> Đã kết nối HiveMQ thành công\x1b[0m`);
@@ -89,51 +131,23 @@ client.on('connect', () => {
 });
 
 client.on('message', (topic, message) => {
-    const time = getTimestamp();
     try {
         const payload = JSON.parse(message.toString());
         const topicParts = topic.split('/');
-        const deviceId = topicParts.pop(); // Ví dụ: "TB01"
-        const subTopic = topicParts[1];
+        const deviceId = topicParts[1];
 
-        if (subTopic === 'log') {
-            console.log(`\x1b[33m[${time}] [DEVICE_LOG] ${deviceId}: ${payload.action} -> ${payload.detail}\x1b[0m`);
-        } else if (subTopic === 'ack') {
-            console.log(`\x1b[36m[${time}] [DEVICE_ACK] ${deviceId}: Thiết bị đã áp dụng kịch bản mới.\x1b[0m`);
+        if (topic.endsWith('/status')) {
+            if (payload.s !== undefined) {
+                updateDeviceConnectionStatus(deviceId, payload.s);
+            }
         } else if (topic === `kho_iot/${deviceId}`) {
-            // 1. Log ra terminal để theo dõi nhanh
-            console.log(`\x1b[34m[${time}] [SENSOR_DATA] ${deviceId}: Temp: ${payload.t}°C, Hum: ${payload.h}%\x1b[0m`);
-
-            // 2. Lưu vào Database
-            const insertSql = `
-                INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang)
-                SELECT idThietBi, ?, ?, ?, ? 
-                FROM thietbi 
-                WHERE maThietBi = ? 
-                LIMIT 1`;
-
-            const values = [
-                payload.t || null,              // nhietDo
-                payload.h || null,              // doAm
-                payload.co2 || null,            // nongDoCo2
-                payload.as || null,             // cuongDoAnhSang
-                deviceId                        // maThietBi dùng để tìm idThietBi
-            ];
-
-            db.query(insertSql, values, (err, result) => {
-                if (err) {
-                    console.log(`\x1b[31m[${time}] [SAVE_ERROR] Lỗi lưu DB: ${err.message}\x1b[0m`);
-                } else if (result.affectedRows > 0) {
-                    // Log nhẹ để biết đã lưu thành công
-                    console.log(`\x1b[32m[${time}] [DB_SAVED] Đã lưu dữ liệu cho ${deviceId}\x1b[0m`);
-                } else {
-                    console.log(`\x1b[33m[${time}] [DB_WARN] Không tìm thấy mã thiết bị ${deviceId} trong bảng thietbi\x1b[0m`);
-                }
-            });
+            handleSensorData(deviceId, payload);
+        } else if (topicParts[2] === 'log') {
+            console.log(`\x1b[33m[${getTimestamp()}] [DEVICE_LOG] ${deviceId}: ${payload.action} -> ${payload.detail}\x1b[0m`);
+        } else if (topicParts[2] === 'ack') {
+            console.log(`\x1b[36m[${getTimestamp()}] [DEVICE_ACK] ${deviceId}: Kịch bản đã được áp dụng.\x1b[0m`);
         }
-    } catch (e) {
-        // Không spam terminal nếu payload không phải JSON
-    }
+    } catch (e) {}
 });
 
 // 5. API Router

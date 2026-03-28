@@ -14,33 +14,27 @@ class LogSecurityService {
     public function ghiNhanTruyCap() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-        if ($method === 'GET') {
+        if (strpos($uri, 'page=auth') === false) {
             return false;
         }
 
-        $dsTrangBoQua = [
-            'page=alert_log',
-            'page=security_detail',
-            '/api/ping'
-        ];
-
-        foreach ($dsTrangBoQua as $trang) {
-            if (strpos($uri, $trang) !== false) {
-                return false;
-            }
-        }
-
         $ip = $this->getRealIp();
-        $geo = $this->getGeoInfo($ip);
+        
+        if (!isset($_SESSION['geo_data']) || $_SESSION['geo_ip'] !== $ip) {
+            $_SESSION['geo_data'] = $this->getGeoInfo($ip);
+            $_SESSION['geo_ip'] = $ip;
+        }
+        
+        $geo = $_SESSION['geo_data'];
         
         $data = [
-            'idNguoiDung' => $_SESSION['user_id'] ?? null,
+            'idNguoiDung' => null,
             'ipAddress'   => $ip,
             'fingerprint' => $_COOKIE['device_fingerprint'] ?? 'N/A',
-            'userAgent'   => $_SERVER['HTTP_USER_AGENT'],
+            'userAgent'   => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
             'method'      => $method,
             'requestUri'  => $uri,
             'sessionId'   => session_id(),

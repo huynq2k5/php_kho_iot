@@ -65,11 +65,7 @@
                                     </td>
                                     
                                     <td class="px-4 py-3 text-xs">
-                                        <?php if (!$tb->isActive()): ?>
-                                            <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-                                                <i class="fas fa-ban mr-1"></i> Vô hiệu hóa
-                                            </span>
-                                        <?php elseif ($tb->isOnline()): ?>
+                                        <?php if ($tb->trangThai == 1): ?>
                                             <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                                 Online
                                             </span>

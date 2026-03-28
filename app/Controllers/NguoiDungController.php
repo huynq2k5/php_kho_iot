@@ -242,5 +242,21 @@ class NguoiDungController extends BaseController{
             exit;
         }
     }
+
+    public function apiTimKiem() {
+        $keyword = $_GET['keyword'] ?? '';
+        $role = $_GET['role'] ?? ''; // Đây là idNhom từ select box
+
+        $danhSachNguoiDung = $this->userService->timKiemNguoiDung($keyword, $role);
+        
+        // Nếu bạn muốn dùng AJAX, hãy trả về JSON
+        if (isset($_GET['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode($danhSachNguoiDung);
+            exit;
+        }
+
+        return $danhSachNguoiDung;
+    }
 }
 ?>

@@ -67,6 +67,7 @@ function hasPermission($permissionCode) {
 // 3. ĐIỀU HƯỚNG VÀ KIỂM TRA QUYỀN
 switch ($page) {
     case 'auth':
+        $controller = new \App\Controllers\AuthController();
         $layout = 'auth';
         $viewFile = $viewDir . '/auth/login.php';
         break;
@@ -105,13 +106,9 @@ switch ($page) {
             $page = '403';
         }
         break;
-    case 'tudong-master':
-        if (hasPermission('trangchu.view')) {
-            $controller = new \App\Controllers\TrangChuController();
-            $controller->toggleMasterMode();
-        } else {
-            $page = '403';
-        }
+    case 'api_ttTB':
+        $controller = new \App\Controllers\TrangChuController();
+        $controller->layJSONTrangThaiThietBi();
         break;
 
     // Các tab thiết bị
@@ -376,6 +373,11 @@ switch ($page) {
             $page = '403';
         }
         break;
+    case 'users_search':
+        $controller = new \App\Controllers\NguoiDungController();
+        $controller->apiTimKiem();
+        break;
+
     case 'nguoidung_them':
         if (hasPermission('nguoidung.view')) {
             $userController = new \App\Controllers\NguoiDungController();

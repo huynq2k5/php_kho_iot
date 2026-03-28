@@ -44,15 +44,35 @@
                 <div class="automation-group group">
                     <div class="flex justify-between items-center mb-3">
                         <span class="font-bold text-gray-700 dark:text-gray-200"><?php echo $kb->tenKichBan; ?></span>
-                        <label class="flex items-center cursor-pointer relative">
-                            <input type="checkbox" 
-                                class="sr-only peer kb-toggle" 
-                                data-id="<?php echo $kb->idKichBan; ?>"
-                                <?php echo $kb->kichHoat ? 'checked' : ''; ?>
-                                onchange="toggleAutomation(<?php echo $kb->idKichBan; ?>, this.checked)">
-                            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300"></div>
-                            <div class="absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full transition-all duration-300 peer-checked:translate-x-5 shadow-sm"></div>
-                        </label>
+                        
+                        <div class="flex items-center space-x-3">
+                            <a href="index.php?page=tudong-sua&id=<?php echo $kb->idKichBan; ?>" 
+                            class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors dark:text-blue-400 dark:hover:bg-gray-700" 
+                            title="Chỉnh sửa">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+
+                            <button @click="openModal" 
+                                onclick="triggerModal({
+                                    title: 'Xóa người dùng',
+                                    description: 'Bạn đang xóa <?= $kb->tenKichBan ?>. Hành động này không thể hoàn tác!',
+                                    confirmUrl: 'index.php?page=tudong_xuly_xoa&id=<?= $kb->idKichBan ?>',
+                                    btnClass: 'bg-red-600 hover:bg-red-700'
+                                })"
+                                class="text-gray-400 hover:text-red-600 transition-colors duration-150">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                            <label class="flex items-center cursor-pointer relative ml-2">
+                                <input type="checkbox" 
+                                    class="sr-only peer kb-toggle" 
+                                    data-id="<?php echo $kb->idKichBan; ?>"
+                                    <?php echo $kb->kichHoat ? 'checked' : ''; ?>
+                                    onchange="toggleAutomation(<?php echo $kb->idKichBan; ?>, this.checked)">
+                                <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-red-600 transition-all duration-300"></div>
+                                <div class="absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full transition-all duration-300 peer-checked:translate-x-5 shadow-sm"></div>
+                            </label>
+                        </div>
                     </div>
                     
                     <div class="relative p-3 bg-gray-50 rounded-lg dark:bg-gray-700 border border-gray-100 dark:border-gray-600 flex items-center justify-between overflow-hidden">
@@ -65,7 +85,7 @@
                             <?php echo $kb->hanhDong === 'ON' ? 'BẬT' : 'TẮT'; ?> <?php echo $kb->tenThanhPhanRa; ?>
                         </span>
                     </div>
-                    </div>
+                </div>
                 <?php endforeach; ?>
             </div>
         </div>

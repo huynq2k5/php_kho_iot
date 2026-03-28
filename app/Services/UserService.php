@@ -66,5 +66,19 @@ class UserService{
         if (!$idUser || !$idNhomMoi) return false;
         return $this->userRepo->updateIdNhom($idUser, $idNhomMoi);
     }
+
+    public function timKiemNguoiDung($keyword, $idNhom) {
+        $users = $this->userRepo->searchUsers($keyword, $idNhom);
+
+        foreach ($users as $user) {
+            if (isset($user->idNhom)) {
+                $user->permissions = $this->userRepo->getPermissions($user->idNhom);
+            } else {
+                $user->permissions = [];
+            }
+        }
+
+        return $users;
+    }
 }
 ?>

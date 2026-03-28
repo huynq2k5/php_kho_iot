@@ -325,6 +325,27 @@
 		});
 	}
 
+	function updateNodeStatusAjax() {
+		fetch('index.php?page=api_ttTB')
+			.then(response => response.json())
+			.then(data => {
+				data.forEach(tb => {
+					const row = document.getElementById(`node-row-${tb.maThietBi}`);
+					const statusBadge = document.getElementById(`node-status-${tb.maThietBi}`);
+					
+					if (row && statusBadge) {
+						const isOnline = (parseInt(tb.trangThai) === 1);
+						
+						row.className = `flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 ${isOnline ? 'border-green-500' : 'border-red-500'}`;
+						
+						statusBadge.innerText = isOnline ? 'ONLINE' : 'OFFLINE';
+						statusBadge.className = `text-xs font-black px-2 py-1 rounded ${isOnline ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+					}
+				});
+			})
+			.catch(err => console.error("Lỗi cập nhật thiết bị:", err));
+	}
+
     document.addEventListener("DOMContentLoaded", () => {
 		document.getElementById('masterSwitch')?.addEventListener('click', function(e) {
 			if (!client.isConnected()) {
@@ -346,6 +367,7 @@
 			// vì lát nữa tin nhắn phản hồi về onMessageArrived sẽ lo việc đó.
 		});
         document.getElementById('masterSwitch')?.addEventListener('change', updateAllButtons);
+		setInterval(updateNodeStatusAjax, 5000);
         startConnect();
     });
 </script>

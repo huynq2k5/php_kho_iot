@@ -167,4 +167,27 @@ class UserRepository {
         $sql = "UPDATE nguoidung SET idNhom = ? WHERE idNguoiDung = ?";
         return $this->db->capNhat($sql, [$idNhomMoi, $idNguoiDung]);
     }
+
+    public function searchUsers($keyword = '', $idNhom = '') {
+        $sql = "SELECT u.*, n.tenNhom as role_name 
+                FROM nguoidung u 
+                JOIN nhomnguoidung n ON u.idNhom = n.idNhom 
+                WHERE (u.tenDangNhap LIKE ? OR u.hoTen LIKE ?)";
+        
+        $params = ["%$keyword%", "%$keyword%"];
+
+        if (!empty($idNhom)) {
+            $sql .= " AND u.idNhom = ?";
+            $params[] = $idNhom;
+        }
+
+        $result = $this->db->truyVan($sql, $params);
+        $users = [];
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = (object)$row;
+            }
+        }
+        return $users;
+    }
 }
