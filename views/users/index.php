@@ -475,32 +475,52 @@
         }
     }
 
-    document.querySelector('button:has(.fa-filter)').addEventListener('click', function() {
-        // 1. Lấy giá trị chính xác từ ID
-        const keyword = document.getElementById('searchInput').value.trim();
-        const roleId = document.getElementById('filterRole').value;
+    // Tìm nút lọc một lần duy nhất
+    const filterBtn = document.querySelector('button:has(.fa-filter)');
 
-        console.log(`Đang lọc: [${keyword}] - Vai trò: [${roleId}]`); // Để Huy kiểm tra ở Console
+    if (filterBtn) {
+        // CHỈ CẦN 1 LẦN addEventListener
+        filterBtn.addEventListener('click', function() {
+            // 1. Lưu lại nội dung gốc (Lọc + Icon phễu)
+            const originalContent = this.innerHTML;
+            const btn = this; // Gán vào biến btn để đảm bảo scope trong Promise
 
-        // 2. Gửi yêu cầu lên Server
-        fetch(`index.php?page=users_search&ajax=1&keyword=${encodeURIComponent(keyword)}&role=${roleId}`)
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.querySelector('tbody');
-                tbody.innerHTML = ''; 
+            // 2. Lấy giá trị
+            const keyword = document.getElementById('searchInput').value.trim();
+            const roleId = document.getElementById('filterRole').value;
 
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Không tìm thấy kết quả nào.</td></tr>';
-                    return;
-                }
+            // 3. Hiệu ứng LOADING
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> <span>Đang lọc...</span>';
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
 
-                data.forEach(user => {
-                    // Hàm render row giữ nguyên như cũ
-                    renderUserRow(tbody, user); 
+            // 4. Gửi yêu cầu
+            fetch(`index.php?page=users_search&ajax=1&keyword=${encodeURIComponent(keyword)}&role=${roleId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.querySelector('tbody');
+                    tbody.innerHTML = ''; 
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Không tìm thấy kết quả nào.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(user => {
+                        renderUserRow(tbody, user); 
+                    });
+                })
+                .catch(err => {
+                    console.error("Lỗi AJAX:", err);
+                })
+                .finally(() => {
+                    // 5. HOÀN TÁC: Đưa nút về trạng thái ban đầu
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'cursor-not-allowed');
                 });
-            })
-            .catch(err => console.error("Lỗi AJAX:", err));
-    });
+        });
+    }
 
     // Hàm phụ để code sạch hơn (Huy nên tách ra như thế này)
     function renderUserRow(tbody, user) {

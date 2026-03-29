@@ -99,4 +99,14 @@ class ThietBiRepository {
         }
         return $dsThietBi;
     }
+
+    public function layIdTuMaThietBi($maThietBi) {
+        $sql = "SELECT idThietBi FROM thietbi WHERE maThietBi = ? LIMIT 1";
+        $kq = $this->db->truyVan($sql, [$maThietBi]);
+        if ($kq && $kq->num_rows > 0) {
+            $row = $kq->fetch_assoc();
+            return $row['idThietBi'];
+        }
+        return null;
+    }
 }

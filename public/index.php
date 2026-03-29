@@ -98,9 +98,11 @@ switch ($page) {
         if (hasPermission('trangchu.view')) {
             $kbService = new \App\Services\KichBanTuDongService();
             $controller = new App\Controllers\TrangChuController();
+            $data = $controller->index();
             $ttTB = $controller->layTrangThaiThietBi();
             // Định nghĩa biến này để file view bên dưới có thể dùng được
             $isManual = $kbService->isHeThongManual();
+
             $viewFile = $viewDir . '/trangchu/index.php';
         } else {
             $page = '403';
@@ -132,15 +134,16 @@ switch ($page) {
         }
         break;
     case 'thietbi_sua':
-        if (hasPermission('thietbi.view')) {
-            $id = $_GET['id'] ?? null;
-            $tbkvController = new \App\Controllers\TbiKvucController();
-            $tb = $tbkvController->layThongTinSuaThietBi($id);
-            $dsKhuVuc = $tbkvController->layDuLieuKhuVuc();
-            $viewFile = $viewDir . '/thietbi/sua_thietbi.php';
-        } else {
-            $page = '403';
-        }
+        $id = $_GET['id'] ?? null;
+        $tbkvController = new \App\Controllers\TbiKvucController();
+        
+        $tb = $tbkvController->layThongTinSuaThietBi($id);
+        $dsKhuVuc = $tbkvController->layDuLieuKhuVuc();
+        // Gọi hàm mới thêm để lấy danh sách linh kiện
+        $dsThanhPhan = $tbkvController->layDuLieuThanhPhan($id); 
+        
+        $isEdit = true;
+        $viewFile = $viewDir . '/thietbi/sua_thietbi.php';
         break;
     case 'thietbi_xuly_them':
         if (hasPermission('thietbi.view')) {
@@ -177,7 +180,16 @@ switch ($page) {
         } else {
             $page = '403';
         }
-        break;    
+        break;  
+    
+    case 'lichsu_export':
+        if (hasPermission('thietbi.view')) { 
+            $tbkvController = new \App\Controllers\TbiKvucController();
+            $tbkvController->webXuatExcelLichSu();
+        } else {
+            header('Location: index.php?page=403');
+        }
+        break;  
     
     case 'khuvuc_them':
         if (hasPermission('thietbi.view')) {

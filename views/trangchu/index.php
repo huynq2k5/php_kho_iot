@@ -5,15 +5,18 @@
 </h2>
 
 <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-    
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
         <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-500">
             <i class="fas fa-temperature-high text-xl w-5 h-5 flex items-center justify-center"></i>
         </div>
         <div>
-            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Nhiệt độ</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-nhietdo">-- °C</p>
-            <p class="text-xs font-bold text-red-600 mt-1">Cao hơn chuẩn</p>
+            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Nhiệt độ TB</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-nhietdo">
+                <?= number_format($data['overview']['avgTemp'] ?? 0, 1) ?> °C
+            </p>
+            <p class="text-xs font-bold mt-1 <?= $data['status']['temp']['class'] ?? 'text-gray-500' ?>">
+                <?= $data['status']['temp']['text'] ?? 'Đang tải...' ?>
+            </p>
         </div>
     </div>
 
@@ -22,9 +25,13 @@
             <i class="fas fa-tint text-xl w-5 h-5 flex items-center justify-center"></i>
         </div>
         <div>
-            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Độ ẩm</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-doam">-- %</p>
-            <p class="text-xs text-gray-500 mt-1">Ổn định</p>
+            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Độ ẩm TB</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-doam">
+                <?= number_format($data['overview']['avgHum'] ?? 0, 1) ?> %
+            </p>
+            <p class="text-xs font-bold mt-1 <?= $data['status']['hum']['class'] ?? 'text-gray-500' ?>">
+                <?= $data['status']['hum']['text'] ?? 'Đang tải...' ?>
+            </p>
         </div>
     </div>
 
@@ -33,9 +40,13 @@
             <i class="fas fa-sun text-xl w-5 h-5 flex items-center justify-center"></i>
         </div>
         <div>
-            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Ánh sáng</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-anhsang">-- Lux</p>
-            <p class="text-xs text-gray-500 mt-1">Trời nắng</p>
+            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Ánh sáng TB</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-anhsang">
+                <?= number_format($data['overview']['avgLight'] ?? 0, 0) ?> Lux
+            </p>
+            <p class="text-xs font-bold mt-1 <?= $data['status']['light']['class'] ?? 'text-gray-500' ?>">
+                <?= $data['status']['light']['text'] ?? 'Đang tải...' ?>
+            </p>
         </div>
     </div>
 
@@ -44,9 +55,13 @@
             <i class="fas fa-wind text-xl w-5 h-5 flex items-center justify-center"></i>
         </div>
         <div>
-            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Nồng độ CO2</p>
-            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-co2">-- ppm</p>
-            <p class="text-xs text-green-600 font-bold mt-1">Không khí tốt</p>
+            <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Nồng độ CO2 TB</p>
+            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-co2">
+                <?= number_format($data['overview']['avgCo2'] ?? 0, 0) ?> ppm
+            </p>
+            <p class="text-xs font-bold mt-1 <?= $data['status']['co2']['class'] ?? 'text-gray-500' ?>">
+                <?= $data['status']['co2']['text'] ?? 'Đang tải...' ?>
+            </p>
         </div>
     </div>
 </div>

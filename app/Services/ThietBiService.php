@@ -57,4 +57,8 @@ class ThietBiService {
         $dsThietBi = $this->thietBiRepo->timKiemThietBi($tuKhoa);
         return $dsThietBi;
     }
+
+    public function layIdThietBi($maThietBi) {
+        return $this->thietBiRepo->layIdTuMaThietBi($maThietBi);
+    }
 }

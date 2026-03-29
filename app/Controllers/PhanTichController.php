@@ -27,6 +27,13 @@ class PhanTichController extends BaseController{
 
         $data = $this->lichSuService->layDuLieuVeBieuDo($idThietBi, $period, $sensorType);
 
+        $data['analysis'] = $this->lichSuService->phanTichChiSo(
+            $data['values'], 
+            $data['macd'], 
+            $data['rsi'], 
+            $sensorType
+        );
+
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;

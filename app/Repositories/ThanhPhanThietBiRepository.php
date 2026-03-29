@@ -108,4 +108,9 @@ class ThanhPhanThietBiRepository
         $sql = "DELETE FROM thanhphan_thietbi WHERE idThanhPhan = ?";
         return $this->db->capNhat($sql, [$id]);
     }
+    public function deleteByDevice($idThietBi)
+    {
+        $sql = "DELETE FROM thanhphan_thietbi WHERE idThietBi = ?";
+        return $this->db->capNhat($sql, [$idThietBi]);
+    }
 }

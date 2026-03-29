@@ -59,4 +59,9 @@ class ThanhPhanThietBiService {
             'actuators' => $output
         ];
     }
+
+    public function xoaTatCaThanhPhanCuaThietBi($idThietBi)
+    {
+        return $this->tpRepo->deleteByDevice($idThietBi);
+    }
 }

@@ -90,57 +90,41 @@
                     Đánh giá hệ thống
                 </h4>
                 
-                <div class="p-3 mb-4 text-sm text-red-800 bg-red-100 rounded-lg border-l-4 border-red-600 dark:bg-red-900/40 dark:text-red-200">
+                <div id="eval-alert-box" class="p-3 mb-4 text-sm rounded-lg border-l-4">
                     <div class="flex items-center font-bold mb-1">
-                        <i class="fas fa-exclamation-triangle mr-2"></i> Cảnh báo đa chỉ số!
+                        <i class="fas fa-microchip mr-2"></i> Trạng thái phân tích
                     </div>
-                    <p>MACD cho thấy xu hướng tăng, đồng thời <span class="font-bold underline">RSI đã chạm mức 74</span> (Vùng quá nhiệt). Cần can thiệp ngay để tránh sốc nhiệt cho kho bãi.</p>
+                    <p id="eval-description">Đang phân tích dữ liệu...</p>
                 </div>
 
                 <div class="space-y-3">
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-600 dark:text-gray-400">Xu hướng (MACD):</span>
-                        <span class="flex items-center text-red-600 dark:text-red-500 font-bold">
-                            <i class="fas fa-arrow-up mr-1"></i> Tăng mạnh
-                        </span>
+                        <span id="eval-trend-val" class="font-bold">--</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-600 dark:text-gray-400">Cường độ (RSI):</span>
-                        <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-                            74 (Quá nhiệt)
-                        </span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-600 dark:text-gray-400">Trạng thái:</span>
-                        <span class="font-bold text-gray-700 dark:text-gray-200">Biến động nhanh</span>
+                        <span id="eval-rsi-val" class="px-2 py-1 font-semibold leading-tight rounded-full">--</span>
                     </div>
                 </div>
             </div>
 
-            <div class="min-w-0 p-4 text-white bg-red-600 rounded-lg shadow-xs">
+            <div id="suggestion-card" class="min-w-0 p-4 text-white rounded-lg shadow-xs transition-colors duration-300">
                 <h4 class="mb-4 font-semibold text-white text-lg">
                     Gợi ý tối ưu vận hành
                 </h4>
                 
-                <p class="mb-4 text-red-100 text-sm opacity-90">
-                    Dựa trên RSI > 70, cường độ tăng nhiệt đang ở mức báo động. Hệ thống đề xuất kích hoạt kịch bản làm mát cưỡng bức thay vì kịch bản tự động thông thường.
+                <p id="suggestion-text" class="mb-4 text-white text-sm opacity-90">
+                    Hệ thống đang thu thập thêm dữ liệu để đưa ra gợi ý chính xác nhất.
                 </p>
 
-                <div class="flex items-center justify-between p-4 bg-red-700 bg-opacity-50 rounded-lg border border-red-500">
-                    <div class="text-center">
-                        <p class="text-xs font-bold text-red-200 uppercase tracking-wide">Quạt hiện tại</p>
-                        <p class="text-xl font-bold text-white">40% công suất</p>
-                    </div>
-                    <i class="fas fa-bolt text-yellow-300 animate-pulse"></i>
-                    <div class="text-center">
-                        <p class="text-xs font-bold text-green-300 uppercase tracking-wide">Đề xuất mới</p>
-                        <p class="text-2xl font-bold text-green-300">80% công suất</p>
+                <div class="flex items-center justify-between p-4 bg-black bg-opacity-20 rounded-lg border border-white border-opacity-20">
+                    <div class="text-center w-full">
+                        <p class="text-xs font-bold text-white uppercase tracking-wide opacity-80">Thông tin phản hồi</p>
+                        <p id="suggestion-brief" class="text-lg font-bold text-white">Chế độ tự động</p>
                     </div>
                 </div>
-
-                <button class="w-full mt-4 px-4 py-3 text-sm font-bold leading-5 text-red-600 transition-colors duration-150 bg-white border border-transparent rounded-lg hover:bg-gray-100 focus:outline-none shadow-sm">
-                    <i class="fas fa-check-circle me-2"></i> Kích hoạt làm mát cưỡng bức
-                </button>
+                
             </div>
 
         </div>
@@ -183,13 +167,6 @@
                 data: { labels: [], datasets: [{ label: 'RSI Nhiệt độ', data: [], borderColor: '#9333ea', borderWidth: 2, pointRadius: 0, tension: 0.3 }] },
                 options: { ...commonOptions, scales: { y: { min: 0, max: 100 } } }
             });
-
-            // 4. Stability Chart
-            stabilityChart = new Chart(document.getElementById('stabilityChart'), {
-                type: 'line',
-                data: { labels: [], datasets: [{ data: [], borderColor: '#0694a2', fill: true, pointRadius: 0, tension: 0.4, backgroundColor: 'rgba(6, 148, 162, 0.1)' }] },
-                options: { ...commonOptions, scales: { y: { min: 0, max: 100 } } }
-            });
         }
 
         async function loadSensors(idThietBi) {
@@ -216,67 +193,98 @@
 
         async function updateDashboard() {
             const idTB = deviceFilter.value;
-            const sensor = sensorFilter.value; // Lấy giá trị từ Select cảm biến
-            const period = periodFilter.value; // Lấy giá trị từ Select thời gian
+            const sensor = sensorFilter.value;
+            const period = periodFilter.value;
 
             if (!idTB || !sensor) return;
 
             filterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
             try {
-                // Dùng biến `${sensor}` và `${period}` để URL thay đổi theo Select
                 const response = await fetch(`index.php?page=phantich_api_data&idThietBi=${idTB}&period=${period}&sensorType=${sensor}`);
                 const res = await response.json();
 
-                // Cập nhật tất cả biểu đồ theo cùng 1 nguồn dữ liệu vừa chọn
-                [realtimeChart, macdChart, rsiChart, stabilityChart].forEach(chart => {
-                    chart.data.labels = res.labels;
+                // CHỈ cập nhật 3 biểu đồ thực tế đang có
+                [realtimeChart, macdChart, rsiChart].forEach(chart => {
+                    if (chart) {
+                        chart.data.labels = res.labels;
+                    }
                 });
 
-                realtimeChart.data.datasets[0].label = sensorFilter.options[sensorFilter.selectedIndex].text;
-                realtimeChart.data.datasets[0].data = res.values;
-                realtimeChart.update();
+                if (realtimeChart) {
+                    realtimeChart.data.datasets[0].label = sensorFilter.options[sensorFilter.selectedIndex].text;
+                    realtimeChart.data.datasets[0].data = res.values;
+                    realtimeChart.update();
+                }
 
-                macdChart.data.datasets[0].data = res.macd.macd;
-                macdChart.data.datasets[1].data = res.macd.signal;
-                macdChart.data.datasets[2].data = res.macd.histogram;
-                macdChart.data.datasets[2].backgroundColor = res.macd.histogram.map(v => v >= 0 ? 'rgba(220, 38, 38, 0.3)' : 'rgba(156, 163, 175, 0.3)');
-                macdChart.update();
+                if (macdChart) {
+                    macdChart.data.datasets[0].data = res.macd.macd;
+                    macdChart.data.datasets[1].data = res.macd.signal;
+                    macdChart.data.datasets[2].data = res.macd.histogram;
+                    macdChart.data.datasets[2].backgroundColor = res.macd.histogram.map(v => v >= 0 ? 'rgba(220, 38, 38, 0.3)' : 'rgba(156, 163, 175, 0.3)');
+                    macdChart.update();
+                }
 
-                rsiChart.data.datasets[0].data = res.rsi;
-                rsiChart.update();
+                if (rsiChart) {
+                    rsiChart.data.datasets[0].data = res.rsi;
+                    rsiChart.update();
+                }
 
-                stabilityChart.data.datasets[0].data = res.rsi.map(v => 100 - Math.abs(50 - v) * 2);
-                stabilityChart.update();
-
+                // Gọi hàm cập nhật Card (Lần này chắc chắn sẽ chạy vì không bị lỗi Chart chặn đường)
                 updateUIAnalysis(res);
+
             } catch (error) {
-                console.error("Lỗi fetch:", error);
+                console.error("Lỗi fetch dữ liệu:", error);
             } finally {
                 filterBtn.innerHTML = '<i class="fas fa-filter mr-1"></i> Lọc';
             }
         }
 
         function updateUIAnalysis(res) {
-            if (!res.rsi || res.rsi.length === 0) return;
-            const lastRSI = Math.round(res.rsi[res.rsi.length - 1]);
-            const lastMACD = res.macd.macd[res.macd.macd.length - 1];
-            const lastSignal = res.macd.signal[res.macd.signal.length - 1];
-
-            // Cập nhật Badge RSI
-            const rsiBadge = document.querySelector('.px-2.py-1.font-semibold.leading-tight.rounded-full');
-            if (rsiBadge) {
-                const status = lastRSI > 70 ? 'Quá nhiệt' : (lastRSI < 30 ? 'Quá lạnh' : 'Ổn định');
-                rsiBadge.textContent = `${lastRSI} (${status})`;
-                rsiBadge.className = `px-2 py-1 font-semibold leading-tight rounded-full ${lastRSI > 70 ? 'text-red-700 bg-red-100' : 'text-green-700 bg-green-100'}`;
+            const analysis = res.analysis;
+            // Nếu Backend chưa trả về mảng analysis, dừng lại để tránh lỗi
+            if (!analysis) {
+                console.warn("Dữ liệu phân tích (analysis) bị thiếu trong JSON!");
+                return;
             }
 
-            // Cập nhật Mũi tên và Text Xu hướng
-            const trendText = document.querySelector('.flex.items-center.text-red-600.font-bold');
-            if (trendText) {
-                const isUp = lastMACD > lastSignal;
-                trendText.innerHTML = isUp ? '<i class="fas fa-arrow-up mr-1"></i> Tăng mạnh' : '<i class="fas fa-arrow-down mr-1 text-blue-500"></i> Đang giảm';
-                trendText.className = isUp ? 'flex items-center text-red-600 font-bold' : 'flex items-center text-blue-600 font-bold';
+            // 1. Cập nhật Card Đánh giá
+            const evalDesc = document.getElementById('eval-description');
+            const evalAlert = document.getElementById('eval-alert-box');
+            const trendVal = document.getElementById('eval-trend-val');
+            const rsiVal = document.getElementById('eval-rsi-val');
+
+            if (evalDesc) evalDesc.textContent = analysis.evaluation;
+            
+            if (evalAlert) {
+                // Sửa lỗi replace class cũ: Thêm cả class màu nền mờ và màu chữ
+                evalAlert.className = `p-3 mb-4 text-sm rounded-lg border-l-4 ${analysis.bgClass} bg-opacity-20 ${analysis.statusClass} border-current`;
+            }
+
+            if (trendVal) {
+                trendVal.textContent = analysis.trendText;
+                trendVal.className = `font-bold ${analysis.statusClass}`;
+            }
+
+            if (rsiVal) {
+                rsiVal.textContent = analysis.lastRSI;
+                rsiVal.className = `px-2 py-1 font-semibold leading-tight rounded-full ${analysis.bgClass} text-white`;
+            }
+
+            // 2. Cập nhật Card Gợi ý
+            const suggestCard = document.getElementById('suggestion-card');
+            const suggestText = document.getElementById('suggestion-text');
+            const suggestBrief = document.getElementById('suggestion-brief');
+
+            if (suggestCard) {
+                suggestCard.className = `min-w-0 p-4 text-white rounded-lg shadow-xs transition-colors duration-300 ${analysis.bgClass}`;
+            }
+
+            if (suggestText) suggestText.textContent = analysis.suggestion;
+            
+            if (suggestBrief) {
+                // Tự động đưa ra kết luận ngắn gọn dựa trên chỉ số RSI
+                suggestBrief.textContent = analysis.lastRSI > 70 ? "Cần tăng công xuất thiết bị chấp hành" : (analysis.lastRSI < 30 ? "Cần giảm công xuất thiết bị chấp hành" : "Vận hành tốt");
             }
         }
 

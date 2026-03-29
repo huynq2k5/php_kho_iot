@@ -8,7 +8,7 @@ $isEdit = true;
 <div class="flex flex-col items-start justify-between w-full gap-4 my-6 sm:flex-row sm:items-center">
     <div>
         <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Sửa thiết bị: <span class="text-red-600 font-mono"><?= htmlspecialchars($data['maThietBi'] ?? '') ?></span>
+            Sửa thiết bị: <span class="text-red-600 font-mono"><?= htmlspecialchars($tb->maThietBi ?? '') ?></span>
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Cập nhật cấu hình kết nối và vị trí lắp đặt của thiết bị
@@ -30,8 +30,17 @@ $isEdit = true;
            class="px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition-colors duration-150 bg-white border border-gray-300 rounded-lg hover:text-gray-800 hover:border-gray-400 focus:outline-none focus:shadow-outline-red dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-gray-300 dark:hover:border-gray-500">
             <i class="fas fa-times mr-2"></i> Hủy
         </a>
-        <button type="submit" 
-                class="px-5 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:shadow-outline-red shadow-md">
+
+        <button @click="openModal" 
+                type="button" 
+                onclick="triggerModal({
+                    title: 'Xác nhận cập nhật',
+                    description: 'Các kịch bản liên quan đến thiết bị này sẽ bị xóa để đồng bộ lại. Bạn có chắc chắn muốn tiếp tục?',
+                    btnClass: 'bg-red-600 hover:bg-red-700',
+                    confirmUrl: 'javascript:document.getElementById(\'deviceForm\').submit();'
+                })"
+                class="px-5 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:shadow-outline-red shadow-md"
+                title="Xác nhận cập nhật">
             <i class="fas fa-save mr-2"></i> Cập nhật thiết bị
         </button>
     </div>

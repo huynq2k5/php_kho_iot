@@ -90,7 +90,7 @@
                                         <button @click="openModal" 
                                                 onclick="triggerModal({
                                                 title: 'Xóa thiết bị',
-                                                description: 'Bạn đang xóa <?= $tb->tenThietBi ?>. Hành động này không thể hoàn tác!',
+                                                description: 'Bạn đang xóa <?= $tb->tenThietBi ?>. Thao tác sẽ xoá thông tin thiết bị này đã thu thập. Hãy sao lưu dữ liệu (nếu chưa làm)',
                                                 confirmUrl: 'index.php?page=thietbi_xuly_xoa&id=<?= $tb->idThietBi ?>',
                                                 btnClass: 'bg-red-600 hover:bg-red-700'
                                                 })"

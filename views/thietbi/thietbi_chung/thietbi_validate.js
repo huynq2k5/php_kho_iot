@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             topicMqtt.classList.remove('input-invalid');
             topicMqtt.classList.add('input-valid');
             helper.classList.add('text-green-600', 'dark:text-green-400');
-            helper.textContent = '✓ Topic hợp lệ';
+            helper.textContent = 'Topic hợp lệ';
             return true;
         }
     }
