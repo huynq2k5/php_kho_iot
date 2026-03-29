@@ -2,27 +2,17 @@
 
 namespace App\Controllers;
 
-use App\Services\NhatKyHeThongService;
-use App\Services\ThongBaoService;
-use App\Services\LogSecurityService;
-
 class CanhBaoNhatKyController extends BaseController {
-    private $nhatKyService;
-    private $thongBaoService;
-    private $securityService;
 
     public function __construct() {
         parent::__construct();
-        $this->nhatKyService = new NhatKyHeThongService();
-        $this->thongBaoService = new ThongBaoService();
-        $this->securityService = new LogSecurityService();
     }
 
     public function layDuLieuManHinhChinh() {
         return [
             'canhBao' => $this->thongBaoService->layCanhBaoMoiNhat(10),
             'nhatKy'  => $this->nhatKyService->hienThiTatCaNhatKy(20),
-            'truyCap' => $this->securityService->layDanhSachTruyCap(10)
+            'truyCap' => $this->logSecurityService->layDanhSachTruyCap(10)
         ];
     }
 
@@ -33,7 +23,7 @@ class CanhBaoNhatKyController extends BaseController {
             exit;
         }
 
-        $access = $this->securityService->layChiTietTruyCap($id);
+        $access = $this->logSecurityService->layChiTietTruyCap($id);
         
         if (!$access) {
             header('Location: index.php?page=alert_log');
@@ -48,6 +38,8 @@ class CanhBaoNhatKyController extends BaseController {
             $soNgay = $_POST['soNgay'] ?? 30;
             $kq = $this->nhatKyService->donDepNhatKy($soNgay);
 
+            $this->logHeThong("Dọn dẹp nhật ký hệ thống cũ hơn {$soNgay} ngày", "CAU_HINH", 0);
+
             $_SESSION['msg'] = $kq ? 'del_success' : 'del_error';
             header('Location: index.php?page=alert_log');
             exit;
@@ -60,6 +52,7 @@ class CanhBaoNhatKyController extends BaseController {
     }
 
     public function webXuatBaoCao() {
+
         header('Location: index.php?page=alert_log');
         exit;
     }

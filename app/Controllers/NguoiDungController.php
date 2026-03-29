@@ -64,66 +64,6 @@ class NguoiDungController extends BaseController{
         return $quyenNhom = $this->quyenService->layQuyenDaGan($id);
     }
 
-    public function webThemNguoiDung() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'maNguoiDung' => $_POST['maNguoiDung'] ?? null,
-                'tenDangNhap' => $_POST['tenDangNhap'] ?? null,
-                'hoTen'       => $_POST['hoTen'] ?? null,
-                'idNhom'      => $_POST['idNhom'] ?? null,
-                'matKhau'     => $_POST['matKhau'] ?? '12345678'
-            ];
-
-            $kq = $this->userService->themUser($data);
-
-            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
-            header('Location: index.php?page=users');
-            exit;
-        }
-    }
-
-    public function webSuaNguoiDung() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['idNguoiDung'] ?? null;
-            $data = [
-                'tenDangNhap' => $_POST['tenDangNhap'] ?? null,
-                'hoTen'       => $_POST['hoTen'] ?? null,
-                'idNhom'      => $_POST['idNhom'] ?? null
-            ];
-
-            $kq = $this->userService->suaUser($id, $data);
-
-            $_SESSION['msg'] = ($kq !== false) ? 'edit_success' : 'edit_error';
-            
-            if ($kq !== false) {
-                header('Location: index.php?page=users');
-            } else {
-                header('Location: index.php?page=nguoidung_sua&id=' . $id);
-            }
-            exit;
-        }
-    }
-
-    public function webXoaNguoiDung() {
-        $id = $_GET['id'] ?? null;
-        if ($id) {
-            $kq = $this->userService->xoaUser($id);
-            $_SESSION['msg'] = $kq ? 'del_success' : 'del_error';
-            header('Location: index.php?page=users');
-            exit;
-        }
-    }
-
-    public function webResetPass(){
-        $id = $_GET['id'] ?? null;
-        if($id){
-            $kq = $this->userService->thucHienResetPass($id);
-            $_SESSION['msg'] = $kq ? 'res_thanhcong' : 'res_thatbai';
-            header('Location: index.php?page=users');
-            exit;
-        }
-    }
-
     public function webChuyenNhom() {
         $idNguoiDung = $_GET['idNguoiDung'] ?? null;
         $idNhomMoi = $_GET['idNhom'] ?? null;
@@ -140,77 +80,6 @@ class NguoiDungController extends BaseController{
             header('Location: index.php?page=users');
         }
         exit;
-    }
-
-    public function webSuaNhom() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['idNhom'] ?? null;
-            $data = [
-                'tenNhom' => $_POST['tenNhom'] ?? null,
-                'moTa' => $_POST['moTa'] ?? null,
-            ];
-            
-            $permissionIds = $_POST['permissions'] ?? [];
-            
-            $newMemberIds = $_POST['new_members'] ?? [];
-
-            $kqGroup = $this->nhomService->capNhatNhomVaQuyen($id, $data, $permissionIds);
-
-            $kqMembers = true;
-            if (!empty($newMemberIds)) {
-                foreach ($newMemberIds as $userId) {
-                    if (!$this->userService->chuyenNhomMoi($userId, $id)) {
-                        $kqMembers = false;
-                    }
-                }
-            }
-
-            $_SESSION['msg'] = ($kqGroup && $kqMembers) ? 'edit_success' : 'edit_error';
-            
-            header("Location: index.php?page=nhom_sua&id=" . $id);
-            exit;
-        }
-    }
-
-    public function webXoaNhom() {
-        $id = $_GET['id'] ?? null;
-        if ($id) {
-            $kq = $this->nhomService->xoaNhom($id);
-            $_SESSION['msg'] = $kq ? 'del_success' : 'del_error';
-            header('Location: index.php?page=users&tab=groups');
-            exit;
-        }
-    }
-
-    public function webThemNhom() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'maNhom' => $_POST['maNhom'] ?? null,
-                'tenNhom' => $_POST['tenNhom'] ?? null,
-                'moTa'       => $_POST['moTa'] ?? null,
-            ];
-
-            $kq = $this->nhomService->themNhom($data);
-
-            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
-            header('Location: index.php?page=users&tab=groups');
-            exit;
-        }
-    }
-
-    public function webThemQuyen() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'maQuyen' => $_POST['maQuyen'] ?? null,
-                'tenQuyen' => $_POST['tenQuyen'] ?? null
-            ];
-
-            $kq = $this->quyenService->themQuyen($data);
-
-            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
-            header('Location: index.php?page=users&tab=permissions');
-            exit;
-        }
     }
 
     public function webSuaQuyen() {
@@ -233,10 +102,183 @@ class NguoiDungController extends BaseController{
         }
     }
 
-    public function webXoaQuyen() {
+    public function webThemNguoiDung()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'maNguoiDung' => $_POST['maNguoiDung'] ?? null,
+                'tenDangNhap' => $_POST['tenDangNhap'] ?? null,
+                'hoTen'       => $_POST['hoTen'] ?? null,
+                'idNhom'      => $_POST['idNhom'] ?? null,
+                'matKhau'     => $_POST['matKhau'] ?? '12345678'
+            ];
+
+            $kq = $this->userService->themUser($data);
+
+            if ($kq) {
+                $this->logHeThong("Thêm người dùng mới: {$data['hoTen']}", "NGUOI_DUNG", $kq, null, $data);
+            }
+
+            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
+            header('Location: index.php?page=users');
+            exit;
+        }
+    }
+
+    public function webSuaNguoiDung()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['idNguoiDung'] ?? null;
+            $oldData = $this->userService->getUserById($id); // Lấy dữ liệu cũ để ghi log
+            
+            $data = [
+                'tenDangNhap' => $_POST['tenDangNhap'] ?? null,
+                'hoTen'       => $_POST['hoTen'] ?? null,
+                'idNhom'      => $_POST['idNhom'] ?? null
+            ];
+
+            $kq = $this->userService->suaUser($id, $data);
+
+            if ($kq !== false) {
+                // GHI LOG: Cập nhật
+                $this->logHeThong("Cập nhật thông tin người dùng: {$data['hoTen']}", "NGUOI_DUNG", $id, $oldData, $data);
+            }
+
+            $_SESSION['msg'] = ($kq !== false) ? 'edit_success' : 'edit_error';
+            header('Location: index.php?page=users');
+            exit;
+        }
+    }
+
+    public function webXoaNguoiDung()
+    {
         $id = $_GET['id'] ?? null;
         if ($id) {
+            $oldData = $this->userService->getUserById($id);
+            $kq = $this->userService->xoaUser($id);
+            
+            if ($kq) {
+                // GHI LOG: Xóa
+                $this->logHeThong("Xóa người dùng: {$oldData->hoTen}", "NGUOI_DUNG", $id, $oldData, null);
+            }
+
+            $_SESSION['msg'] = $kq ? 'del_success' : 'del_error';
+            header('Location: index.php?page=users');
+            exit;
+        }
+    }
+
+    public function webResetPass()
+    {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $user = $this->userService->getUserById($id);
+            $kq = $this->userService->thucHienResetPass($id);
+            
+            if ($kq) {
+                // GHI LOG: Bảo mật
+                $this->logHeThong("Khôi phục mật khẩu mặc định cho: {$user->hoTen}", "NGUOI_DUNG", $id);
+            }
+
+            $_SESSION['msg'] = $kq ? 'res_thanhcong' : 'res_thatbai';
+            header('Location: index.php?page=users');
+            exit;
+        }
+    }
+
+    public function webThemNhom()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'maNhom' => $_POST['maNhom'] ?? null,
+                'tenNhom' => $_POST['tenNhom'] ?? null,
+                'moTa'       => $_POST['moTa'] ?? null,
+            ];
+
+            $kq = $this->nhomService->themNhom($data);
+            
+            if ($kq) {
+                $this->logHeThong("Thêm nhóm người dùng mới: {$data['tenNhom']}", "NGUOI_DUNG", $kq, null, $data);
+            }
+
+            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
+            header('Location: index.php?page=users&tab=groups');
+            exit;
+        }
+    }
+
+    public function webSuaNhom()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['idNhom'] ?? null;
+            $oldData = $this->nhomService->getRoleById($id);
+
+            $data = [
+                'tenNhom' => $_POST['tenNhom'] ?? null,
+                'moTa' => $_POST['moTa'] ?? null,
+            ];
+            
+            $permissionIds = $_POST['permissions'] ?? [];
+            $kqGroup = $this->nhomService->capNhatNhomVaQuyen($id, $data, $permissionIds);
+
+            if ($kqGroup) {
+                $this->logHeThong("Cập nhật thông tin và quyền cho nhóm: {$data['tenNhom']}", "NGUOI_DUNG", $id, $oldData, $data);
+            }
+
+            $_SESSION['msg'] = $kqGroup ? 'edit_success' : 'edit_error';
+            header("Location: index.php?page=nhom_sua&id=" . $id);
+            exit;
+        }
+    }
+
+    public function webXoaNhom()
+    {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $oldData = $this->nhomService->getRoleById($id);
+            $kq = $this->nhomService->xoaNhom($id);
+            
+            if ($kq) {
+                $this->logHeThong("Xóa nhóm người dùng: {$oldData->tenNhom}", "NGUOI_DUNG", $id, $oldData, null);
+            }
+
+            $_SESSION['msg'] = $kq ? 'del_success' : 'del_error';
+            header('Location: index.php?page=users&tab=groups');
+            exit;
+        }
+    }
+
+    public function webThemQuyen()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'maQuyen' => $_POST['maQuyen'] ?? null,
+                'tenQuyen' => $_POST['tenQuyen'] ?? null
+            ];
+
+            $kq = $this->quyenService->themQuyen($data);
+            
+            if ($kq) {
+                $this->logHeThong("Định nghĩa quyền mới: {$data['tenQuyen']}", "NGUOI_DUNG", $kq, null, $data);
+            }
+
+            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
+            header('Location: index.php?page=users&tab=permissions');
+            exit;
+        }
+    }
+
+    public function webXoaQuyen()
+    {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $oldData = $this->quyenService->getQuyenById($id);
             $kq = $this->quyenService->xoaQuyen($id);
+            
+            if ($kq) {
+                $this->logHeThong("Xóa quyền khỏi hệ thống: {$oldData->tenQuyen}", "NGUOI_DUNG", $id, $oldData, null);
+            }
+
             $_SESSION['msg'] = $kq ? 'del_success' : 'del_error';
             header('Location: index.php?page=users&tab=permissions');
             exit;

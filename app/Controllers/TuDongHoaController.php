@@ -62,6 +62,9 @@ class TuDongHoaController extends BaseController{
             ];
 
             $kq = $this->kbService->themKichBan($data);
+            if ($kq) {
+                $this->logHeThong("Thêm kịch bản tự động mới: {$data['tenKichBan']}", "KICH_BAN", 0, null, $data);
+            }
             $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
             header('Location: index.php?page=tudong');
             exit;
@@ -71,6 +74,7 @@ class TuDongHoaController extends BaseController{
     public function webSuaKichBan() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['idKichBan'] ?? null;
+            $oldData = $this->kbService->getKichBanById($id);
             $data = [
                 'tenKichBan'      => $_POST['tenKichBan'] ?? null,
                 'loaiKichBan'     => $_POST['loaiKichBan'] ?? 'SENSOR',
@@ -85,6 +89,9 @@ class TuDongHoaController extends BaseController{
             ];
 
             $kq = $this->kbService->suaKichBan($id, $data);
+            if ($kq !== -1) {
+                $this->logHeThong("Cập nhật kịch bản: {$data['tenKichBan']}", "KICH_BAN", $id, $oldData, $data);
+            }
             $_SESSION['msg'] = ($kq !== -1) ? 'edit_success' : 'edit_error';
             header('Location: index.php?page=tudong');
             exit;
@@ -93,8 +100,12 @@ class TuDongHoaController extends BaseController{
 
     public function webXoaKichBan() {
         $id = $_GET['id'] ?? null;
+        $oldData = $this->kbService->getKichBanById($id);
         if ($id) {
             $kq = $this->kbService->xoaKichBan($id);
+            if ($kq !== -1) {
+                $this->logHeThong("Xóa kịch bản tự động: " . ($oldData->tenKichBan ?? $id), "KICH_BAN", $id, $oldData, null);
+            }
             $_SESSION['msg'] = ($kq !== -1) ? 'del_success' : 'del_error';
             header('Location: index.php?page=tudong');
             exit;
@@ -120,6 +131,8 @@ class TuDongHoaController extends BaseController{
         if ($result) {
             $url = "http://localhost:3001/capnhatkichban?id=" . $id;
             @file_get_contents($url);
+            $trangThai = ($status == 1) ? "Kích hoạt" : "Hủy kích hoạt";
+            $this->logHeThong("$trangThai kịch bản ID: $id", "KICH_BAN", $id);
         }
 
         header('Content-Type: application/json');

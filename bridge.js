@@ -6,8 +6,8 @@ const app = express();
 // 1. Cấu hình Database (Chỉ để ĐỌC kịch bản, không ghi log vào đây)
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost', // Trên Cloud sẽ là địa chỉ của DB
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || '',
+    user: process.env.DB_USER || 'huynq',
+    password: process.env.DB_PASS || '123',
     database: process.env.DB_NAME || 'kho_iot',
     port: process.env.DB_PORT || 3306
 });

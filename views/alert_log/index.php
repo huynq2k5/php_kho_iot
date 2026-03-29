@@ -68,7 +68,7 @@
                             <th class="px-4 py-3">Thời gian</th>
                             <th class="px-4 py-3">Người dùng</th>
                             <th class="px-4 py-3">Hành động</th>
-                            <th class="px-4 py-3">Chi tiết</th>
+                      
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -90,7 +90,6 @@
                                         <?= $log->hanhDong ?>
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-sm"><?= $log->giaTriMoi ?></td>
                             </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

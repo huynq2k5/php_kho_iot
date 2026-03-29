@@ -26,9 +26,8 @@ class LichSuCamBienService {
         return $this->lichSuRepo->xoaLichSuTheoThietBi($idThietBi);
     }
 
-    public function ghiNhanDuLieu($data)
-    {
-        return $this->lichSuRepo->luuLichSu($data);
+    public function ghiNhanDuLieu($data) {
+        return $kq = $this->lichSuRepo->luuLichSu($data);
     }
 
     // Hàm tính EMA (Exponential Moving Average)
