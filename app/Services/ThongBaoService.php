@@ -39,4 +39,9 @@ class ThongBaoService
     {
         return $this->thongBaoRepo->danhDauDaXem($id);
     }
+
+    public function layTatCaCanhBao()
+    {
+        return $this->thongBaoRepo->layTatCaThongBao();
+    }
 }

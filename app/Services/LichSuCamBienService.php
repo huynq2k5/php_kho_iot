@@ -26,10 +26,6 @@ class LichSuCamBienService {
         return $this->lichSuRepo->xoaLichSuTheoThietBi($idThietBi);
     }
 
-    public function ghiNhanDuLieu($data) {
-        return $kq = $this->lichSuRepo->luuLichSu($data);
-    }
-
     // Hàm tính EMA (Exponential Moving Average)
     private function calculateEMA($data, $period) {
         if (empty($data)) return [];
@@ -87,8 +83,6 @@ class LichSuCamBienService {
         }
         return $rsi;
     }
-
-    // App/Services/LichSuCamBienService.php
 
     public function layDuLieuVeBieuDo($idThietBi, $period, $sensorType) {
         $rawDataObjects = $this->lichSuRepo->layDuLieuBieuDo($idThietBi, $period);

@@ -100,26 +100,58 @@ const updateDeviceConnectionStatus = (maThietBi, statusValue) => {
 
 const handleSensorData = (deviceId, payload) => {
     const time = getTimestamp();
-    const insertSql = `
-        INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang)
-        SELECT idThietBi, ?, ?, ?, ? 
-        FROM thietbi 
-        WHERE maThietBi = ? 
-        LIMIT 1`;
+    const idAdmin = 1;
 
-    const values = [
-        payload.t || null,
-        payload.h || null,
-        payload.co2 || null,
-        payload.as || null,
-        deviceId
-    ];
+    const findDeviceSql = `SELECT idThietBi, tenThietBi FROM thietbi WHERE maThietBi = ? LIMIT 1`;
 
-    db.query(insertSql, values, (err, result) => {
-        if (err) {
-            console.log(`\x1b[31m[${time}] [SAVE_ERROR] Lỗi lưu DB: ${err.message}\x1b[0m`);
-        } else if (result.affectedRows > 0) {
-            console.log(`\x1b[34m[${time}] [DB_SAVED] Dữ liệu cảm biến từ ${deviceId} đã được lưu\x1b[0m`);
+    db.query(findDeviceSql, [deviceId], (err, results) => {
+        if (err || results.length === 0) return;
+
+        const idThietBi = results[0].idThietBi;
+        const tenThietBi = results[0].tenThietBi;
+
+        const insertSensorSql = `
+            INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang)
+            VALUES (?, ?, ?, ?, ?)`;
+        
+        const sensorValues = [
+            idThietBi,
+            payload.t || 0,
+            payload.h || 0,
+            payload.co2 || 0,
+            payload.as || 0
+        ];
+
+        db.query(insertSensorSql, sensorValues, (err) => {
+            if (err) console.log(`\x1b[31m[ERROR] Lỗi lưu cảm biến: ${err.message}\x1b[0m`);
+            else console.log(`\x1b[34m[${time}] [DB_SAVED] Dữ liệu từ ${deviceId} đã lưu.\x1b[0m`);
+        });
+
+        const alerts = [];
+        if (payload.t > 16) {
+            alerts.push(["QUÁ NHIỆT", `Nhiệt độ tại ${tenThietBi} đạt ${payload.t}°C.`, "CanhBao"]);
+        }
+        if (payload.h < 80) {
+            alerts.push(["ĐỘ ẨM THẤP", `Độ ẩm tại ${tenThietBi} giảm còn ${payload.h}%.`, "CanhBao"]);
+        }
+        if (payload.co2 > 1000) {
+            alerts.push(["CO2 CAO", `Nồng độ CO2 tại ${tenThietBi}: ${payload.co2} ppm.`, "CanhBao"]);
+        }
+        if (payload.as > 50) {
+            alerts.push(["ÁNH SÁNG", `Phát hiện ánh sáng tại ${tenThietBi}: ${payload.as} lux.`, "CanhBao"]);
+        }
+
+        if (alerts.length > 0) {
+            const insertAlertSql = `
+                INSERT INTO thongbao (tieuDe, noiDung, loaiThongBao, idThietBi, idNguoiDung)
+                VALUES ?`;
+            
+            const alertValues = alerts.map(a => [a[0], a[1], a[2], idThietBi, idAdmin]);
+
+            db.query(insertAlertSql, [alertValues], (err) => {
+                if (err) console.log(`\x1b[31m[ERROR] Lỗi lưu cảnh báo: ${err.message}\x1b[0m`);
+                else console.log(`\x1b[31m[ALARM] >>> Đã ghi ${alerts.length} cảnh báo vào hệ thống!\x1b[0m`);
+            });
         }
     });
 };

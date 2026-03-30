@@ -46,14 +46,76 @@ class CanhBaoNhatKyController extends BaseController {
         }
     }
 
-    public function webTimKiemNhatKy() {
-        $tuKhoa = $_GET['tuKhoa'] ?? '';
-        return $this->nhatKyService->timKiemNhatKy($tuKhoa);
-    }
+    public function webXuatBaoCaoTongHop() {
+        $canhBao = $this->thongBaoService->layTatCaCanhBao(); 
+        $nhatKy = $this->nhatKyService->layTatCaNhatKy();      
+        $truyCap = $this->logSecurityService->layTatCaTruyCap();    
 
-    public function webXuatBaoCao() {
+        $fileName = "BaoCao_TongThe_Kho_IoT_" . date('Ymd_His') . ".csv";
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $fileName);
 
-        header('Location: index.php?page=alert_log');
+        $output = fopen('php://output', 'w');
+
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        fputcsv($output, ['--- 1. DANH SÁCH CẢNH BÁO CHI TIẾT ---']);
+        fputcsv($output, [
+            'ID', 'Thời gian', 'Thiết bị', 'Tiêu đề', 'Nội dung', 'Phân loại', 'Trạng thái'
+        ]);
+        foreach ($canhBao as $cb) {
+            fputcsv($output, [
+                $cb->idThongBao,
+                date('d/m/Y H:i:s', strtotime($cb->thoiGian)),
+                $cb->tenThietBi ?: 'N/A',
+                $cb->tieuDe,
+                $cb->noiDung,
+                ($cb->loaiThongBao === 'CanhBao' ? 'Khẩn cấp' : 'Thông tin'),
+                ($cb->daXem == 1 ? 'Đã xem' : 'Chưa xem')
+            ]);
+        }
+
+        fputcsv($output, []); 
+        fputcsv($output, ['--- 2. NHẬT KÝ HỆ THỐNG ---']);
+        fputcsv($output, [
+            'ID', 'Thời gian', 'Người thực hiện', 'Hành động', 'Loại đối tượng', 'ID Đối tượng', 'Giá trị cũ', 'Giá trị mới'
+        ]);
+        foreach ($nhatKy as $log) {
+            fputcsv($output, [
+                $log->idNhatKy,
+                date('d/m/Y H:i:s', strtotime($log->thoiGian)),
+                $log->hoTen ?: 'Hệ thống',
+                $log->hanhDong,
+                $log->loaiDoiTuong,
+                $log->idDoiTuong,
+                $log->giaTriCu,
+                $log->giaTriMoi
+            ]);
+        }
+
+        fputcsv($output, []);
+        fputcsv($output, ['--- 3. NHẬT KÝ TRUY CẬP ---']);
+        fputcsv($output, [
+            'ID', 'Thời gian', 'IP Address', 'Quốc gia', 'Thành phố', 'ISP', 'Phương thức', 'Yêu cầu (URI)', 'Thiết bị (User Agent)', 'Fingerprint', 'Session ID'
+        ]);
+        foreach ($truyCap as $access) {
+            fputcsv($output, [
+                $access->idTruyCap,
+                date('d/m/Y H:i:s', strtotime($access->thoiGian)),
+                $access->ipAddress,
+                $access->quocGia,
+                $access->thanhPho,
+                $access->isp,
+                $access->method,
+                $access->requestUri,
+                $access->userAgent,
+                $access->fingerprint,
+                $access->sessionId
+            ]);
+        }
+
+        fclose($output);
         exit;
     }
 }

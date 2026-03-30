@@ -45,6 +45,19 @@ class NhatKyTruyCapRepository
         return $dsTruyCap;
     }
 
+    public function layTruyCap() {
+        $sql = "SELECT * FROM nhatky_truycap ORDER BY thoiGian DESC ";
+        $kq = $this->db->truyVan($sql);
+        $dsTruyCap = [];
+
+        if ($kq && $kq->num_rows > 0) {
+            while ($row = $kq->fetch_assoc()) {
+                $dsTruyCap[] = new NhatKyTruyCap($row);
+            }
+        }
+        return $dsTruyCap;
+    }
+
     public function layTruyCapTheoId($id) {
         $sql = "SELECT * FROM nhatky_truycap WHERE idTruyCap = ?";
         $kq = $this->db->truyVan($sql, [$id]);

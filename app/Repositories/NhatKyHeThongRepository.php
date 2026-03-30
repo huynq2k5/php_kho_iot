@@ -33,6 +33,24 @@ class NhatKyHeThongRepository
         return $dsNhatKy;
     }
 
+    public function layNhatKy()
+    {
+        $sql = "SELECT n.*, u.hoTen 
+                FROM nhatkyhethong n 
+                LEFT JOIN nguoidung u ON n.idNguoiDung = u.idNguoiDung
+                ORDER BY n.thoiGian DESC ";
+        
+        $kq = $this->db->truyVan($sql);
+
+        $dsNhatKy = [];
+        if ($kq && $kq->num_rows > 0) {
+            while ($row = $kq->fetch_assoc()) {
+                $dsNhatKy[] = new NhatKyHeThong($row);
+            }
+        }
+        return $dsNhatKy;
+    }
+
     public function ghiLog($data)
     {
         $sql = "INSERT INTO nhatkyhethong (idNguoiDung, hanhDong, loaiDoiTuong, idDoiTuong, giaTriCu, giaTriMoi) 

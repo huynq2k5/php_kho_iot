@@ -108,6 +108,14 @@ class LogSecurityService {
         return $dsTruyCap;
     }
 
+    public function layTatCaTruyCap() {
+        $dsTruyCap = $this->repo->layTruyCap();
+        foreach ($dsTruyCap as $item) {
+            $item->phanGiaiUA = $this->parseUserAgent($item->userAgent);
+        }
+        return $dsTruyCap;
+    }
+
     public function layChiTietTruyCap($id) {
         $item = $this->repo->layTruyCapTheoId($id);
         if ($item) {

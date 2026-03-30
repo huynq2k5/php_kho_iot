@@ -33,6 +33,23 @@ class ThongBaoRepository
         return $dsThongBao;
     }
 
+    public function layTatCaThongBao(){
+        $sql = "SELECT t.*, tb.tenThietBi 
+                FROM thongbao t 
+                LEFT JOIN thietbi tb ON t.idThietBi = tb.idThietBi 
+                ORDER BY t.thoiGian DESC ";
+        
+        $kq = $this->db->truyVan($sql);
+
+        $dsThongBao = [];
+        if ($kq && $kq->num_rows > 0) {
+            while ($row = $kq->fetch_assoc()) {
+                $dsThongBao[] = new ThongBao($row);
+            }
+        }
+        return $dsThongBao;
+    }
+
     public function layThongBaoTheoUser($idNguoiDung)
     {
         $sql = "SELECT t.*, tb.tenThietBi 

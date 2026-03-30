@@ -1,147 +1,161 @@
 <div class="flex flex-col items-start justify-between w-full gap-4 my-6 sm:flex-row sm:items-center">
-    <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">
-        Cảnh báo và Nhật ký hệ thống
-    </h2>
-    <div class="flex gap-2">
-        <form action="index.php?page=alert_log_xoa" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa lịch sử cũ hơn 30 ngày?')">
-            <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium leading-5 text-red-700 transition-colors duration-150 bg-red-100 border border-transparent rounded-lg hover:bg-red-200 focus:outline-none focus:shadow-outline-red dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50">
-                <i class="fas fa-trash-alt mr-2"></i> Xóa lịch sử cũ
-            </button>
-        </form>
-        <a href="index.php?page=alert_log_export" class="inline-flex items-center px-3 py-2 text-sm font-medium leading-5 text-blue-700 transition-colors duration-150 bg-blue-100 border border-transparent rounded-lg hover:bg-blue-200 focus:outline-none focus:shadow-outline-red dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
-            <i class="fas fa-file-export mr-2"></i> Xuất báo cáo
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            Trung tâm Nhật ký & Cảnh báo
+        </h2>
+        
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="index.php?page=alert_log_export" class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-all">
+            <i class="fas fa-file-download mr-2"></i> Xuất báo cáo
         </a>
     </div>
 </div>
 
-<div class="grid gap-6 md:grid-cols-1">
+<div class="grid gap-6 lg:grid-cols-2">
     
-    <div class="w-full">
-        <div class="min-w-0 bg-white rounded-lg shadow-xs dark:bg-gray-800 border border-gray-200 dark:border-gray-700 h-full flex flex-col">
-            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                <h4 class="font-semibold text-gray-700 dark:text-gray-300">Cảnh báo môi trường</h4>
-            </div>
+    <div class="flex flex-col min-w-0 bg-white rounded-xl shadow-sm dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-50 dark:border-gray-700">
+            <h4 class="font-bold text-gray-700 dark:text-gray-200 flex items-center">
+                <span class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                Cảnh báo môi trường
+            </h4>
             
-            <div class="divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto" style="max-height: 600px;">
-                <?php if (empty($data['canhBao'])): ?>
-                    <div class="px-4 py-6 text-center text-gray-500">Không có cảnh báo nào gần đây.</div>
-                <?php else: ?>
+        </div>
+        
+        <div class="overflow-y-auto custom-scrollbar" style="max-height: 400px;">
+            <?php if (empty($data['canhBao'])): ?>
+                <div class="flex flex-col items-center py-12 text-gray-400">
+                    <i class="fas fa-check-circle text-3xl mb-2 text-green-500/50"></i>
+                    <p class="text-sm">Hệ thống đang hoạt động an toàn</p>
+                </div>
+            <?php else: ?>
+                <div class="divide-y divide-gray-50 dark:divide-gray-700">
                     <?php foreach ($data['canhBao'] as $cb): 
-                        // Xác định màu sắc dựa trên loại thông báo hoặc nội dung
-                        $borderColor = ($cb->loaiThongBao == 'CanhBao') ? 'border-red-600' : 'border-green-600';
-                        $badgeClass = ($cb->loaiThongBao == 'CanhBao') ? 'text-red-700 bg-red-100 dark:bg-red-700' : 'text-green-700 bg-green-100 dark:bg-green-700';
+                        $isUrgent = ($cb->loaiThongBao == 'CanhBao');
+                        $indicatorColor = $isUrgent ? 'bg-red-500' : 'bg-green-500';
+                        $bgHover = $isUrgent ? 'hover:bg-red-50/50 dark:hover:bg-red-900/10' : 'hover:bg-green-50/50 dark:hover:bg-green-900/10';
                     ?>
-                    <div class="relative px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 border-l-4 <?= $borderColor ?>">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <h5 class="text-sm font-semibold text-gray-800 dark:text-gray-200"><?= $cb->tieuDe ?></h5>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1"><?= $cb->noiDung ?></p>
-                                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                                    <i class="far fa-clock mr-1"></i><?= date('d/m/Y H:i', strtotime($cb->thoiGian)) ?>
-                                </p>
+                    <div class="px-5 py-4 transition-colors <?= $bgHover ?> relative group">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1.5 w-2 h-2 rounded-full shrink-0 <?= $indicatorColor ?>"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-center mb-1">
+                                    <h5 class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate"><?= $cb->tieuDe ?></h5>
+                                    <span class="text-[10px] font-medium text-gray-400 uppercase"><?= date('H:i d/m', strtotime($cb->thoiGian)) ?></span>
+                                </div>
+                                <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed"><?= $cb->noiDung ?></p>
                             </div>
-                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold leading-tight rounded-full <?= $badgeClass ?> dark:text-red-100">
-                                <?= ($cb->loaiThongBao == 'CanhBao') ? 'Khẩn cấp' : 'Thông tin' ?>
-                            </span>
                         </div>
                     </div>
                     <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-
-            <div class="px-4 py-3 text-center border-t border-gray-200 dark:border-gray-700 mt-auto">
-                <a href="#" class="text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">Xem tất cả cảnh báo</a>
-            </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
-    <div class="w-full">
-        <div class="min-w-0 bg-white rounded-lg shadow-xs dark:bg-gray-800 border border-gray-200 dark:border-gray-700 h-full flex flex-col">
-            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                <h4 class="font-semibold text-gray-700 dark:text-gray-300">Nhật ký vận hành (Audit Log)</h4>
-            </div>
+    <div class="flex flex-col min-w-0 bg-white rounded-xl shadow-sm dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+        <div class="px-5 py-4 border-b border-gray-50 dark:border-gray-700">
+            <h4 class="font-bold text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fas fa-history mr-2 text-blue-500"></i>
+                Nhật ký vận hành
+            </h4>
+        </div>
 
-            <div class="w-full overflow-x-auto">
-                <table class="w-full whitespace-no-wrap">
-                    <thead>
-                        <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                            <th class="px-4 py-3">Thời gian</th>
-                            <th class="px-4 py-3">Người dùng</th>
-                            <th class="px-4 py-3">Hành động</th>
-                      
+        <div class="w-full overflow-x-auto flex-1 custom-scrollbar" style="max-height: 400px;">
+            <table class="w-full text-left border-collapse">
+                <thead class="sticky top-0 bg-gray-50 dark:bg-gray-900 z-10">
+                    <tr class="text-[11px] font-bold tracking-wider text-gray-500 uppercase border-b dark:border-gray-700">
+                        <th class="px-5 py-3">Thời gian</th>
+                        <th class="px-5 py-3">Đối tượng</th>
+                        <th class="px-5 py-3">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
+                    <?php if (empty($data['nhatKy'])): ?>
+                        <tr><td colspan="3" class="px-5 py-12 text-center text-gray-400 text-sm">Chưa có hoạt động nào được ghi lại</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($data['nhatKy'] as $log): 
+                            $badgeStyle = 'text-gray-600 bg-gray-100 dark:bg-gray-700 dark:text-gray-300';
+                            if (strpos($log->hanhDong, 'Điều khiển') !== false) $badgeStyle = 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400';
+                            if (strpos($log->hanhDong, 'Sửa') !== false || strpos($log->hanhDong, 'Cấu hình') !== false) $badgeStyle = 'text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400';
+                            if ($log->hoTen == 'Hệ thống') $badgeStyle = 'text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-400';
+                        ?>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-5 py-3 text-xs font-mono text-gray-500 dark:text-gray-400"><?= date('H:i:s', strtotime($log->thoiGian)) ?></td>
+                            <td class="px-5 py-3 text-xs font-semibold text-gray-700 dark:text-gray-300"><?= $log->hoTen ?: 'Hệ thống' ?></td>
+                            <td class="px-5 py-3 text-xs font-semibold text-gray-900 dark:text-gray-200">
+                                <?= $log->hanhDong ?>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                        <?php if (empty($data['nhatKy'])): ?>
-                            <tr><td colspan="4" class="px-4 py-10 text-center text-gray-500">Chưa có nhật ký hoạt động.</td></tr>
-                        <?php else: ?>
-                            <?php foreach ($data['nhatKy'] as $log): 
-                                // Dynamic Badge Color
-                                $actionClass = 'text-gray-700 bg-gray-100';
-                                if (strpos($log->hanhDong, 'Điều khiển') !== false) $actionClass = 'text-blue-700 bg-blue-100 dark:bg-blue-700 dark:text-blue-100';
-                                if (strpos($log->hanhDong, 'Sửa') !== false || strpos($log->hanhDong, 'Cấu hình') !== false) $actionClass = 'text-yellow-700 bg-yellow-100 dark:bg-yellow-600 dark:text-yellow-100';
-                                if ($log->hoTen == 'Hệ thống') $actionClass = 'text-cyan-700 bg-cyan-100 dark:bg-cyan-700 dark:text-cyan-100';
-                            ?>
-                            <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                <td class="px-4 py-3 text-sm font-mono"><?= date('H:i:s', strtotime($log->thoiGian)) ?></td>
-                                <td class="px-4 py-3 text-sm font-medium"><?= $log->hoTen ?: 'N/A' ?></td>
-                                <td class="px-4 py-3 text-xs">
-                                    <span class="px-2 py-1 font-semibold leading-tight rounded-full <?= $actionClass ?>">
-                                        <?= $log->hanhDong ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <div class="w-full mt-6">
-        <div class="min-w-0 bg-white rounded-lg shadow-xs dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <h4 class="font-semibold text-gray-700 dark:text-gray-300">Nhật ký truy cập (Security Log)</h4>
-                <span class="text-xs text-gray-500 uppercase tracking-widest">Dữ liệu IP & Vị trí</span>
-            </div>
+    <div class="lg:col-span-2 flex flex-col min-w-0 bg-white rounded-xl shadow-sm dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden mt-2">
+        <div class="px-5 py-4 border-b border-gray-50 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-900/20 flex justify-between items-center">
+            <h4 class="font-bold text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fas fa-shield-alt mr-2 text-red-500"></i>
+                Nhật ký truy cập bảo mật
+            </h4>
+            <span class="text-[10px] font-bold text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">DỮ LIỆU IP & VỊ TRÍ</span>
+        </div>
 
-            <div class="w-full overflow-x-auto">
-                <table class="w-full whitespace-no-wrap">
-                    <thead>
-                        <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                            <th class="px-4 py-3">Thời gian</th>
-                            <th class="px-4 py-3">IP & Địa điểm</th>
-                            <th class="px-4 py-3 text-right">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                        <?php if (empty($data['truyCap'])): ?>
-                            <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500">Chưa có dữ liệu truy cập.</td></tr>
-                        <?php else: ?>
-                            <?php foreach ($data['truyCap'] as $access): ?>
-                            <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                <td class="px-4 py-3 text-sm">
-                                    <?= date('H:i:s d/m', strtotime($access->thoiGian)) ?>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-red-600 dark:text-red-400"><?= $access->ipAddress ?></span>
-                                        <span class="text-[10px]"><?= $access->thanhPho ?>, <?= $access->quocGia ?></span>
+        <div class="w-full overflow-x-auto overflow-y-auto custom-scrollbar" style="max-height: 400px;">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-[11px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50/50 dark:bg-gray-900/50 border-b dark:border-gray-700">
+                        <th class="px-6 py-4">Thời điểm</th>
+                        <th class="px-6 py-4">Địa chỉ IP</th>
+                        <th class="px-6 py-4">Vị trí địa lý</th>
+                        <th class="px-6 py-4 text-right">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
+                    <?php if (empty($data['truyCap'])): ?>
+                        <tr><td colspan="4" class="px-6 py-12 text-center text-gray-400">Không có dữ liệu truy cập trái phép</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($data['truyCap'] as $access): ?>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
+                            <td class="px-6 py-4 text-xs font-medium text-gray-500">
+                                <span class="block font-bold text-gray-700 dark:text-gray-300"><?= date('H:i:s', strtotime($access->thoiGian)) ?></span>
+                                <span><?= date('d/m/Y', strtotime($access->thoiGian)) ?></span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-mono font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">
+                                    <?= $access->ipAddress ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center text-xs text-gray-600 dark:text-gray-400">
+                                    <i class="fas fa-map-marker-alt mr-2 text-gray-300"></i>
+                                    <div>
+                                        <p class="font-bold text-gray-700 dark:text-gray-200"><?= $access->thanhPho ?></p>
+                                        <p class="text-[10px] uppercase"><?= $access->quocGia ?></p>
                                     </div>
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    <a href="index.php?page=chitiet_baomat&id=<?= $access->idTruyCap ?>" 
-                                    class="px-3 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-md active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red">
-                                        <i class="fas fa-eye mr-1"></i> Chi tiết
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="index.php?page=chitiet_baomat&id=<?= $access->idTruyCap ?>" 
+                                   class="inline-flex items-center px-4 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 transition-shadow hover:shadow">
+                                    Chi tiết <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; }
+</style>

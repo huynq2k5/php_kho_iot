@@ -65,6 +65,7 @@ function hasPermission($permissionCode) {
 }
 
 // 3. ĐIỀU HƯỚNG VÀ KIỂM TRA QUYỀN
+
 switch ($page) {
     case 'auth':
         $controller = new \App\Controllers\AuthController();
@@ -336,9 +337,20 @@ switch ($page) {
     case 'alert_log':
         if (hasPermission('canhbao.view')) {
             $controller = new \App\Controllers\CanhBaoNhatKyController();
-            
-            // Lấy dữ liệu tổng hợp cho màn hình chính (Cả thông báo và nhật ký)
+
             $data = $controller->layDuLieuManHinhChinh(); 
+            
+            $viewFile = $viewDir . '/alert_log/index.php';
+        } else {
+            $page = '403';
+        }
+        break;
+
+    case 'alert_log_export':
+        if (hasPermission('canhbao.view')) {
+            $controller = new \App\Controllers\CanhBaoNhatKyController();
+            
+            $controller->webXuatBaoCaoTongHop(); 
             
             $viewFile = $viewDir . '/alert_log/index.php';
         } else {

@@ -17,12 +17,9 @@ class NhatKyHeThongService {
         return $this->nhatKyRepo->layTatCaNhatKy($limit);
     }
 
-    public function timKiemNhatKy($tuKhoa)
+    public function layTatCaNhatKy()
     {
-        if (empty($tuKhoa)) {
-            return $this->hienThiTatCaNhatKy();
-        }
-        return $this->nhatKyRepo->timKiemNhatKy($tuKhoa);
+        return $this->nhatKyRepo->layNhatKy();
     }
 
     public function ghiNhatKyMoi($data)
