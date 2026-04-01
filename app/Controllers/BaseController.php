@@ -53,4 +53,36 @@ abstract class BaseController
         echo json_encode($data);
         exit;
     }
+
+    public function apiTimKiemChucNang() {
+        $tuKhoa = $_GET['q'] ?? '';
+        
+        $tatCaChucNang = [
+            ['ten' => 'Trang chủ', 'url' => 'index.php?page=dashboard', 'quyen' => 'dashboard.view'],
+            ['ten' => 'Tự động hóa', 'url' => 'index.php?page=tudong', 'quyen' => 'tudong.view'],
+            ['ten' => 'Quản lý người dùng', 'url' => 'index.php?page=users', 'quyen' => 'nguoidung.view'],
+            ['ten' => 'Hồ sơ cá nhân', 'url' => 'index.php?page=profile', 'quyen' => 'all'],
+            ['ten' => 'Thêm thiết bị', 'url' => 'index.php?page=thietbi_them', 'quyen' => 'thietbi.view'],
+            ['ten' => 'Thêm người dùng', 'url' => 'index.php?page=nguoidung_them', 'quyen' => 'nguoidung.view'],
+            ['ten' => 'Thêm nhóm', 'url' => 'index.php?page=nhom_them', 'quyen' => 'nguoidung.view']
+        ];
+
+        $ketQua = [];
+        foreach ($tatCaChucNang as $item) {
+            $khopTuKhoa = stripos($item['ten'], $tuKhoa) !== false;
+            
+            $coQuyen = ($item['quyen'] === 'all' || hasPermission($item['quyen']));
+
+            if ($khopTuKhoa && $coQuyen) {
+                $ketQua[] = [
+                    'ten' => $item['ten'],
+                    'url' => $item['url']
+                ];
+            }
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(array_slice($ketQua, 0, 5));
+        exit;
+    }
 }

@@ -8,17 +8,7 @@
             
             <div class="space-y-4">
                 <div class="flex flex-col gap-4 xl:flex-row xl:items-start">
-                    <div class="text-center mx-auto xl:mx-0">
-                        <div class="relative inline-block">
-                            <div class="flex items-center justify-center w-28 h-28 bg-gray-100 rounded-full border-2 border-dashed border-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                                <i class="fas fa-camera text-2xl text-gray-400 dark:text-gray-500"></i>
-                            </div>
-                            <button type="button" class="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 text-white bg-red-600 rounded-full border-2 border-white shadow-sm hover:bg-red-700">
-                                <i class="fas fa-pen text-xs"></i>
-                            </button>
-                        </div>
-                        <div class="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400">Ảnh đại diện</div>
-                    </div>
+                    
 
                     <div class="flex-1 w-full space-y-3">
                         <label class="block text-sm">

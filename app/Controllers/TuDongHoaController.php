@@ -134,7 +134,7 @@ class TuDongHoaController extends BaseController{
             $trangThai = ($status == 1) ? "Kích hoạt" : "Hủy kích hoạt";
             $this->logHeThong("$trangThai kịch bản ID: $id", "KICH_BAN", $id);
         }
-
+        $_SESSION['msg'] = ($result !== -1) ? 'edit_success' : 'edit_error';
         header('Content-Type: application/json');
         echo json_encode(['success' => (bool)$result]);
         exit;

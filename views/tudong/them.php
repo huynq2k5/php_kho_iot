@@ -3,34 +3,13 @@
         <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">
             Thêm kịch bản tự động mới
         </h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Thiết lập các quy tắc điều khiển thông minh cho kho hàng</p>
+        
     </div>
     
     <a href="index.php?page=tudong" 
        class="inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition-colors duration-150 bg-white border border-gray-300 rounded-lg hover:text-gray-800 hover:border-gray-400 focus:outline-none focus:shadow-outline-red dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-gray-300 dark:hover:border-gray-500">
         <i class="fas fa-chevron-left mr-2"></i> Quay lại
     </a>
-</div>
-
-<div class="w-full max-w-4xl mx-auto mb-6">
-    <div class="border-b border-gray-200 dark:border-gray-700">
-        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="scriptTabs">
-            <li class="mr-2">
-                <button class="inline-block p-4 border-b-2 rounded-t-lg transition-colors duration-150" 
-                        id="sensor-tab" 
-                        onclick="switchTab('sensor')">
-                    <i class="fas fa-temperature-high mr-2"></i> Theo cảm biến
-                </button>
-            </li>
-            <li class="mr-2">
-                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-colors duration-150" 
-                        id="timer-tab" 
-                        onclick="switchTab('timer')">
-                    <i class="fas fa-clock mr-2"></i> Theo thời gian
-                </button>
-            </li>
-        </ul>
-    </div>
 </div>
 
 <form id="scriptForm" action="index.php?page=tudong_xuly_them" method="POST" class="w-full max-w-4xl mx-auto">
@@ -50,6 +29,7 @@
 
 <script>
     <?php include 'tudong_chung/tudong_validate.js'; ?>
+    // Huy có thể xóa luôn hàm switchTab trong file validate.js nếu không dùng ở đâu khác
 </script>
 
 <style>

@@ -14,27 +14,6 @@
     </a>
 </div>
 
-<div class="w-full max-w-4xl mx-auto mb-6">
-    <div class="border-b border-gray-200 dark:border-gray-700">
-        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="scriptTabs">
-            <li class="mr-2">
-                <button class="inline-block p-4 border-b-2 rounded-t-lg transition-colors duration-150" 
-                        id="sensor-tab" 
-                        onclick="switchTab('sensor')">
-                    <i class="fas fa-temperature-high mr-2"></i> Theo cảm biến
-                </button>
-            </li>
-            <li class="mr-2">
-                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-colors duration-150" 
-                        id="timer-tab" 
-                        onclick="switchTab('timer')">
-                    <i class="fas fa-clock mr-2"></i> Theo thời gian
-                </button>
-            </li>
-        </ul>
-    </div>
-</div>
-
 <form id="scriptForm" action="index.php?page=tudong_xuly_sua" method="POST" class="w-full max-w-4xl mx-auto">
     <input type="hidden" name="idKichBan" value="<?= $kichBan->idKichBan ?>">
 
@@ -43,7 +22,7 @@
     <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
         <button type="button" onclick="window.location.reload()"
                 class="px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition-colors duration-150 bg-white border border-gray-300 rounded-lg hover:text-gray-800 hover:border-gray-400 focus:outline-none focus:shadow-outline-red dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-gray-300 dark:hover:border-gray-500">
-            <i class="fas fa-sync-alt mr-2"></i> Khôi phục dữ liệu
+            <i class="fas fa-sync-alt mr-2"></i> Khôi phục
         </button>
         <button type="submit" 
                 class="px-5 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:shadow-outline-red shadow-md">

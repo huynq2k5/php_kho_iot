@@ -37,6 +37,12 @@ if ($msg) {
         case 'res_thatbai':
             $alert = ['type' => 'error', 'title' => 'Khôi phục thất bại', 'text' => 'Lỗi khi thực hiện khôi phục mật khẩu.'];
             break;
+        case 'pass_ko_khop':
+            $alert = ['type' => 'error', 'title' => 'Mật khẩu mới không khớp', 'text' => 'Mật khẩu mới và xác nhận không khớp.'];
+            break;
+        case 'pass_sai':
+            $alert = ['type' => 'error', 'title' => 'Sai mật khẩu', 'text' => 'Sai mật khẩu cũ. Vui lòng nhập lại.'];
+            break;
     }
 }
 
@@ -93,6 +99,21 @@ switch ($page) {
         $controller = new \App\Controllers\NguoiDungController();
         $user = $controller->layDuLieuNguoiDungBangId($id);
         $viewFile = $viewDir . '/profile/index.php';
+        break;
+    
+    case 'profile_update_info':
+        $userController = new \App\Controllers\NguoiDungController();
+        $userController->webCapNhatThongTinCaNhan();
+        break;
+
+    case 'profile_change_password':
+        $userController = new \App\Controllers\NguoiDungController();
+        $userController->webDoiMatKhauCaNhan();
+        break;
+
+    case 'api_search_features':
+        $controller = new \App\Controllers\NguoiDungController();
+        $controller->apiTimKiemChucNang();
         break;
 
     case 'dashboard':
@@ -257,6 +278,7 @@ switch ($page) {
             $tdController = new \App\Controllers\TuDongHoaController();
 
             $data = $tdController->layDuLieuTrangChu();
+            $thietBi = $tdController->layDanhSachThietBi();
 
             $viewFile = $viewDir . '/tudong/index.php';
         } else {
@@ -362,15 +384,6 @@ switch ($page) {
         if (hasPermission('canhbao.view')) {
             $controller = new \App\Controllers\CanhBaoNhatKyController();
             $controller->webXoaLichSuCu();
-        } else {
-            $page = '403';
-        }
-        break;
-
-    case 'alert_log_export':
-        if (hasPermission('canhbao.view')) {
-            $controller = new \App\Controllers\CanhBaoNhatKyController();
-            $controller->webXuatBaoCao();
         } else {
             $page = '403';
         }

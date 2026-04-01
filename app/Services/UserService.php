@@ -80,5 +80,17 @@ class UserService{
 
         return $users;
     }
+
+    public function doiMatKhau($id, $matKhauCu, $matKhauMoi) {
+        $user = $this->userRepo->timUserTheoId($id);
+        
+        // Kiểm tra mật khẩu cũ có khớp với Hash trong DB không
+        if (password_verify($matKhauCu, $user->matKhau)) {
+            $hashMoi = password_hash($matKhauMoi, PASSWORD_DEFAULT);
+            return $this->userRepo->resetMatKhau($id, $hashMoi);
+        }
+        
+        return false; // Mật khẩu cũ sai
+    }
 }
 ?>

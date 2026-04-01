@@ -51,33 +51,28 @@
     <div class="md:col-span-5">
         <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 border border-gray-200 dark:border-gray-700 h-full">
             <div class="flex items-center mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
-                <h4 class="font-semibold text-gray-700 dark:text-gray-300">Giao diện & Hiển thị</h4>
+                <h4 class="font-semibold text-gray-700 dark:text-gray-300">
+                    <i class="fas fa-code mr-2 text-red-600"></i> Gợi ý đặt mã nhóm
+                </h4>
             </div>
             
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-2">
-                    <?php 
-                    $colors = ['blue' => 'Xanh dương', 'green' => 'Xanh lá', 'yellow' => 'Vàng', 'red' => 'Đỏ', 'cyan' => 'Xanh nhạt', 'gray' => 'Xám'];
-                    foreach ($colors as $val => $label): 
-                        
-                        $checked = ((isset($isEdit) && $isEdit === true && isset($group->badge_color) && $group->badge_color == $val) || (!isset($isEdit) && $val == 'blue')) ? 'checked' : '';
-                    ?>
-                    <div class="relative">
-                        <input type="radio" class="sr-only peer" name="badge_color" id="color_<?= $val ?>" value="<?= $val ?>" <?= $checked ?> onchange="updatePreview()">
-                        <label for="color_<?= $val ?>" class="flex items-center justify-center gap-2 w-full py-2 text-sm font-medium rounded-lg cursor-pointer border-2 transition-all peer-checked:border-red-600 dark:bg-gray-700">
-                            <i class="fas fa-circle text-<?= $val ?>-600 text-xs"></i> <?= $label ?>
-                        </label>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="p-4 mt-2 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 dark:bg-gray-700 dark:border-gray-600 text-center">
-                    <p class="text-xs font-medium text-gray-500 mb-3 uppercase">Xem trước</p>
-                    <span id="badgePreview" class="inline-flex items-center px-3 py-2 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 border">
-                        <i class="fas fa-users mr-1"></i> 
-                        <span id="previewText"><?= (isset($isEdit) && $isEdit === true) ? htmlspecialchars($group->tenNhom) : 'Tên nhóm...' ?></span>
-                    </span>
-                </div>
+            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                <p class="font-medium text-gray-800 dark:text-gray-200">Mã nhóm nên viết hoa, không dấu:</p>
+                
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-terminal text-red-600 mt-1 mr-2 text-xs"></i>
+                        <span><strong>Mã theo vai trò:</strong> ADM (Quản trị), SUP (Giám sát), STAFF (Nhân viên).</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-terminal text-red-600 mt-1 mr-2 text-xs"></i>
+                        <span><strong>Mã theo khu vực:</strong> VL (Vĩnh Long), CN (Cần Thơ).</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-terminal text-red-600 mt-1 mr-2 text-xs"></i>
+                        <span><strong>Mã theo cấp độ:</strong> FULL (Toàn quyền), VIEW_ONLY (Chỉ xem).</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

@@ -186,6 +186,62 @@ class NguoiDungController extends BaseController{
         }
     }
 
+    public function webCapNhatThongTinCaNhan()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_SESSION['user_id'] ?? null; 
+            
+            if ($id) {
+                $userCu = $this->userService->getUserById($id);
+                
+                $data = [
+                    'hoTen'       => $_POST['hoTen'] ?? $userCu->hoTen,
+                    'tenDangNhap' => $userCu->tenDangNhap,
+                    'idNhom'      => $userCu->idNhom
+                ];
+
+                $kq = $this->userService->suaUser($id, $data);
+
+                if ($kq !== false) {
+                    $_SESSION['user_name'] = $data['hoTen'];
+                    $this->logHeThong("Cá nhân cập nhật thông tin", "NGUOI_DUNG", $id, $userCu, $data);
+                }
+
+                $_SESSION['msg'] = ($kq !== false) ? 'edit_success' : 'edit_error';
+            }
+            header('Location: index.php?page=profile');
+            exit;
+        }
+    }
+
+    public function webDoiMatKhauCaNhan()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_SESSION['user_id'] ?? null;
+            $matKhauCu = $_POST['old_password'] ?? '';
+            $matKhauMoi = $_POST['new_password'] ?? '';
+            $xacNhanMatKhau = $_POST['confirm_password'] ?? '';
+
+            if ($matKhauMoi !== $xacNhanMatKhau) {
+                $_SESSION['msg'] = 'pass_ko_khop'; 
+                header('Location: index.php?page=profile');
+                exit;
+            }
+
+            $kq = $this->userService->doiMatKhau($id, $matKhauCu, $matKhauMoi);
+
+            if ($kq === true) {
+                $this->logHeThong("Cá nhân thay đổi mật khẩu", "NGUOI_DUNG", $id);
+                $_SESSION['msg'] = 'edit_success';
+            } else {
+                $_SESSION['msg'] = 'pass_sai'; 
+            }
+
+            header('Location: index.php?page=profile');
+            exit;
+        }
+    }
+
     public function webThemNhom()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

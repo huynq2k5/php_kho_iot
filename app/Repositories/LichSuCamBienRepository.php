@@ -95,7 +95,8 @@ class LichSuCamBienRepository {
                     AVG(nhietDo) as avgTemp, 
                     AVG(doAm) as avgHum, 
                     AVG(nongDoCo2) as avgCo2, 
-                    AVG(cuongDoAnhSang) as avgLight 
+                    AVG(cuongDoAnhSang) as avgLight,
+                    thoiGian 
                 FROM lichsucambien 
                 WHERE (idThietBi, thoiGian) IN (
                     SELECT idThietBi, MAX(thoiGian) 

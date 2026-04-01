@@ -21,7 +21,10 @@
                 <input class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-red-300 focus:outline-none focus:shadow-outline-red form-input" 
                        type="text" 
                        placeholder="Tìm kiếm chức năng..." 
-                       aria-label="Search" />
+                       aria-label="Search"
+                       id="header-search-input" />
+                <ul id="search-results" class="absolute w-full mt-2 bg-white rounded-md shadow-lg dark:bg-gray-800 hidden z-50 border border-gray-200 dark:border-gray-700">
+                </ul>
             </div>
         </div>
 
@@ -73,19 +76,8 @@
                         aria-label="submenu">
                         <li class="flex">
                             <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="#">
-                                <span>Tin nhắn</span>
+                                <span>Chưa đọc</span>
                                 <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600">13</span>
-                            </a>
-                        </li>
-                        <li class="flex">
-                            <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="#">
-                                <span>Báo cáo</span>
-                                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600">2</span>
-                            </a>
-                        </li>
-                        <li class="flex">
-                            <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="#">
-                                <span>Cảnh báo</span>
                             </a>
                         </li>
                     </ul>
@@ -133,17 +125,6 @@
                             </a>
                         </li>
                         
-                        <!-- Cài đặt -->
-                        <li class="flex">
-                            <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="#">
-                                <svg class="w-4 h-4 mr-3" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                <span>Cài đặt</span>
-                            </a>
-                        </li>
-                        
                         <!-- Đăng xuất -->
                         <li class="flex">
                             <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="index.php?page=logout">
@@ -159,3 +140,81 @@
         </ul>
     </div>
 </header>
+<script>
+    const inputTimKiem = document.getElementById('header-search-input');
+    const vungKetQua = document.getElementById('search-results');
+    let indexHighlight = -1; // Theo dõi vị trí đang chọn
+
+    // Hàm cập nhật giao diện khi di chuyển mũi tên
+    function capNhatHighlight(danhSachItem) {
+        danhSachItem.forEach((item, index) => {
+            if (index === indexHighlight) {
+                // Thêm màu nền khi được chọn (khớp với màu đỏ của Huy)
+                item.classList.add('bg-red-50', 'dark:bg-gray-700', 'text-red-600');
+                item.scrollIntoView({ block: 'nearest' }); // Tự cuộn nếu danh sách dài
+            } else {
+                item.classList.remove('bg-red-50', 'dark:bg-gray-700', 'text-red-600');
+            }
+        });
+    }
+
+    inputTimKiem.addEventListener('input', function(e) {
+        const q = e.target.value.trim();
+        indexHighlight = -1; // Reset vị trí khi gõ chữ mới
+        
+        if (q.length < 2) {
+            vungKetQua.classList.add('hidden');
+            return;
+        }
+
+        fetch(`index.php?page=api_search_features&q=${q}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length > 0) {
+                    vungKetQua.innerHTML = data.map((item, index) => `
+                        <li>
+                            <a href="${item.url}" class="search-item block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-150">
+                                <i class="fas fa-chevron-right mr-2 text-red-500 text-xs"></i> ${item.ten}
+                            </a>
+                        </li>
+                    `).join('');
+                    vungKetQua.classList.remove('hidden');
+                } else {
+                    vungKetQua.classList.add('hidden');
+                }
+            });
+    });
+
+    // Xử lý phím mũi tên và Enter
+    inputTimKiem.addEventListener('keydown', function(e) {
+        const items = vungKetQua.querySelectorAll('.search-item');
+        
+        if (vungKetQua.classList.contains('hidden') || items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault(); // Chặn con trỏ nhảy về cuối input
+            indexHighlight = (indexHighlight + 1) % items.length;
+            capNhatHighlight(items);
+        } 
+        else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            indexHighlight = (indexHighlight - 1 + items.length) % items.length;
+            capNhatHighlight(items);
+        } 
+        else if (e.key === 'Enter') {
+            if (indexHighlight > -1) {
+                e.preventDefault();
+                // Chuyển trang đến URL của item đang chọn
+                window.location.href = items[indexHighlight].getAttribute('href');
+            }
+        }
+        else if (e.key === 'Escape') {
+            vungKetQua.classList.add('hidden');
+        }
+    });
+
+    // Đóng kết quả khi click ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!inputTimKiem.contains(e.target)) vungKetQua.classList.add('hidden');
+    });
+</script>

@@ -63,18 +63,6 @@
                 </div>
             </div>
 
-            <div id="timer-tab-content" class="tab-content space-y-4 hidden">
-                <div class="grid grid-cols-1 gap-4">
-                    <label class="block text-sm">
-                        <span class="text-gray-700 dark:text-gray-400 font-medium">Giờ bắt đầu</span>
-                        <input type="time" name="thoiGianBat" class="block w-full mt-1 text-sm dark:bg-gray-700 form-input focus:border-red-400" value="<?= $kichBan->thoiGianBat ?? '08:00' ?>">
-                    </label>
-                    <label class="block text-sm">
-                        <span class="text-gray-700 dark:text-gray-400 font-medium">Giờ kết thúc</span>
-                        <input type="time" name="thoiGianTat" class="block w-full mt-1 text-sm dark:bg-gray-700 form-input focus:border-red-400" value="<?= $kichBan->thoiGianTat ?? '17:00' ?>">
-                    </label>
-                </div>
-            </div>
         </div>
     </div>
 

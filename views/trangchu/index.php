@@ -1,8 +1,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-    Tổng quan kho hàng
-</h2>
+<div class="flex flex-col items-start justify-between my-6 gap-y-4 sm:flex-row sm:items-center">
+    <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">
+        Tổng quan kho hàng
+    </h2>
+    
+    <div class="flex items-center px-4 py-2 bg-white rounded-lg shadow-xs dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+        <div class="p-2 mr-3 text-purple-600 bg-purple-100 rounded-full dark:text-purple-100 dark:bg-purple-600">
+            <i class="far fa-clock w-4 h-4 flex items-center justify-center"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-gray-500 uppercase dark:text-gray-400 tracking-wider">Cập nhật lúc</p>
+            <p class="text-sm font-bold text-gray-700 dark:text-gray-200" id="current-time">
+                <?= isset($data['overview']['thoiGian']) ? date('H:i:s', strtotime($data['overview']['thoiGian'])) : '--:--:--' ?>
+				<?= isset($data['overview']['thoiGian']) ? date('d/m/Y', strtotime($data['overview']['thoiGian'])) : 'Ngày --/--' ?>
+            </p>
+        </div>
+    </div>
+</div>
 
 <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
