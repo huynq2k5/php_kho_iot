@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mqtt = require('mqtt');
 const mysql = require('mysql2');
 const express = require('express');
@@ -80,12 +81,12 @@ const guiMailThongBao = (maThietBi, trangThai) => {
         <p><b>Trạng thái:</b> ${trangThai === 1 ? '<span style="color: green;">Hoạt động</span>' : '<span style="color: red;">Mất kết nối</span>'}</p>
         <p><b>Thời gian:</b> ${layThoiGian()}</p>
         <hr>
-        <p>Hệ thống giám sát kho thông minh Vĩnh Long.</p>
+        <p>Hệ thống giám sát kho thông minh.</p>
     `;
 
     const options = {
-        from: 'Hệ thống IoT <email_cua_huy@gmail.com>',
-        to: 'email_nhan_thong_bao@gmail.com',
+        from: 'Hệ thống giám sát kho thông minh',
+        to: '23004224@st.vlute.edu.vn',
         subject: chuDe,
         html: noiDung
     };
@@ -97,9 +98,9 @@ const guiMailThongBao = (maThietBi, trangThai) => {
 };
 
 const capNhatTrangThai = (maThietBi, trangThai) => {
-    if (trangThaiCu[maThietBi] !== trangThaiMoi) {
-        guiMailThongBao(maThietBi, trangThaiMoi);
-        trangThaiCu[maThietBi] = trangThaiMoi;
+    if (trangThaiCu[maThietBi] !== trangThai) {
+        guiMailThongBao(maThietBi, trangThai);
+        trangThaiCu[maThietBi] = trangThai;
 
         const sql = `UPDATE thietbi SET trangThai = ? WHERE maThietBi = ?`;
         const mau = trangThai === 1 ? "\x1b[32m" : "\x1b[31m";
