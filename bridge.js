@@ -2,6 +2,7 @@ const mqtt = require('mqtt');
 const mysql = require('mysql2');
 const express = require('express');
 const app = express();
+const nodemailer = require('nodemailer');
 
 const ketNoiDb = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
@@ -10,6 +11,16 @@ const ketNoiDb = mysql.createPool({
     database: process.env.DB_NAME || 'kho_iot',
     port: process.env.DB_PORT || 3306
 });
+
+const cauHinhEmail = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+const trangThaiCu = {};
 
 const mqttClient = mqtt.connect('mqtts://66134711837f4104800192a63e1b7f97.s1.eu.hivemq.cloud:8883', {
     username: 'huyng',
@@ -61,16 +72,45 @@ const xuLyCamBien = (maThietBi, duLieu) => {
     });
 };
 
-const capNhatTrangThai = (maThietBi, trangThai) => {
-    const sql = `UPDATE thietbi SET trangThai = ? WHERE maThietBi = ?`;
-    const mau = trangThai === 1 ? "\x1b[32m" : "\x1b[31m";
-    const chu = trangThai === 1 ? "ONLINE" : "OFFLINE";
+const guiMailThongBao = (maThietBi, trangThai) => {
+    const chuDe = trangThai === 1 ? `[ONLINE] Thiết bị ${maThietBi} đã kết nối` : `[OFFLINE] Thiết bị ${maThietBi} mất kết nối`;
+    const noiDung = `
+        <h3>Thông báo trạng thái thiết bị</h3>
+        <p><b>Mã thiết bị:</b> ${maThietBi}</p>
+        <p><b>Trạng thái:</b> ${trangThai === 1 ? '<span style="color: green;">Hoạt động</span>' : '<span style="color: red;">Mất kết nối</span>'}</p>
+        <p><b>Thời gian:</b> ${layThoiGian()}</p>
+        <hr>
+        <p>Hệ thống giám sát kho thông minh Vĩnh Long.</p>
+    `;
 
-    ketNoiDb.query(sql, [trangThai, maThietBi], (err, kq) => {
-        if (!err && kq.affectedRows > 0) {
-            console.log(`${mau}[${layThoiGian()}] [STATUS] ${maThietBi} hien tai ${chu}\x1b[0m`);
-        }
+    const options = {
+        from: 'Hệ thống IoT <email_cua_huy@gmail.com>',
+        to: 'email_nhan_thong_bao@gmail.com',
+        subject: chuDe,
+        html: noiDung
+    };
+
+    cauHinhEmail.sendMail(options, (err, info) => {
+        if (err) console.log(`\x1b[31m[MAIL_ERR] ${err.message}\x1b[0m`);
+        else console.log(`\x1b[32m[MAIL_OK] Da gui thong bao cho ${maThietBi}\x1b[0m`);
     });
+};
+
+const capNhatTrangThai = (maThietBi, trangThai) => {
+    if (trangThaiCu[maThietBi] !== trangThaiMoi) {
+        guiMailThongBao(maThietBi, trangThaiMoi);
+        trangThaiCu[maThietBi] = trangThaiMoi;
+
+        const sql = `UPDATE thietbi SET trangThai = ? WHERE maThietBi = ?`;
+        const mau = trangThai === 1 ? "\x1b[32m" : "\x1b[31m";
+        const chu = trangThai === 1 ? "ONLINE" : "OFFLINE";
+
+        ketNoiDb.query(sql, [trangThai, maThietBi], (err, kq) => {
+            if (!err && kq.affectedRows > 0) {
+                console.log(`${mau}[${layThoiGian()}] [STATUS] ${maThietBi} hien tai ${chu}\x1b[0m`);
+            }
+        });
+    }
 };
 
 const dayKichBan = (idKichBan) => {
