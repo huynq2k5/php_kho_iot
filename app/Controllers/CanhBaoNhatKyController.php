@@ -118,4 +118,46 @@ class CanhBaoNhatKyController extends BaseController {
         fclose($output);
         exit;
     }
+
+    public function webDocThongBao()
+    {
+        $id = $_GET['id'] ?? null;
+
+        if ($id) {
+            $this->thongBaoService->daDocThongBao($id);
+        }
+
+        $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?page=dashboard';
+        header("Location: $referer");
+        exit;
+    }
+
+    public function apiDocThongBao()
+    {
+        header('Content-Type: application/json');
+        $id = $_GET['id'] ?? null;
+        $kq = false;
+
+        if ($id) {
+            $kq = $this->thongBaoService->daDocThongBao($id);
+        }
+
+        echo json_encode([
+            'success' => $kq,
+            'message' => $kq ? 'Da danh dau' : 'Loi thuc thi'
+        ]);
+        exit;
+    }
+
+    public function webSLChuaDoc()
+    {
+        header('Content-Type: application/json');
+        $count = $this->thongBaoService->getSoLuongChuaDoc();
+        
+        echo json_encode([
+            'success' => true,
+            'unread_count' => (int)$count
+        ]);
+        exit;
+    }
 }

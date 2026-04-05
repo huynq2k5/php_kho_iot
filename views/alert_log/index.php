@@ -20,7 +20,6 @@
                 <span class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
                 Cảnh báo môi trường
             </h4>
-            
         </div>
         
         <div class="overflow-y-auto custom-scrollbar" style="max-height: 400px;">
@@ -30,22 +29,40 @@
                     <p class="text-sm">Hệ thống đang hoạt động an toàn</p>
                 </div>
             <?php else: ?>
-                <div class="divide-y divide-gray-50 dark:divide-gray-700">
+                <div class="divide-y divide-gray-50 dark:divide-gray-700" id="alert-container">
                     <?php foreach ($data['canhBao'] as $cb): 
                         $isUrgent = ($cb->loaiThongBao == 'CanhBao');
+                        $isRead = ($cb->daXem == 1);
                         $indicatorColor = $isUrgent ? 'bg-red-500' : 'bg-green-500';
                         $bgHover = $isUrgent ? 'hover:bg-red-50/50 dark:hover:bg-red-900/10' : 'hover:bg-green-50/50 dark:hover:bg-green-900/10';
                     ?>
-                    <div class="px-5 py-4 transition-colors <?= $bgHover ?> relative group">
+                    <div id="alert-item-<?= $cb->idThongBao ?>" 
+                        class="px-5 py-4 transition-colors <?= $bgHover ?> relative group <?= $isRead ? 'opacity-60' : '' ?>">
                         <div class="flex items-start gap-3">
-                            <div class="mt-1.5 w-2 h-2 rounded-full shrink-0 <?= $indicatorColor ?>"></div>
+                            
+                            <div class="mt-1.5 w-2 h-2 rounded-full shrink-0 <?= $indicatorColor ?> <?= $isRead ? '' : 'animate-ping' ?>"></div>
+                            
                             <div class="flex-1 min-w-0">
                                 <div class="flex justify-between items-center mb-1">
-                                    <h5 class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate"><?= $cb->tieuDe ?></h5>
-                                    <span class="text-[10px] font-medium text-gray-400 uppercase"><?= date('H:i d/m', strtotime($cb->thoiGian)) ?></span>
+                                    <h5 class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate <?= $isRead ? 'font-medium' : '' ?>">
+                                        <a href="index.php?page=alert_read&id=<?= $cb->idThongBao ?>" class="hover:text-red-600">
+                                            <?= $cb->tieuDe ?>
+                                        </a>
+                                    </h5>
+                                    <span class="text-[10px] font-medium text-gray-400 uppercase">
+                                        <?= date('H:i d/m', strtotime($cb->thoiGian)) ?>
+                                    </span>
                                 </div>
                                 <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed"><?= $cb->noiDung ?></p>
                             </div>
+
+                            <?php if (!$isRead): ?>
+                            <button onclick="markAsReadApi(<?= $cb->idThongBao ?>)" 
+                                    class="hidden group-hover:block text-gray-400 hover:text-green-600 transition-colors"
+                                    title="Đánh dấu đã đọc">
+                                <i class="fas fa-check text-xs"></i>
+                            </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -53,6 +70,31 @@
             <?php endif; ?>
         </div>
     </div>
+
+    <script>
+    async function markAsReadApi(id) {
+        try {
+            const response = await fetch(`index.php?page=alert_read_api&id=${id}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const item = document.getElementById(`alert-item-${id}`);
+                if (item) {
+                    item.classList.add('opacity-60');
+                    const checkbox = item.querySelector('.alert-checkbox');
+                    const pingDot = item.querySelector('.animate-ping');
+                    const btnRead = item.querySelector('button[onclick^="markAsReadApi"]');
+                    
+                    if (checkbox) checkbox.classList.add('hidden');
+                    if (pingDot) pingDot.classList.remove('animate-ping');
+                    if (btnRead) btnRead.remove();
+                }
+            }
+        } catch (error) {
+            console.error('Lỗi kết nối API:', error);
+        }
+    }
+    </script>
 
     <div class="flex flex-col min-w-0 bg-white rounded-xl shadow-sm dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
         <div class="px-5 py-4 border-b border-gray-50 dark:border-gray-700">

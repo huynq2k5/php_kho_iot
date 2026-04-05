@@ -381,6 +381,30 @@ switch ($page) {
         }
         break;
 
+    case 'alert_read':
+        if (hasPermission('canhbao.view')) {
+            $controller = new \App\Controllers\CanhBaoNhatKyController();
+            $controller->webDocThongBao();
+        } else {
+            $page = '403';
+        }
+        break;
+
+    case 'alert_read_api':
+        if (hasPermission('canhbao.view')) {
+            $controller = new \App\Controllers\CanhBaoNhatKyController();
+            $controller->apiDocThongBao();
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => '403 Forbidden']);
+            exit;
+        }
+        break;
+    case 'unread_count_api':
+        $controller = new \App\Controllers\CanhBaoNhatKyController();
+        $controller->webSLChuaDoc();
+        break;
+
     case 'alert_log_export':
         if (hasPermission('canhbao.view')) {
             $controller = new \App\Controllers\CanhBaoNhatKyController();

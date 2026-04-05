@@ -90,6 +90,15 @@ class ThongBaoRepository
         return $this->db->capNhat($sql, [$id]);
     }
 
+    public function demThongBaoChuaDoc()
+    {
+        $sql = "SELECT COUNT(*) as total FROM thongbao WHERE daXem = 0";
+        $result = $this->db->truyVan($sql);
+        $row = $result->fetch_assoc();
+        
+        return (int)($row['total'] ?? 0);
+    }
+
     public function xoaThongBao($id)
     {
         $sql = "DELETE FROM thongbao WHERE idThongBao = ?";

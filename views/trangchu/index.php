@@ -138,6 +138,19 @@
 							<button disabled id="btn-h" onclick="controlDevice('h')" class="btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed">Đang đợi...</button>
 						</td>
 					</tr>
+					<tr class="text-gray-700 dark:text-gray-400 opacity-50 transition-opacity" id="row-cs">
+						<td class="px-4 py-3 text-sm">
+							<div class="flex items-center">
+								<div class="p-2 mr-3 rounded-full bg-orange-50 dark:bg-orange-900">
+									<i class="fas fa-window-maximize text-orange-500" id="icon-cs"></i>
+								</div>
+								<span class="font-medium">Cửa sổ thông minh</span>
+							</div>
+						</td>
+						<td class="px-4 py-3 text-sm text-right">
+							<button disabled id="btn-cs" onclick="controlDevice('cs')" class="btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed">Đang đợi...</button>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
@@ -189,7 +202,7 @@
 	};
 
     const client = new Paho.MQTT.Client(MQTT_CONF.broker, MQTT_CONF.port, MQTT_CONF.clientId);
-    let deviceStates = { q: 0, a: 0, h: 0 };
+    let deviceStates = { q: 0, a: 0, h: 0, cs: 0 };
 
     const mqttOptions = {
         useSSL: true,
@@ -259,7 +272,8 @@
 				deviceStates = { 
 					q: payload.fan, 
 					a: payload.ac, 
-					h: payload.hum 
+					h: payload.hum, 
+					cs: payload.win
 				};
 				updateAllButtons();
 				
@@ -282,21 +296,12 @@
 			}
 
             if (message.destinationName === MQTT_CONF.baseTopic) {
-				// const map = { t: "val-nhietdo", h: "val-doam", co2: "val-co2", as: "val-anhsang" };
-				// const units = { t: "°C", h: "%", co2: " ppm", as: " Lux" };
-				
-				// Object.keys(map).forEach(key => {
-				// 	const el = document.getElementById(map[key]);
-				// 	if (el && payload[key] !== undefined) {
-				// 		el.innerText = (typeof payload[key] === 'number' ? payload[key].toFixed(1) : payload[key]) + units[key];
-				// 	}
-				// });
-
-				if (payload.fan !== undefined || payload.ac !== undefined || payload.hum !== undefined) {
+				if (payload.fan !== undefined || payload.ac !== undefined || payload.hum !== undefined || payload.cs !== undefined) {
 					deviceStates = { 
 						q: payload.fan !== undefined ? payload.fan : deviceStates.q, 
 						a: payload.ac !== undefined ? payload.ac : deviceStates.a, 
-						h: payload.hum !== undefined ? payload.hum : deviceStates.h 
+						h: payload.hum !== undefined ? payload.hum : deviceStates.h,
+						cs: payload.cs !== undefined ? payload.cs : deviceStates.cs
 					};
 					updateAllButtons();
 				}
@@ -324,7 +329,7 @@
     function updateAllButtons() {
 		const isManual = document.getElementById('masterSwitch')?.checked;
 		
-		['q', 'a', 'h'].forEach(dev => {
+		['q', 'a', 'h', 'cs'].forEach(dev => {
 			const btn = document.getElementById(`btn-${dev}`);
 			const row = document.getElementById(`row-${dev}`);
 			if (!btn || !row) return;
@@ -332,7 +337,6 @@
 			const isOn = deviceStates[dev] === 1;
 			btn.innerText = isOn ? "Bật" : "Tắt";
 			
-			// Luôn cập nhật màu dựa trên trạng thái isOn
 			if (!isManual) {
 				btn.disabled = true;
 				btn.className = "btn-device px-3 py-1 text-xs font-medium text-white bg-gray-400 rounded-md cursor-not-allowed";
