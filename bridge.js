@@ -22,6 +22,7 @@ const cauHinhEmail = nodemailer.createTransport({
 });
 
 const trangThaiCu = {};
+const trangThaiCanhBao = {};
 
 const mqttClient = mqtt.connect('mqtts://66134711837f4104800192a63e1b7f97.s1.eu.hivemq.cloud:8883', {
     username: 'huyng',
@@ -43,22 +44,32 @@ const luuLichSu = (idThietBi, duLieu) => {
 
 const xuLyCanhBao = (idThietBi, tenThietBi, duLieu) => {
     const idAdmin = 1;
-    const danhSachLoi = [];
+    if (!trangThaiCanhBao[idThietBi]) trangThaiCanhBao[idThietBi] = {};
 
-    if (duLieu.t > 16) danhSachLoi.push(["QUÁ NHIỆT", `Nhiệt độ tại ${tenThietBi} đạt ${duLieu.t}°C.`, "CanhBao"]);
-    if (duLieu.h < 80) danhSachLoi.push(["ĐỘ ẨM THẤP", `Độ ẩm tại ${tenThietBi} giảm còn ${duLieu.h}%.`, "CanhBao"]);
-    if (duLieu.co2 > 1000) danhSachLoi.push(["CO2 CAO", `Nồng độ CO2 tại ${tenThietBi}: ${duLieu.co2} ppm.`, "CanhBao"]);
-    if (duLieu.as > 50) danhSachLoi.push(["ÁNH SÁNG", `Phát hiện ánh sáng tại ${tenThietBi}: ${duLieu.as} lux.`, "CanhBao"]);
+    const cacLoi = [
+        { key: 'QUÁ NHIỆT', check: duLieu.t > 16, msg: `Nhiệt độ tại ${tenThietBi} đạt ${duLieu.t}°C.` },
+        { key: 'ĐỘ ẨM THẤP', check: duLieu.h < 80, msg: `Độ ẩm tại ${tenThietBi} giảm còn ${duLieu.h}%.` },
+        { key: 'CO2 CAO', check: duLieu.co2 > 1000, msg: `Nồng độ CO2 tại ${tenThietBi}: ${duLieu.co2} ppm.` },
+        { key: 'ÁNH SÁNG', check: duLieu.as > 50, msg: `Phát hiện ánh sáng tại ${tenThietBi}: ${duLieu.as} lux.` }
+    ];
 
-    if (danhSachLoi.length > 0) {
-        const sql = `INSERT INTO thongbao (tieuDe, noiDung, loaiThongBao, idThietBi, idNguoiDung) VALUES ?`;
-        const hangLoi = danhSachLoi.map(loi => [...loi, idThietBi, idAdmin]);
+    cacLoi.forEach(loi => {
+        if (loi.check && !trangThaiCanhBao[idThietBi][loi.key]) {
+            const sql = `INSERT INTO thongbao (tieuDe, noiDung, loaiThongBao, idThietBi, idNguoiDung) VALUES (?, ?, ?, ?, ?)`;
+            const values = [loi.key, loi.msg, "CanhBao", idThietBi, idAdmin];
 
-        ketNoiDb.query(sql, [hangLoi], (err) => {
-            if (err) console.log(`\x1b[31m[LOI_CANH_BAO] ${err.message}\x1b[0m`);
-            else console.log(`\x1b[31m[ALARM] Da ghi ${danhSachLoi.length} canh bao moi!\x1b[0m`);
-        });
-    }
+            ketNoiDb.query(sql, values, (err) => {
+                if (!err) {
+                    console.log(`\x1b[31m[ALARM] Da ghi canh bao: ${loi.key} cho ${tenThietBi}\x1b[0m`);
+                    trangThaiCanhBao[idThietBi][loi.key] = true; 
+                }
+            });
+        } 
+        else if (!loi.check && trangThaiCanhBao[idThietBi][loi.key]) {
+            trangThaiCanhBao[idThietBi][loi.key] = false; 
+            console.log(`\x1b[32m[INFO] ${tenThietBi} - ${loi.key} da tro lai binh thuong\x1b[0m`);
+        }
+    });
 };
 
 const xuLyCamBien = (maThietBi, duLieu) => {

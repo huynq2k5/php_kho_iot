@@ -65,9 +65,7 @@
                     Google
                 </button>
                 <p class="mt-4">
-                    <a class="text-sm font-medium text-red-600 dark:text-red-400 hover:underline" href="index.php?page=quen_mk">
-                        Quên mật khẩu?
-                    </a>
+                    
                 </p>
                 
             </div>

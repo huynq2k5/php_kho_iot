@@ -45,6 +45,8 @@ class LichSuCamBienRepository {
 
     public function layDuLieuBieuDo($idThietBi, $period = 'day') {
         $dateCondition = "";
+        $limit = 130;
+
         switch ($period) {
             case 'week':
                 $dateCondition = "AND thoiGian >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
@@ -52,14 +54,26 @@ class LichSuCamBienRepository {
             case 'month':
                 $dateCondition = "AND thoiGian >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
                 break;
-            default: // day
+            default: 
                 $dateCondition = "AND thoiGian >= CURDATE()";
                 break;
         }
 
-        $sql = "SELECT * FROM lichsucambien 
-                WHERE idThietBi = ? $dateCondition 
-                ORDER BY thoiGian ASC";
+        $sqlCount = "SELECT COUNT(*) as tong FROM lichsucambien WHERE idThietBi = ? $dateCondition";
+        $kqCount = $this->db->truyVan($sqlCount, [$idThietBi]);
+        $row = $kqCount->fetch_assoc();
+        $tongRecords = $row['tong'];
+
+        $step = ($tongRecords > $limit) ? ceil($tongRecords / $limit) : 1;
+
+        $sql = "SELECT * FROM (
+                    SELECT *, @row := @row + 1 AS rownum 
+                    FROM lichsucambien, (SELECT @row := 0) r
+                    WHERE idThietBi = ? $dateCondition 
+                    ORDER BY thoiGian ASC
+                ) ranked
+                WHERE rownum % $step = 0
+                LIMIT $limit";
         
         $kq = $this->db->truyVan($sql, [$idThietBi]);
         $dsLichSu = [];
