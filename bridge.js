@@ -1,4 +1,6 @@
 require('dotenv').config();
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 const mqtt = require('mqtt');
 const mysql = require('mysql2');
 const express = require('express');
@@ -14,7 +16,7 @@ const ketNoiDb = mysql.createPool({
 });
 
 const cauHinhEmail = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: '74.125.204.108',
     port: 465,
     secure: true, 
     auth: {
@@ -22,7 +24,8 @@ const cauHinhEmail = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS
     },
     
-    family: 4, 
+    connectionTimeout: 10000, 
+    greetingTimeout: 10000,
     tls: {
         rejectUnauthorized: false
     }
