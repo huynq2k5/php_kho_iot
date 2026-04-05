@@ -9,6 +9,7 @@ class KetNoi {
     private $conn;
 
     public function __construct() {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
         $this->host = getenv('DB_HOST') ?: '127.0.0.1';
         $this->user = getenv('DB_USER') ?: 'huynq';
         $this->pass = getenv('DB_PASS') ?: '123';

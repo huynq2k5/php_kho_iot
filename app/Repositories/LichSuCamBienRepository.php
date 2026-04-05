@@ -92,14 +92,16 @@ class LichSuCamBienRepository {
 
     public function luuLichSu($data) {
         $sql = "INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang, thoiGian) 
-                VALUES (?, ?, ?, ?, ?, NOW())";
+                VALUES (?, ?, ?, ?, ?, ?)";
         
+        $thoiGianHienTai = date('Y-m-d H:i:s');
         return $this->db->capNhat($sql, [
             $data['idThietBi'],
             $data['nhietDo'],
             $data['doAm'],
             $data['nongDoCo2'],
-            $data['cuongDoAnhSang']
+            $data['cuongDoAnhSang'],
+            $thoiGianHienTai
         ]);
     }
 
