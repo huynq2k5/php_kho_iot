@@ -16,16 +16,16 @@ const ketNoiDb = mysql.createPool({
 });
 
 const cauHinhEmail = nodemailer.createTransport({
-    host: '74.125.204.108',
+    host: 'smtp.gmail.com', 
     port: 465,
     secure: true, 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
-    
-    connectionTimeout: 10000, 
-    greetingTimeout: 10000,
+    family: 4, 
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
     tls: {
         rejectUnauthorized: false
     }
