@@ -43,6 +43,9 @@ if ($msg) {
         case 'pass_sai':
             $alert = ['type' => 'error', 'title' => 'Sai mật khẩu', 'text' => 'Sai mật khẩu cũ. Vui lòng nhập lại.'];
             break;
+        case 'duplicate_code':
+            $alert = ['type' => 'error', 'title' => 'Trùng mã số', 'text' => 'Mã số đã được sử dụng.'];
+            break;
     }
 }
 

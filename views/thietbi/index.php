@@ -143,9 +143,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <span class="px-2 py-1 text-xs font-semibold leading-tight rounded-full <?= $badgeColorClass ?>">
-                                <?= htmlspecialchars($kv->cheDo) ?>
-                            </span>
+                            
                         </div>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2" title="<?= htmlspecialchars($kv->moTa ?? '') ?>">
                             <?= htmlspecialchars($kv->moTa ?? 'Chưa có mô tả cho khu vực này.') ?>

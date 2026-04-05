@@ -64,7 +64,7 @@
                 <h4 class="font-semibold text-gray-800 dark:text-gray-300">
                     1. Chỉ số MACD (Xu hướng biến động)
                 </h4>
-                <div class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Kỹ thuật Exponential Moving Average</div>
+                
             </div>
             <div class="relative w-full" style="height: 350px;">
                 <canvas id="macdChart"></canvas>

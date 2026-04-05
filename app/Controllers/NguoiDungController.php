@@ -115,11 +115,19 @@ class NguoiDungController extends BaseController{
 
             $kq = $this->userService->themUser($data);
 
-            if ($kq) {
-                $this->logHeThong("Thêm người dùng mới: {$data['hoTen']}", "NGUOI_DUNG", $kq, null, $data);
+            if ($kq === "ERROR_DUPLICATE_CODE") {
+                $_SESSION['msg'] = 'duplicate_code';
+                header('Location: index.php?page=nguoidung_them');
+                exit;
             }
 
-            $_SESSION['msg'] = $kq ? 'add_success' : 'add_error';
+            if ($kq) {
+                $this->logHeThong("Thêm người dùng mới: {$data['hoTen']}", "NGUOI_DUNG", $kq, null, $data);
+                $_SESSION['msg'] = 'add_success';
+            } else {
+                $_SESSION['msg'] = 'add_error';
+            }
+
             header('Location: index.php?page=users');
             exit;
         }
@@ -253,6 +261,12 @@ class NguoiDungController extends BaseController{
 
             $kq = $this->nhomService->themNhom($data);
             
+            if ($kq === "ERROR_DUPLICATE_CODE") {
+                $_SESSION['msg'] = 'duplicate_code';
+                header('Location: index.php?page=nhom_them');
+                exit;
+            }
+
             if ($kq) {
                 $this->logHeThong("Thêm nhóm người dùng mới: {$data['tenNhom']}", "NGUOI_DUNG", $kq, null, $data);
             }
@@ -314,6 +328,12 @@ class NguoiDungController extends BaseController{
 
             $kq = $this->quyenService->themQuyen($data);
             
+            if ($kq === "ERROR_DUPLICATE_CODE") {
+                $_SESSION['msg'] = 'duplicate_code';
+                header('Location: index.php?page=quyen_them');
+                exit;
+            }
+
             if ($kq) {
                 $this->logHeThong("Định nghĩa quyền mới: {$data['tenQuyen']}", "NGUOI_DUNG", $kq, null, $data);
             }

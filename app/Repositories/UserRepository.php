@@ -108,6 +108,20 @@ class UserRepository {
         return $users;
     }
 
+    public function kiemTraTrungMa($maNguoiDung, $idHienTai = null) {
+        $sql = "SELECT idNguoiDung FROM nguoidung WHERE maNguoiDung = ?";
+        $params = [$maNguoiDung];
+
+        if ($idHienTai) {
+            $sql .= " AND idNguoiDung != ?";
+            $params[] = $idHienTai;
+        }
+
+        $result = $this->db->truyVan($sql, $params);
+        
+        return ($result && $result->num_rows > 0);
+    }
+
     public function insertNguoiDung($data) {
         $sql = "INSERT INTO nguoidung (maNguoiDung, tenDangNhap, matKhau, hoTen, idNhom) 
                 VALUES (?, ?, ?, ?, ?)";

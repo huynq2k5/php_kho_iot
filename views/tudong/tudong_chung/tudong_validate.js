@@ -1,7 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const getEl = (id) => document.getElementById(id);
     const scriptForm = getEl('scriptForm');
+    const submitBtn = scriptForm.querySelector('button[type="submit"]');
 
+    // 1. Khai báo các phần tử (Bao gồm các trường ẩn và các ô input cũ)
     const elements = {
         tenKichBan: getEl('tenKichBan'),
         loaiKichBan: getEl('loaiKichBan'),
@@ -9,10 +11,63 @@ document.addEventListener('DOMContentLoaded', function() {
         idThietBiRa: getEl('idThietBiRa'),
         idThanhPhanVao: getEl('idThanhPhanVao'),
         idThanhPhanRa: getEl('idThanhPhanRa'),
+        dieuKien: document.querySelector('select[name="dieuKien"]'),
+        giaTriNguong: document.querySelector('input[name="giaTriNguong"]'),
+        hanhDong: document.querySelector('select[name="hanhDong"]'),
         thoiGianBat: document.querySelector('input[name="thoiGianBat"]'),
         thoiGianTat: document.querySelector('input[name="thoiGianTat"]')
     };
 
+    let initialValues = {};
+
+    // 2. Chụp ảnh trạng thái ban đầu để so sánh
+    function captureInitialState() {
+        initialValues = {
+            tenKichBan: elements.tenKichBan.value,
+            loaiKichBan: elements.loaiKichBan.value,
+            idThietBiVao: elements.idThietBiVao.value,
+            idThanhPhanVao: elements.idThanhPhanVao.value,
+            idThietBiRa: elements.idThietBiRa.value,
+            idThanhPhanRa: elements.idThanhPhanRa.value,
+            dieuKien: elements.dieuKien?.value,
+            giaTriNguong: elements.giaTriNguong?.value,
+            hanhDong: elements.hanhDong?.value,
+            thoiGianBat: elements.thoiGianBat?.value,
+            thoiGianTat: elements.thoiGianTat?.value
+        };
+        updateSubmitButton(false);
+    }
+
+    // 3. Bật/Tắt nút Submit dựa trên thay đổi
+    function updateSubmitButton(isChanged) {
+        if (isChanged) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    // 4. Kiểm tra thay đổi dữ liệu
+    function checkChanges() {
+        const hasChanged = 
+            elements.tenKichBan.value !== initialValues.tenKichBan ||
+            elements.loaiKichBan.value !== initialValues.loaiKichBan ||
+            elements.idThietBiVao.value !== initialValues.idThietBiVao ||
+            elements.idThanhPhanVao.value !== initialValues.idThanhPhanVao ||
+            elements.idThietBiRa.value !== initialValues.idThietBiRa ||
+            elements.idThanhPhanRa.value !== initialValues.idThanhPhanRa ||
+            (elements.dieuKien && elements.dieuKien.value !== initialValues.dieuKien) ||
+            (elements.giaTriNguong && elements.giaTriNguong.value != initialValues.giaTriNguong) ||
+            (elements.hanhDong && elements.hanhDong.value !== initialValues.hanhDong) ||
+            (elements.thoiGianBat && elements.thoiGianBat.value !== initialValues.thoiGianBat) ||
+            (elements.thoiGianTat && elements.thoiGianTat.value !== initialValues.thoiGianTat);
+
+        updateSubmitButton(hasChanged);
+    }
+
+    // 5. Logic chuyển Tab
     window.switchTab = function(tab) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
         getEl(tab + '-tab-content').classList.remove('hidden');
@@ -23,10 +78,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const activeTab = getEl(tab + '-tab');
-        activeTab.classList.add('text-red-600', 'border-red-600', 'dark:text-red-500', 'dark:border-red-500');
+        if (activeTab) {
+            activeTab.classList.add('text-red-600', 'border-red-600', 'dark:text-red-500', 'dark:border-red-500');
+        }
         elements.loaiKichBan.value = tab.toUpperCase();
+        checkChanges();
     };
 
+    // 6. Load linh kiện AJAX (Dùng async/await)
     async function loadComponents(idThietBi, loai, targetSelect, selectedId = null) {
         if (!idThietBi) return;
         targetSelect.innerHTML = '<option>Đang tải...</option>';
@@ -36,9 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             targetSelect.innerHTML = `<option value="">-- Chọn ${loai === 'INPUT' ? 'cảm biến' : 'thiết bị'} --</option>`;
-            
             data.forEach(item => {
-                // Kiểm tra nếu ID trùng với ID đã lưu thì thêm thuộc tính selected
                 const isSelected = (selectedId && item.idThanhPhan == selectedId) ? 'selected' : '';
                 targetSelect.innerHTML += `<option value="${item.idThanhPhan}" ${isSelected}>${item.tenThanhPhan} (${item.maThanhPhan})</option>`;
             });
@@ -47,34 +104,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    elements.idThietBiVao.addEventListener('change', () => {
-        loadComponents(elements.idThietBiVao.value, 'INPUT', elements.idThanhPhanVao);
+    // 7. Lắng nghe các sự kiện thay đổi
+    scriptForm.addEventListener('input', checkChanges);
+    scriptForm.addEventListener('change', checkChanges);
+
+    elements.idThietBiVao.addEventListener('change', async () => {
+        await loadComponents(elements.idThietBiVao.value, 'INPUT', elements.idThanhPhanVao);
+        checkChanges();
     });
 
-    elements.idThietBiRa.addEventListener('change', () => {
-        loadComponents(elements.idThietBiRa.value, 'OUTPUT', elements.idThanhPhanRa);
+    elements.idThietBiRa.addEventListener('change', async () => {
+        await loadComponents(elements.idThietBiRa.value, 'OUTPUT', elements.idThanhPhanRa);
+        checkChanges();
     });
 
+    // 8. LOGIC KIỂM TRA KHI SUBMIT (Toàn bộ logic cũ của Huy)
     if (scriptForm) {
         scriptForm.addEventListener('submit', function(e) {
-            let isValid = true;
-
-            // 1. Kiểm tra tên kịch bản (Dùng chung)
-            if (elements.tenKichBan.value.trim() === "") {
-                elements.tenKichBan.classList.add('border-red-600');
-                getEl('tenKichBan_error').classList.remove('hidden');
-                isValid = false;
+            // Nếu nút đang bị disable thì không làm gì cả
+            if (submitBtn.disabled) {
+                e.preventDefault();
+                return false;
             }
 
-            // 2. Kiểm tra theo loại kịch bản
-            if (elements.loaiKichBan.value === 'SENSOR') {
-                // Kiểm tra cảm biến đầu vào
+            let isValid = true;
+
+            // 8.1. Kiểm tra tên kịch bản
+            if (elements.tenKichBan.value.trim() === "") {
+                elements.tenKichBan.classList.add('border-red-600');
+                getEl('tenKichBan_error')?.classList.remove('hidden');
+                isValid = false;
+            } else {
+                elements.tenKichBan.classList.remove('border-red-600');
+                getEl('tenKichBan_error')?.classList.add('hidden');
+            }
+
+            // 8.2. Kiểm tra theo loại kịch bản
+            const loai = elements.loaiKichBan.value;
+            if (loai === 'SENSOR') {
                 if (!elements.idThanhPhanVao.value) {
                     alert('Vui lòng chọn cảm biến đầu vào!');
                     isValid = false;
                 }
-            } else if (elements.loaiKichBan.value === 'TIMER') {
-                // Kiểm tra thời gian (BỔ SUNG TẠI ĐÂY)
+            } else if (loai === 'TIMER') {
                 if (!elements.thoiGianBat.value || !elements.thoiGianTat.value) {
                     alert('Vui lòng thiết lập đầy đủ giờ bắt đầu và giờ kết thúc!');
                     isValid = false;
@@ -87,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // 3. Kiểm tra thiết bị thực thi (Dùng chung)
+            // 8.3. Kiểm tra thiết bị thực thi
             if (!elements.idThanhPhanRa.value) {
                 alert('Vui lòng chọn thiết bị thực thi đầu ra!');
                 isValid = false;
@@ -100,14 +172,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentLoai = elements.loaiKichBan.value.toLowerCase();
     switchTab(currentLoai);
 
-    // Tự động load linh kiện khi ở chế độ sửa (Edit mode)
-    const initialVao = getEl('idThietBiVao').value;
-    const initialRa = getEl('idThietBiRa').value;
+    const initialVao = elements.idThietBiVao.value;
+    const initialRa = elements.idThietBiRa.value;
+    const loadTasks = [];
 
     if (initialVao) {
-        loadComponents(initialVao, 'INPUT', getEl('idThanhPhanVao'), '<?= $kichBan->idThanhPhanVao ?? "" ?>');
+        loadTasks.push(loadComponents(initialVao, 'INPUT', elements.idThanhPhanVao, '<?= $kichBan->idThanhPhanVao ?? "" ?>'));
     }
     if (initialRa) {
-        loadComponents(initialRa, 'OUTPUT', getEl('idThanhPhanRa'), '<?= $kichBan->idThanhPhanRa ?? "" ?>');
+        loadTasks.push(loadComponents(initialRa, 'OUTPUT', elements.idThanhPhanRa, '<?= $kichBan->idThanhPhanRa ?? "" ?>'));
     }
+
+    await Promise.all(loadTasks);
+    captureInitialState(); 
 });

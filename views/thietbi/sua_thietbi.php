@@ -32,6 +32,7 @@ $isEdit = true;
         </a>
 
         <button @click="openModal" 
+                id="btnUpdateDevice"
                 type="button" 
                 onclick="triggerModal({
                     title: 'Xác nhận cập nhật',

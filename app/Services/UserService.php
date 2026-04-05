@@ -39,7 +39,15 @@ class UserService{
         return $this->userRepo->layNguoiDungNgoaiNhom($idNhom);
     }
 
+    public function checkDuplicateCode($maNguoiDung, $idHienTai = null) {
+        return $this->userRepo->kiemTraTrungMa($maNguoiDung, $idHienTai);
+    }
+
     public function themUser($data) {
+        if ($this->userRepo->kiemTraTrungMa($data['maNguoiDung'])) {
+            return "ERROR_DUPLICATE_CODE"; 
+        }
+
         if (empty($data['matKhau'])) {
             $data['matKhau'] = '12345678';
         }
