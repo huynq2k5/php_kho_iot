@@ -30,15 +30,23 @@ const mqttClient = mqtt.connect('mqtts://66134711837f4104800192a63e1b7f97.s1.eu.
     clientId: 'node_bridge_' + Math.random().toString(16).substr(2, 8)
 });
 
-const layThoiGian = () => new Date().toLocaleString('vi-VN');
+const layThoiGian = () => {
+    return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Ho_Chi_Minh',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+    }).format(new Date()).replace(/,/g, '').replace(/(\d{4})-(\d{2})-(\d{2})/, '$1-$2-$3');
+};
 
 const luuLichSu = (idThietBi, duLieu) => {
-    const sql = `INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang) VALUES (?, ?, ?, ?, ?)`;
-    const giaTri = [idThietBi, duLieu.t || 0, duLieu.h || 0, duLieu.co2 || 0, duLieu.as || 0];
+    const bayGio = layThoiGian();
+    const sql = `INSERT INTO lichsucambien (idThietBi, nhietDo, doAm, nongDoCo2, cuongDoAnhSang, thoiGian) VALUES (?, ?, ?, ?, ?, ?)`;
+    const giaTri = [idThietBi, duLieu.t || 0, duLieu.h || 0, duLieu.co2 || 0, duLieu.as || 0, bayGio];
 
     ketNoiDb.query(sql, giaTri, (err) => {
-        if (err) console.log(`\x1b[31m[${layThoiGian()}] [LOI_LƯU_DB] ${err.message}\x1b[0m`);
-        else console.log(`\x1b[34m[${layThoiGian()}] [DB_OK] Da luu du lieu thiet bi ID: ${idThietBi}\x1b[0m`);
+        if (err) console.log(`\x1b[31m[${bayGio}] [LOI_LƯU_DB] ${err.message}\x1b[0m`);
+        else console.log(`\x1b[34m[${bayGio}] [DB_OK] Da luu du lieu thiet bi ID: ${idThietBi} luc ${bayGio}\x1b[0m`);
     });
 };
 
