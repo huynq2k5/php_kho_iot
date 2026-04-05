@@ -104,13 +104,12 @@ class LichSuCamBienRepository {
     }
 
     public function layTrungBinhMoiNhatHeThong() {
-        // Truy vấn lấy bản ghi mới nhất của mỗi idThietBi, sau đó tính trung bình cộng
         $sql = "SELECT 
                     AVG(nhietDo) as avgTemp, 
                     AVG(doAm) as avgHum, 
                     AVG(nongDoCo2) as avgCo2, 
                     AVG(cuongDoAnhSang) as avgLight,
-                    thoiGian 
+                    MAX(thoiGian) as thoiGian 
                 FROM lichsucambien 
                 WHERE (idThietBi, thoiGian) IN (
                     SELECT idThietBi, MAX(thoiGian) 
@@ -120,10 +119,11 @@ class LichSuCamBienRepository {
         
         $kq = $this->db->truyVan($sql);
         if ($kq && $kq->num_rows > 0) {
-            return $kq->fetch_assoc();
+            $result = $kq->fetch_assoc();
+            return $result;
         }
         return [
-            'avgTemp' => 0, 'avgHum' => 0, 'avgCo2' => 0, 'avgLight' => 0
+            'avgTemp' => 0, 'avgHum' => 0, 'avgCo2' => 0, 'avgLight' => 0, 'thoiGian' => null
         ];
     }
 }
