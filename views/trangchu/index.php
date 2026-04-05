@@ -29,9 +29,7 @@
             <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-nhietdo">
                 <?= number_format($data['overview']['avgTemp'] ?? 0, 1) ?> °C
             </p>
-            <p class="text-xs font-bold mt-1 <?= $data['status']['temp']['class'] ?? 'text-gray-500' ?>">
-                <?= $data['status']['temp']['text'] ?? 'Đang tải...' ?>
-            </p>
+            <p id="stat-nhietdo" class="text-xs font-bold mt-1 text-gray-500">Đang tải...</p>
         </div>
     </div>
 
@@ -44,9 +42,7 @@
             <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-doam">
                 <?= number_format($data['overview']['avgHum'] ?? 0, 1) ?> %
             </p>
-            <p class="text-xs font-bold mt-1 <?= $data['status']['hum']['class'] ?? 'text-gray-500' ?>">
-                <?= $data['status']['hum']['text'] ?? 'Đang tải...' ?>
-            </p>
+            <p id="stat-doam" class="text-xs font-bold mt-1 text-gray-500">Đang tải...</p>
         </div>
     </div>
 
@@ -59,9 +55,7 @@
             <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-anhsang">
                 <?= number_format($data['overview']['avgLight'] ?? 0, 0) ?> Lux
             </p>
-            <p class="text-xs font-bold mt-1 <?= $data['status']['light']['class'] ?? 'text-gray-500' ?>">
-                <?= $data['status']['light']['text'] ?? 'Đang tải...' ?>
-            </p>
+            <p id="stat-anhsang" class="text-xs font-bold mt-1 text-gray-500">Đang tải...</p>
         </div>
     </div>
 
@@ -74,9 +68,7 @@
             <p class="text-lg font-semibold text-gray-700 dark:text-gray-200" id="val-co2">
                 <?= number_format($data['overview']['avgCo2'] ?? 0, 0) ?> ppm
             </p>
-            <p class="text-xs font-bold mt-1 <?= $data['status']['co2']['class'] ?? 'text-gray-500' ?>">
-                <?= $data['status']['co2']['text'] ?? 'Đang tải...' ?>
-            </p>
+            <p id="stat-co2" class="text-xs font-bold mt-1 text-gray-500">Đang tải...</p>
         </div>
     </div>
 </div>
@@ -290,17 +282,16 @@
 			}
 
             if (message.destinationName === MQTT_CONF.baseTopic) {
-				const map = { t: "val-nhietdo", h: "val-doam", co2: "val-co2", as: "val-anhsang" };
-				const units = { t: "°C", h: "%", co2: " ppm", as: " Lux" };
+				// const map = { t: "val-nhietdo", h: "val-doam", co2: "val-co2", as: "val-anhsang" };
+				// const units = { t: "°C", h: "%", co2: " ppm", as: " Lux" };
 				
-				Object.keys(map).forEach(key => {
-					const el = document.getElementById(map[key]);
-					if (el && payload[key] !== undefined) {
-						el.innerText = (typeof payload[key] === 'number' ? payload[key].toFixed(1) : payload[key]) + units[key];
-					}
-				});
+				// Object.keys(map).forEach(key => {
+				// 	const el = document.getElementById(map[key]);
+				// 	if (el && payload[key] !== undefined) {
+				// 		el.innerText = (typeof payload[key] === 'number' ? payload[key].toFixed(1) : payload[key]) + units[key];
+				// 	}
+				// });
 
-				// --- THÊM ĐOẠN NÀY ĐỂ CẬP NHẬT TRẠNG THÁI NÚT TỪ BASE TOPIC ---
 				if (payload.fan !== undefined || payload.ac !== undefined || payload.hum !== undefined) {
 					deviceStates = { 
 						q: payload.fan !== undefined ? payload.fan : deviceStates.q, 
@@ -376,6 +367,40 @@
 			.catch(err => console.error("Lỗi cập nhật thiết bị:", err));
 	}
 
+	function updateSensorsFromDb() {
+		fetch('index.php?page=api_get_latest_sensors')
+			.then(response => response.json())
+			.then(data => {
+				if (data && data.status) {
+					document.getElementById('val-nhietdo').innerText = parseFloat(data.avgTemp).toFixed(1) + " °C";
+					document.getElementById('val-doam').innerText = parseFloat(data.avgHum).toFixed(1) + " %";
+					document.getElementById('val-anhsang').innerText = parseInt(data.avgLight) + " Lux";
+					document.getElementById('val-co2').innerText = parseInt(data.avgCo2) + " ppm";
+
+					const mapStatus = {
+						temp: 'stat-nhietdo',
+						hum: 'stat-doam',
+						light: 'stat-anhsang',
+						co2: 'stat-co2'
+					};
+
+					Object.keys(mapStatus).forEach(key => {
+						const statusEl = document.getElementById(mapStatus[key]);
+						if (statusEl && data.status[key]) {
+							statusEl.innerText = data.status[key].text;
+							statusEl.className = `text-xs font-bold mt-1 ${data.status[key].class}`;
+						}
+					});
+
+					const timeEl = document.getElementById('current-time');
+					if (timeEl && data.thoiGian) {
+						timeEl.innerText = data.thoiGian; 
+					}
+				}
+			})
+			.catch(err => console.error("Lỗi lấy dữ liệu DB:", err));
+	}
+
     document.addEventListener("DOMContentLoaded", () => {
 		document.getElementById('masterSwitch')?.addEventListener('click', function(e) {
 			if (!client.isConnected()) {
@@ -393,11 +418,12 @@
 			message.qos = 1;
 			client.send(message);
 			
-			// Lưu ý: Không cần gọi updateAllButtons ở đây, 
-			// vì lát nữa tin nhắn phản hồi về onMessageArrived sẽ lo việc đó.
+			
 		});
         document.getElementById('masterSwitch')?.addEventListener('change', updateAllButtons);
-		setInterval(updateNodeStatusAjax, 5000);
+		setInterval(updateNodeStatusAjax, 3000);
+		setInterval(updateSensorsFromDb, 3000);
+		updateSensorsFromDb();
         startConnect();
     });
 </script>

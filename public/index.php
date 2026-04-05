@@ -134,6 +134,16 @@ switch ($page) {
         $controller = new \App\Controllers\TrangChuController();
         $controller->layJSONTrangThaiThietBi();
         break;
+    case 'api_get_latest_sensors':
+        if (hasPermission('trangchu.view')) {
+            $controller = new App\Controllers\TrangChuController();
+            $controller->apiLayDuLieuMoi();
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Permission denied']);
+            exit;
+        }
+        break;
 
     // Các tab thiết bị
     case 'thietbi':

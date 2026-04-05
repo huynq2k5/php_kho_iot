@@ -30,7 +30,6 @@ class TrangChuController {
     public function index() {
         $ov = $this->lsService->layThongSoTrungBinhHeThong();
         
-        // Tạo mảng trạng thái dựa trên hàm phân tích
         $status = [
             'temp'  => $this->lsService->phanTichTrangThai('temp', $ov['avgTemp']),
             'hum'   => $this->lsService->phanTichTrangThai('hum', $ov['avgHum']),
@@ -43,5 +42,27 @@ class TrangChuController {
             'status'   => $status,
             'devices'  => $this->tbService->hienThiTatCaThietBi()
         ];
+    }
+
+    public function apiLayDuLieuMoi() {
+        $ov = $this->lsService->layThongSoTrungBinhHeThong();
+        
+        $status = [
+            'temp'  => $this->lsService->phanTichTrangThai('temp', $ov['avgTemp']),
+            'hum'   => $this->lsService->phanTichTrangThai('hum', $ov['avgHum']),
+            'co2'   => $this->lsService->phanTichTrangThai('co2', $ov['avgCo2']),
+            'light' => $this->lsService->phanTichTrangThai('light', $ov['avgLight']),
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'avgTemp'  => $ov['avgTemp'],
+            'avgHum'   => $ov['avgHum'],
+            'avgCo2'   => $ov['avgCo2'],
+            'avgLight' => $ov['avgLight'],
+            'thoiGian' => $ov['thoiGian'] ? date('H:i:s d/m/Y', strtotime($ov['thoiGian'])) : '--:--:-- Ngày --/--',
+            'status'   => $status
+        ]);
+        exit;
     }
 }
