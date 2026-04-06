@@ -16,18 +16,15 @@ const ketNoiDb = mysql.createPool({
 });
 
 const cauHinhEmail = nodemailer.createTransport({
-    service: 'gmail', 
-    host: 'smtp.gmail.com',
-    port: 587, 
-    secure: false, 
+    host: 'smtp.resend.com',
+    port: 465,
+    secure: true,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: 'resend',
+        pass: process.env.TOKEN
     },
-    family: 4, 
-    tls: {
-        rejectUnauthorized: false 
-    }
+    pool: true,
+    family: 4
 });
 
 const trangThaiCu = {};
@@ -113,8 +110,8 @@ const guiMailThongBao = (maThietBi, trangThai) => {
     `;
 
     const options = {
-        from: 'Hệ thống giám sát kho thông minh',
-        to: '23004224@st.vlute.edu.vn',
+        from: 'He thong Giam sat <onboarding@resend.dev>',
+        to: 'huyn84341@gmail.com',
         subject: chuDe,
         html: noiDung
     };
