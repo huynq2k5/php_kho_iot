@@ -17,14 +17,17 @@ const ketNoiDb = mysql.createPool({
 
 const cauHinhEmail = nodemailer.createTransport({
     host: 'smtp.resend.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false, 
     auth: {
         user: 'resend',
         pass: process.env.TOKEN
     },
     pool: true,
-    family: 4
+    family: 4,
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 20000
 });
 
 const trangThaiCu = {};
