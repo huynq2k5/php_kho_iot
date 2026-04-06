@@ -65,17 +65,15 @@ class KichBanTuDongRepository
     {
         $sql = "INSERT INTO kichban_tudong 
                 (tenKichBan, loaiKichBan, idThanhPhanVao, dieuKien, giaTriNguong, 
-                 thoiGianBat, thoiGianTat, idThanhPhanRa, hanhDong, kichHoat) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                 idThanhPhanRa, hanhDong, kichHoat) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         return $this->db->capNhat($sql, [
             $data['tenKichBan'],
             $data['loaiKichBan'],
-            $data['idThanhPhanVao'] ?? null,
-            $data['dieuKien'] ?? null,
-            $data['giaTriNguong'] ?? 0,
-            $data['thoiGianBat'] ?? null,
-            $data['thoiGianTat'] ?? null,
+            $data['idThanhPhanVao'],
+            $data['dieuKien'],
+            $data['giaTriNguong'],
             $data['idThanhPhanRa'],
             $data['hanhDong'],
             $data['kichHoat'] ?? 1
@@ -90,8 +88,6 @@ class KichBanTuDongRepository
                     idThanhPhanVao = ?, 
                     dieuKien = ?, 
                     giaTriNguong = ?, 
-                    thoiGianBat = ?, 
-                    thoiGianTat = ?, 
                     idThanhPhanRa = ?, 
                     hanhDong = ?, 
                     kichHoat = ?
@@ -100,11 +96,9 @@ class KichBanTuDongRepository
         return $this->db->capNhat($sql, [
             $data['tenKichBan'],
             $data['loaiKichBan'],
-            $data['idThanhPhanVao'] ?? null,
-            $data['dieuKien'] ?? null,
-            $data['giaTriNguong'] ?? 0,
-            $data['thoiGianBat'] ?? null,
-            $data['thoiGianTat'] ?? null,
+            $data['idThanhPhanVao'],
+            $data['dieuKien'],
+            $data['giaTriNguong'],
             $data['idThanhPhanRa'],
             $data['hanhDong'],
             $data['kichHoat'] ?? 1,
@@ -131,8 +125,6 @@ class KichBanTuDongRepository
     }
 
     public function checkHeThongIsManual() {
-        // Nếu có ít nhất 1 kịch bản đang bật (kichHoat = 1) -> Hệ thống là AUTO
-        // Nếu tất cả đều tắt -> Hệ thống là MANUAL
         $sql = "SELECT COUNT(*) as count FROM kichban_tudong WHERE kichHoat = 1";
         $kq = $this->db->truyVan($sql);
         $row = $kq->fetch_assoc();

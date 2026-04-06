@@ -49,13 +49,10 @@ class TuDongHoaController extends BaseController{
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'tenKichBan'      => $_POST['tenKichBan'] ?? null,
-                'loaiKichBan'     => $_POST['loaiKichBan'] ?? 'SENSOR',
-                // CẬP NHẬT: Lưu ID thành phần thay vì ID thiết bị chung chung
+                'loaiKichBan'     => 'SENSOR',
                 'idThanhPhanVao'  => $_POST['idThanhPhanVao'] ?: null, 
                 'dieuKien'        => $_POST['dieuKien'] ?? null,
                 'giaTriNguong'    => $_POST['giaTriNguong'] ?? 0,
-                'thoiGianBat'     => $_POST['thoiGianBat'] ?: null,
-                'thoiGianTat'     => $_POST['thoiGianTat'] ?: null,
                 'idThanhPhanRa'   => $_POST['idThanhPhanRa'] ?? null,
                 'hanhDong'        => $_POST['hanhDong'] ?? 'ON',
                 'kichHoat'        => isset($_POST['kichHoat']) ? 1 : 0
@@ -77,12 +74,10 @@ class TuDongHoaController extends BaseController{
             $oldData = $this->kbService->getKichBanById($id);
             $data = [
                 'tenKichBan'      => $_POST['tenKichBan'] ?? null,
-                'loaiKichBan'     => $_POST['loaiKichBan'] ?? 'SENSOR',
+                'loaiKichBan'     => 'SENSOR',
                 'idThanhPhanVao'  => $_POST['idThanhPhanVao'] ?: null,
                 'dieuKien'        => $_POST['dieuKien'] ?? null,
                 'giaTriNguong'    => $_POST['giaTriNguong'] ?? 0,
-                'thoiGianBat'     => $_POST['thoiGianBat'] ?: null,
-                'thoiGianTat'     => $_POST['thoiGianTat'] ?: null,
                 'idThanhPhanRa'   => $_POST['idThanhPhanRa'] ?? null,
                 'hanhDong'        => $_POST['hanhDong'] ?? 'ON',
                 'kichHoat'        => isset($_POST['kichHoat']) ? 1 : 0
@@ -111,6 +106,7 @@ class TuDongHoaController extends BaseController{
             exit;
         }
     }
+
 
     public function apiLayTrangThaiTatCa() {
         $dsKichBan = $this->kbService->hienThiTatCaKichBan();
