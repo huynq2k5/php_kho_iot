@@ -15,20 +15,6 @@ const ketNoiDb = mysql.createPool({
     port: process.env.DB_PORT || 3306
 });
 
-const cauHinhEmail = nodemailer.createTransport({
-    host: 'smtp.resend.com',
-    port: 587,
-    secure: false, 
-    auth: {
-        user: 'resend',
-        pass: process.env.TOKEN
-    },
-    pool: true,
-    family: 4,
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 20000
-});
 
 const trangThaiCu = {};
 const trangThaiCanhBao = {};
@@ -101,7 +87,7 @@ const xuLyCamBien = (maThietBi, duLieu) => {
     });
 };
 
-const guiMailThongBao = (maThietBi, trangThai) => {
+const guiMailThongBao = async (maThietBi, trangThai) => {
     const chuDe = trangThai === 1 ? `[ONLINE] Thiết bị ${maThietBi} đã kết nối` : `[OFFLINE] Thiết bị ${maThietBi} mất kết nối`;
     const noiDung = `
         <h3>Thông báo trạng thái thiết bị</h3>
@@ -112,17 +98,31 @@ const guiMailThongBao = (maThietBi, trangThai) => {
         <p>Hệ thống giám sát kho thông minh.</p>
     `;
 
-    const options = {
-        from: 'He thong Giam sat <onboarding@resend.dev>',
-        to: 'huyn84341@gmail.com',
-        subject: chuDe,
-        html: noiDung
-    };
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: 'He thong kho thong minh <onboarding@resend.dev>',
+                to: 'huyn84341@gmail.com',
+                subject: chuDe,
+                html: noiDung
+            })
+        });
 
-    cauHinhEmail.sendMail(options, (err, info) => {
-        if (err) console.log(`\x1b[31m[MAIL_ERR] ${err.message}\x1b[0m`);
-        else console.log(`\x1b[32m[MAIL_OK] Da gui thong bao cho ${maThietBi}\x1b[0m`);
-    });
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log(`\x1b[32m[MAIL_OK] Da gui thong bao cho ${maThietBi} qua API\x1b[0m`);
+        } else {
+            console.log(`\x1b[31m[MAIL_ERR] API Error: ${data.message}\x1b[0m`);
+        }
+    } catch (err) {
+        console.log(`\x1b[31m[MAIL_ERR] Fetch Timeout/Network Error: ${err.message}\x1b[0m`);
+    }
 };
 
 const capNhatTrangThai = (maThietBi, trangThai) => {
